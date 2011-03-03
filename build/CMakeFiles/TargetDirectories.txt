@@ -1,3 +1,0 @@
-/home/saljack/Media/Programovani/QT/KminiDLNA/KminiDLNA/build/CMakeFiles/kminidlna.dir
-/home/saljack/Media/Programovani/QT/KminiDLNA/KminiDLNA/build/CMakeFiles/kminidlna_automoc.dir
-/home/saljack/Media/Programovani/QT/KminiDLNA/KminiDLNA/build/CMakeFiles/uninstall.dir

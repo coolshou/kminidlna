@@ -30,6 +30,8 @@ private:
     minidlnaProcess *dlnaProcess;
     MainWidget *mw;
     void minidlnaStart(bool start); //set graphic
+    void loadSettings();
+    bool sm_closeToTray;
 private slots:
     void showSettings();
 public slots:

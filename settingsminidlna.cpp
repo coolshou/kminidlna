@@ -17,25 +17,21 @@
 */
 
 
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
-
-#include <kpagedialog.h>
-#include "settingsgeneral.h"
 #include "settingsminidlna.h"
 
-
-class SettingsDialog : public KPageDialog
+SettingsMiniDLNA::SettingsMiniDLNA(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
 {
-    Q_OBJECT
-public:
-    explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-    virtual ~SettingsDialog();
-private:
-    SettingsGeneral* s_general;
-    SettingsMiniDLNA* s_minidlna;
-private slots:
-    void onApply();
-};
 
-#endif // SETTINGSDIALOG_H
+}
+
+SettingsMiniDLNA::~SettingsMiniDLNA()
+{
+
+}
+
+void SettingsMiniDLNA::applySettings()
+{
+
+}
+
+

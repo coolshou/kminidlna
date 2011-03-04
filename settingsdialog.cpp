@@ -18,18 +18,37 @@
 
 
 #include "settingsdialog.h"
+#include "settingsgeneral.h"
+#include <KDE/KLocalizedString>
+#include <QDebug>
 
-SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, flags)
+SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
 {
-  
+    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    setFaceType( KPageDialog::List);
+
+    s_general = new SettingsGeneral(this);
+    KPageWidgetItem* kp_general = new KPageWidgetItem(s_general, i18n("General"));
+    kp_general->setIcon(KIcon(":/images/ikona.png"));
+    addPage(kp_general);
+
+    s_minidlna = new SettingsMiniDLNA(this);
+    KPageWidgetItem* kp_minidlna = new KPageWidgetItem(s_minidlna, i18n("minidlna"));
+    kp_minidlna->setIcon(KIcon("configure"));
+    addPage(kp_minidlna);
+    
+    connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
+    connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
+
 }
 
-SettingsDialog::~SettingsDialog(){
-  
-}
-
-void SettingsDialog::closeEvent(QCloseEvent* e)
+SettingsDialog::~SettingsDialog()
 {
-    KDialog::closeEvent(e);
+
 }
 
+void SettingsDialog::onApply()
+{
+    s_general->applySettings();
+    s_minidlna->applySettings();
+}

@@ -17,25 +17,25 @@
 */
 
 
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef SETTINGSGENERAL_H
+#define SETTINGSGENERAL_H
 
-#include <kpagedialog.h>
-#include "settingsgeneral.h"
-#include "settingsminidlna.h"
+#include <QWidget>
+#include <QCheckBox>
 
 
-class SettingsDialog : public KPageDialog
+class SettingsGeneral : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-    virtual ~SettingsDialog();
+    explicit SettingsGeneral(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~SettingsGeneral();
+    void applySettings();
 private:
-    SettingsGeneral* s_general;
-    SettingsMiniDLNA* s_minidlna;
-private slots:
-    void onApply();
+    void initGUI();
+    QCheckBox* m_closeToTray;
+    void loadSettings();
 };
 
-#endif // SETTINGSDIALOG_H
+#endif // SETTINGSGENERAL_H

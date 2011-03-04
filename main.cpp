@@ -3,6 +3,7 @@
 #include <KCmdLineArgs>
 
 #include "KminiDLNA.h"
+#include <kicon.h>
 
 int main(int argc, char** argv)
 {    
@@ -16,10 +17,11 @@ int main(int argc, char** argv)
 			 KAboutData::License_GPL_V2);
     
     aboutData.addAuthor(ki18n("Saljack"));
+    aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/ikona.png")));
     KCmdLineArgs::init(argc, argv, &aboutData);
     KApplication app;
+    app.setWindowIcon(QIcon(":/images/ikona.png"));
     KminiDLNA *mainWindow = new KminiDLNA();
-    mainWindow->setWindowIcon(QIcon(":/images/ikona.png"));
     mainWindow->show();
     return app.exec();
 }

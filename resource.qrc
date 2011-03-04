@@ -1,5 +1,6 @@
  <!DOCTYPE RCC><RCC version="1.0">
  <qresource prefix="images">
      <file alias="ikona.png">resource/icon.png</file>
+     <file alias="run.png">resource/icon_play.png</file>
  </qresource>
  </RCC>

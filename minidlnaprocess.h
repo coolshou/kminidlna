@@ -17,39 +17,27 @@
 */
 
 
-#ifndef MAINWIDGET_H
-#define MAINWIDGET_H
-
-#include <QWidget>
-#include <KLed>
-#include <QLabel>
+#ifndef MINIDLNAPROCESS_H
+#define MINIDLNAPROCESS_H
 #include <QProcess>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <signal.h>
 
-
-class MainWidget : public QWidget
+class minidlnaProcess: public QObject
 {
     Q_OBJECT
+
 public:
-    MainWidget(QWidget* parent);
-    virtual ~MainWidget();
-    void setStopStart(bool ss);
+    minidlnaProcess();
+    virtual ~minidlnaProcess();
+    void minidlnaStart();
+    void minidlnaKill();
+    bool minidlnaStatus();
 private:
-    void initGUI();
-    QVBoxLayout *mainlayout;
-    QLabel *lbl;
     QProcess *minidlna;
-    KLed *kled;
-    QPushButton *btnStopStart;
     QString minidlnas;
     QStringList argsm;
-    bool run;
+
 signals:
-      void pressedBtnStopStart();
-private slots:
-      void onBtnPressed();
+    void minidlnaStatus(bool status);
 };
 
-#endif // MAINWIDGET_H
+#endif // MINIDLNAPROCESS_H

@@ -38,3 +38,6 @@ Remote GDB Shell Script=
 Use External Terminal=false
 Working Directory=file:///home/saljack/Media/Programovani/QT/KminiDLNA/KminiDLNA/build/
 isExecutable=true
+
+[Project]
+VersionControlSupport=kdevgit

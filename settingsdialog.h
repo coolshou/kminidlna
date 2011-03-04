@@ -17,39 +17,21 @@
 */
 
 
-#ifndef MAINWIDGET_H
-#define MAINWIDGET_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
-#include <QWidget>
-#include <KLed>
-#include <QLabel>
-#include <QProcess>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <signal.h>
+#include <kdialog.h>
 
 
-class MainWidget : public QWidget
+class SettingsDialog : public KDialog
 {
-    Q_OBJECT
+
 public:
-    MainWidget(QWidget* parent);
-    virtual ~MainWidget();
-    void setStopStart(bool ss);
-private:
-    void initGUI();
-    QVBoxLayout *mainlayout;
-    QLabel *lbl;
-    QProcess *minidlna;
-    KLed *kled;
-    QPushButton *btnStopStart;
-    QString minidlnas;
-    QStringList argsm;
-    bool run;
-signals:
-      void pressedBtnStopStart();
-private slots:
-      void onBtnPressed();
+    explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
+    virtual ~SettingsDialog();
+
+protected:
+    virtual void closeEvent(QCloseEvent* e);
 };
 
-#endif // MAINWIDGET_H
+#endif // SETTINGSDIALOG_H

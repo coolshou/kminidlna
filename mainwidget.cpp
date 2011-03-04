@@ -19,11 +19,12 @@
 
 #include "mainwidget.h"
 #include <KLocalizedString>
+#include "KminiDLNA.h"
+#include <QDebug>
 
-MainWidget::MainWidget()
+MainWidget::MainWidget(QWidget *parent):QWidget(parent)
 {
-    minidlnas  = "/usr/sbin/minidlna";
-    argsm << "-d";
+    run = false;
     initGUI();
 }
 
@@ -45,24 +46,31 @@ void MainWidget::initGUI()
     mainlayout->addLayout(layoutRun);;
     mainlayout->addWidget(btnStopStart);
     minidlna = new QProcess(this);
-    connect(btnStopStart, SIGNAL(pressed()), this, SLOT(onBtnStopStart()));
+    connect(btnStopStart, SIGNAL(pressed()), this, SLOT(onBtnPressed()));
 }
 
-void MainWidget::onBtnStopStart()
+void MainWidget::onBtnPressed()
 {
-    if (minidlna->state() == QProcess::NotRunning) {
-        minidlna->start(minidlnas, argsm);
+  emit pressedBtnStopStart();
+}
+
+/**
+ * set MaintWidget led and btn to stop or start
+ */
+void MainWidget::setStopStart(bool ss)
+{
+    if (ss) {
         kled->setColor(Qt::green);
         kled->setState(KLed::On);
         btnStopStart->setText(i18n("Stop"));
     } else {
-        minidlna->kill();
         kled->setColor(Qt::gray);
         kled->setState(KLed::Off);
         btnStopStart->setText(i18n("Start"));
-
     }
-
 }
+
+
+
 
 

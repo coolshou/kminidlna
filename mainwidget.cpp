@@ -59,6 +59,9 @@ void MainWidget::onBtnPressed()
  */
 void MainWidget::setStopStart(bool ss)
 {
+    if(!btnStopStart->isEnabled()){
+	btnStopStart->setEnabled(true);
+    }
     if (ss) {
         kled->setColor(Qt::green);
         kled->setState(KLed::On);
@@ -69,6 +72,13 @@ void MainWidget::setStopStart(bool ss)
         btnStopStart->setText(i18n("Start"));
     }
 }
+
+void MainWidget::setRunning()
+{
+    btnStopStart->setText(i18n("Starting"));
+    btnStopStart->setEnabled(false);
+}
+
 
 
 

@@ -17,8 +17,9 @@
 
 KminiDLNA::KminiDLNA()
 {
-    dlnaProcess = new minidlnaProcess();
+    dlnaProcess = new MinidlnaProcess();
     initGUI();
+    connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)), this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
     loadSettings();
 }
 
@@ -90,33 +91,21 @@ void KminiDLNA::showSettings()
 }
 
 /**
- * set graphic
- */
-void KminiDLNA::minidlnaStart(bool start)
-{
-    if (start) {
-        systemtray->setIcon(QIcon(":/images/run.png"));
-    } else {
-        systemtray->setIcon(QIcon(":/images/ikona.png"));
-    }
-    mw->setStopStart(start);
-}
-
-/**
  * slot onBtnStopStart
  */
 void KminiDLNA::onBtnStopStart()
 {
     if (dlnaProcess->minidlnaStatus()) {
         dlnaProcess->minidlnaKill();
-        minidlnaStart(false);
     } else {
         dlnaProcess->minidlnaStart();
-        minidlnaStart(true);
     }
 
 }
 
+/**
+ * Load and set settings
+ */
 void KminiDLNA::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group("General");
@@ -126,13 +115,31 @@ void KminiDLNA::loadSettings()
   
 
     if (config.readEntry("runonstart", false)) {
-      qDebug()<< "i AM HERE";
         if (!dlnaProcess->minidlnaStatus()) {
             dlnaProcess->minidlnaStart();
-            minidlnaStart(true);
         }
     }
 }
+
+/**
+ * Slot: If is minidlna status changed
+ */
+void KminiDLNA::onMiniDLNAState ( QProcess::ProcessState state )
+{
+    switch (state){
+      case QProcess::Running:
+	mw->setStopStart(true);
+	systemtray->setIcon(QIcon(":/images/run.png"));
+	break;
+      case QProcess::Starting:
+	mw->setRunning();
+	break;
+      default:
+	mw->setStopStart(false);
+	systemtray->setIcon(QIcon(":/images/ikona.png"));
+    }
+}
+
 
 
 

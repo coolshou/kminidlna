@@ -20,26 +20,45 @@
 #ifndef MINIDLNAPROCESS_H
 #define MINIDLNAPROCESS_H
 #include <QProcess>
+#include <QFile>
+#include <QThread>
 
-class minidlnaProcess: public QObject
+class PidThread: public QThread
+{
+    Q_OBJECT;
+public:
+    explicit PidThread ( QObject* parent = 0 );
+    virtual void run();
+    void setPathPidFile ( const QString& path );
+    int getPid() const;
+private:
+    int pid;
+    QString pathPidFile;
+signals:
+    void foundPidFile ( bool found );
+};
+
+class MinidlnaProcess: public QObject
 {
     Q_OBJECT
 
 public:
-    minidlnaProcess();
-    virtual ~minidlnaProcess();
+    MinidlnaProcess();
+    virtual ~MinidlnaProcess();
     void minidlnaStart();
     void minidlnaKill();
     bool minidlnaStatus();
 private:
-    QProcess *minidlna;
+    QProcess* minidlna;
     QString minidlnas;
-    QStringList argsm;
+    QStringList arg;
+    QString pathPidFile;
+    PidThread* t_pid;
 
 signals:
-    void minidlnaStatus(bool status);
+    void minidlnaStatus ( QProcess::ProcessState state );
 private slots:
-    void onQuit();
+    void onPidFile ( bool found );
 };
 
 #endif // MINIDLNAPROCESS_H

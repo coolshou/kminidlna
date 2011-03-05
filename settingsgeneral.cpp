@@ -25,17 +25,18 @@
 #include <KConfigGroup>
 #include <KConfig>
 #include <QDebug>
+#include <QGroupBox>
 
 /**
  * Page settings widget: General settings
- * 
+ *
  * Use slot applySettings for save settings
- * 
+ *
  * Implemented settings:
  * 	closetotray (false)
  * 	runonstart  (false)
  * 	rememberrun (false)
- * 
+ *
  */
 SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
 {
@@ -48,31 +49,40 @@ SettingsGeneral::~SettingsGeneral()
 }
 
 /**
- * 
+ *
  * Load Widget gui
- * 
+ *
  */
 void SettingsGeneral::initGUI()
 {
-    QVBoxLayout *ll = new QVBoxLayout(this);
-    setLayout(ll);
-    m_closeToTray = new QCheckBox(i18n("Close to system tray"), this);
+
+
+    QVBoxLayout *central = new QVBoxLayout(this);
+    QGroupBox *group = new QGroupBox(i18n("General"), this);
+    QVBoxLayout *ll = new QVBoxLayout(group);
+    central->addWidget(group);
+    group->setLayout(ll);
+//     setLayout(central);
+//     setLayout(ll);
+    m_closeToTray = new QCheckBox(i18n("Close to system tray"), group);
     ll->addWidget(m_closeToTray);
-    
-    m_runOnStart = new QCheckBox(i18n("Run on start"), this);
-    ll->addWidget(m_runOnStart);    
-    
-    m_remRun = new QCheckBox(i18n("Remember running"), this);
+
+    m_runOnStart = new QCheckBox(i18n("Run on start"), group);
+    ll->addWidget(m_runOnStart);
+
+    m_remRun = new QCheckBox(i18n("Remember running"), group);
     ll->addWidget(m_remRun);
-    
+
+    ll->addSpacerItem(new QSpacerItem(40, 200));
+
     loadSettings();
-    
+
 }
 
 /**
- * 
+ *
  * Save settings:
- * 
+ *
  * Implemented settings:
  * 	closetotray (false)
  * 	runonstart  (false)
@@ -88,9 +98,9 @@ void SettingsGeneral::applySettings()
 }
 
 /**
- * 
+ *
  * Load settings only for checkbox etc. !!!
- * 
+ *
  * Implemented settings:
  * 	closetotray (false)
  * 	runonstart  (false)
@@ -98,7 +108,7 @@ void SettingsGeneral::applySettings()
  */
 void SettingsGeneral::loadSettings()
 {
-    
+
     KConfigGroup config = KGlobal::config()->group( "General" );
     m_closeToTray->setChecked(config.readEntry("closetotray", false));
     m_runOnStart->setChecked(config.readEntry("runonstart", false));

@@ -36,6 +36,7 @@ public:
     MainWidget(QWidget* parent);
     virtual ~MainWidget();
     void setStopStart(bool ss);
+    void setRunning();
 private:
     void initGUI();
     QVBoxLayout *mainlayout;

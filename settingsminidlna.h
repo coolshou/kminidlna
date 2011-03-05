@@ -23,8 +23,9 @@
 #include <QWidget>
 #include <QCheckBox>
 #include <QLineEdit>
-#include <QPushButton>
+#include <QToolButton>
 
+class QToolButton;
 class SettingsMiniDLNA : public QWidget
 {
   Q_OBJECT
@@ -35,7 +36,7 @@ public:
 private:
     void initGUI();
     QLineEdit* m_minidlnaPath;
-    QPushButton* m_browsePath;
+    QToolButton* m_browsePath;
     void loadSettings();
 private slots:
     void onBrowsePath();

@@ -26,7 +26,9 @@
 #include <KConfig>
 #include <QDebug>
 #include <KFileDialog>
+#include <QGroupBox>
 #include <KUrl>
+
 
 SettingsMiniDLNA::SettingsMiniDLNA(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
 {
@@ -39,22 +41,25 @@ SettingsMiniDLNA::~SettingsMiniDLNA()
 }
 void SettingsMiniDLNA::initGUI()
 {
-    QVBoxLayout* vl = new QVBoxLayout(this);
-    setLayout(vl);
+  
+    QVBoxLayout* central = new QVBoxLayout(this);
+    QGroupBox* groupmini = new QGroupBox(i18n("minidlna"), this);
+    central->addWidget(groupmini);
+    QVBoxLayout* vl = new QVBoxLayout(groupmini);
     
-    QHBoxLayout* hl =  new QHBoxLayout(this);
+    QHBoxLayout* hl =  new QHBoxLayout();
     
-    hl->addWidget(new QLabel(i18n("minidlna path:"),this));
+    hl->addWidget(new QLabel(i18n("minidlna path:"),groupmini));
     
-    m_minidlnaPath = new QLineEdit("/usr/sbin/minidlna", this);
+    m_minidlnaPath = new QLineEdit("/usr/sbin/minidlna", groupmini);
     hl->addWidget(m_minidlnaPath);
     
-    m_browsePath = new QPushButton(i18n("Browse..."), this);
+    m_browsePath = new QToolButton(groupmini);
+    m_browsePath->setIcon(KIcon("document-open"));
     connect(m_browsePath, SIGNAL(pressed()), this, SLOT(onBrowsePath()));
     hl->addWidget(m_browsePath);
     
     vl->addLayout(hl);
-    qDebug() << "minidlnasettings loads gui";
 
     loadSettings();
 }
@@ -75,7 +80,6 @@ void SettingsMiniDLNA::loadSettings()
 
 void SettingsMiniDLNA::onBrowsePath()
 {
-//     KUrl surl = KUrl(m_minidlnaPath->text());
     KUrl url = KFileDialog::getOpenUrl(KUrl(m_minidlnaPath->text()), "minidlna");
     m_minidlnaPath->setText(url.path());
     

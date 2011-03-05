@@ -27,17 +27,16 @@ private:
     KHelpMenu *aboutMenu;
     KMenu *mTool;
     KMenu *mAbout;
-    minidlnaProcess *dlnaProcess;
+    MinidlnaProcess *dlnaProcess;
     MainWidget *mw;
-    void minidlnaStart(bool start); //set graphic
     void loadSettings();
     bool sm_closeToTray;
 private slots:
     void showSettings();
+    void onMiniDLNAState(QProcess::ProcessState state);
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
-    void onBtnStopStart();
-    
+    void onBtnStopStart();  
 };
 
 #endif // KminiDLNA_H

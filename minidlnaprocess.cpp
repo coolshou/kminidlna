@@ -26,6 +26,7 @@ minidlnaProcess::minidlnaProcess()
     minidlnas  = "/usr/sbin/minidlna";
     argsm << "-d";
     minidlna = new QProcess();
+    connect(kapp, SIGNAL(aboutToQuit()), this, SLOT());
 }
 
 minidlnaProcess::~minidlnaProcess()
@@ -53,7 +54,9 @@ void minidlnaProcess::minidlnaStart()
 void minidlnaProcess::minidlnaKill()
 {
     qDebug() << "STOP";
-    minidlna->kill();
+    if (minidlna->state() == QProcess::Running) {
+        minidlna->kill();
+    }
     emit minidlnaStatus(false);
 }
 
@@ -63,12 +66,18 @@ void minidlnaProcess::minidlnaKill()
  */
 bool minidlnaProcess::minidlnaStatus()
 {
-    if(minidlna->state()==QProcess::NotRunning){
-      return false;
-    }else{
-      return true;
+    if (minidlna->state()==QProcess::NotRunning) {
+        return false;
+    } else {
+        return true;
     }
 }
+
+void minidlnaProcess::onQuit()
+{
+    minidlnaKill();
+}
+
 
 
 

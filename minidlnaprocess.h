@@ -38,6 +38,8 @@ private:
 
 signals:
     void minidlnaStatus(bool status);
+private slots:
+    void onQuit();
 };
 
 #endif // MINIDLNAPROCESS_H

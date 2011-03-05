@@ -21,15 +21,24 @@
 #define SETTINGSMINIDLNA_H
 
 #include <QWidget>
-
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QPushButton>
 
 class SettingsMiniDLNA : public QWidget
 {
-
+  Q_OBJECT
 public:
     explicit SettingsMiniDLNA(QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~SettingsMiniDLNA();
     void applySettings();
+private:
+    void initGUI();
+    QLineEdit* m_minidlnaPath;
+    QPushButton* m_browsePath;
+    void loadSettings();
+private slots:
+    void onBrowsePath();
 };
 
 #endif // SETTINGSMINIDLNA_H

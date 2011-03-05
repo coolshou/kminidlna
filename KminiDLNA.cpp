@@ -57,6 +57,8 @@ void KminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason)
 
 void KminiDLNA::closeEvent(QCloseEvent* event)
 {
+
+    qDebug()<< "exit";
     if (systemtray->isVisible() && sm_closeToTray) {
         hide();
         systemtray->showMessage(i18n("KminiDLNA"), i18n("KminiDLNA was minimalized."),QSystemTrayIcon::Information, 8000);
@@ -73,7 +75,7 @@ void KminiDLNA::createMenu()
     KAction *aSetting = new KAction(KIcon("configure"), i18n("Configure KminiDLNA"), mTool);
     connect(aSetting, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)), this, SLOT(showSettings()));
     mTool->addAction(aSetting);
-    mTool->addAction(KStandardAction::quit(kapp, SLOT(quit()), mTool));
+    mTool->addAction(KStandardAction::quit(kapp, SLOT(quit()), this));
     menu->addMenu(mTool);
     aboutMenu = new KHelpMenu(menu, KCmdLineArgs::aboutData());
     mAbout = aboutMenu->menu();
@@ -106,11 +108,9 @@ void KminiDLNA::minidlnaStart(bool start)
 void KminiDLNA::onBtnStopStart()
 {
     if (dlnaProcess->minidlnaStatus()) {
-        qDebug()<< "MELO";
         dlnaProcess->minidlnaKill();
         minidlnaStart(false);
     } else {
-        qDebug()<< "NEMELO";
         dlnaProcess->minidlnaStart();
         minidlnaStart(true);
     }
@@ -121,7 +121,17 @@ void KminiDLNA::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group("General");
     qDebug() << config.readEntry("closetotray", false);;
+
     sm_closeToTray = config.readEntry("closetotray", false);
+  
+
+    if (config.readEntry("runonstart", false)) {
+      qDebug()<< "i AM HERE";
+        if (!dlnaProcess->minidlnaStatus()) {
+            dlnaProcess->minidlnaStart();
+            minidlnaStart(true);
+        }
+    }
 }
 
 

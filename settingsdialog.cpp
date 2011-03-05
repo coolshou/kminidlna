@@ -24,8 +24,11 @@
 
 SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
 {
+    setWindowModality( Qt::WindowModal );
     setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     setFaceType( KPageDialog::List);
+    setWindowTitle(i18n("Configure KminiDLNA"));
+    setMinimumSize(450, 250);
 
     s_general = new SettingsGeneral(this);
     KPageWidgetItem* kp_general = new KPageWidgetItem(s_general, i18n("General"));
@@ -39,6 +42,7 @@ SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(p
     
     connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
     connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
+
 
 }
 

@@ -26,6 +26,17 @@
 #include <KConfig>
 #include <QDebug>
 
+/**
+ * Page settings widget: General settings
+ * 
+ * Use slot applySettings for save settings
+ * 
+ * Implemented settings:
+ * 	closetotray (false)
+ * 	runonstart  (false)
+ * 	rememberrun (false)
+ * 
+ */
 SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
 {
     initGUI();
@@ -36,28 +47,62 @@ SettingsGeneral::~SettingsGeneral()
 
 }
 
+/**
+ * 
+ * Load Widget gui
+ * 
+ */
 void SettingsGeneral::initGUI()
 {
     QVBoxLayout *ll = new QVBoxLayout(this);
     setLayout(ll);
     m_closeToTray = new QCheckBox(i18n("Close to system tray"), this);
     ll->addWidget(m_closeToTray);
+    
+    m_runOnStart = new QCheckBox(i18n("Run on start"), this);
+    ll->addWidget(m_runOnStart);    
+    
+    m_remRun = new QCheckBox(i18n("Remember running"), this);
+    ll->addWidget(m_remRun);
+    
     loadSettings();
     
 }
 
+/**
+ * 
+ * Save settings:
+ * 
+ * Implemented settings:
+ * 	closetotray (false)
+ * 	runonstart  (false)
+ * 	rememberrun (false)
+ */
 void SettingsGeneral::applySettings()
 {
     KConfigGroup config = KGlobal::config()->group( "General" );
     config.writeEntry("closetotray", m_closeToTray->isChecked());
+    config.writeEntry("runonstart", m_runOnStart->isChecked());
+    config.writeEntry("rememberrun", m_remRun->isChecked());
     config.sync();
 }
 
+/**
+ * 
+ * Load settings only for checkbox etc. !!!
+ * 
+ * Implemented settings:
+ * 	closetotray (false)
+ * 	runonstart  (false)
+ * 	rememberrun (false)
+ */
 void SettingsGeneral::loadSettings()
 {
     
     KConfigGroup config = KGlobal::config()->group( "General" );
     m_closeToTray->setChecked(config.readEntry("closetotray", false));
+    m_runOnStart->setChecked(config.readEntry("runonstart", false));
+    m_remRun->setChecked(config.readEntry("rememberrun", false));
 }
 
 

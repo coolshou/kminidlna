@@ -35,6 +35,8 @@ public:
 private:
     void initGUI();
     QCheckBox* m_closeToTray;
+    QCheckBox* m_runOnStart;
+    QCheckBox* m_remRun;
     void loadSettings();
 };
 

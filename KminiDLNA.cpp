@@ -19,7 +19,7 @@ KminiDLNA::KminiDLNA()
 {
     dlnaProcess = new MinidlnaProcess();
     initGUI();
-    connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)), this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
+    connect ( dlnaProcess, SIGNAL ( minidlnaStatus ( QProcess::ProcessState ) ), this, SLOT ( onMiniDLNAState ( QProcess::ProcessState ) ) );
     loadSettings();
 }
 
@@ -30,64 +30,72 @@ KminiDLNA::~KminiDLNA()
 
 void KminiDLNA::initGUI()
 {
-    mw = new MainWidget(this);
-    setCentralWidget(mw);
+    mw = new MainWidget ( this );
+    setCentralWidget ( mw );
     createMenu();
     initSystemTray();
-    connect(mw, SIGNAL(pressedBtnStopStart()), this, SLOT(onBtnStopStart()));
+    connect ( mw, SIGNAL ( pressedBtnStopStart() ), this, SLOT ( onBtnStopStart() ) );
 }
 void KminiDLNA::initSystemTray()
 {
-    systemtray = new KSystemTrayIcon(QIcon(":/images/ikona.png"),this);
+    systemtray = new KSystemTrayIcon ( QIcon ( ":/images/ikona.png" ),this );
     systemtray->show();
-    connect(systemtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemTrayActived(QSystemTrayIcon::ActivationReason)));
+    connect ( systemtray, SIGNAL ( activated ( QSystemTrayIcon::ActivationReason ) ), this, SLOT ( systemTrayActived ( QSystemTrayIcon::ActivationReason ) ) );
+    connect (systemtray, SIGNAL(quitSelected()), this, SLOT(quitKminiDLNA()));
 }
 
-void KminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason)
+void KminiDLNA::systemTrayActived ( QSystemTrayIcon::ActivationReason reason )
 {
-    if (reason == QSystemTrayIcon::Trigger) {
-        if (isVisible() == true) {
-            if (canBeRestored(1)) {
-                restore(1, false);
+    if ( reason == QSystemTrayIcon::Trigger )
+    {
+        if ( isVisible() == true )
+        {
+            if ( canBeRestored ( 1 ) )
+            {
+                restore ( 1, false );
             }
-        } else {
-            restore(1);
+        }
+        else
+        {
+            restore ( 1 );
         }
     }
 }
 
-void KminiDLNA::closeEvent(QCloseEvent* event)
+void KminiDLNA::closeEvent ( QCloseEvent* event )
 {
-
-    qDebug()<< "exit";
-    if (systemtray->isVisible() && sm_closeToTray) {
+    if ( systemtray->isVisible() && sm_closeToTray )
+    {
         hide();
-        systemtray->showMessage(i18n("KminiDLNA"), i18n("KminiDLNA was minimalized."),QSystemTrayIcon::Information, 8000);
+        systemtray->showMessage ( i18n ( "KminiDLNA" ), i18n ( "KminiDLNA was minimalized." ),QSystemTrayIcon::Information, 8000 );
         event->ignore();
-    } else {
-        KMainWindow::closeEvent(event);
+    }
+    else
+    {
+        KMainWindow::closeEvent ( event );
     }
 }
+
 void KminiDLNA::createMenu()
 {
-    menu = new KMenuBar(this);
-    setMenuBar(menu);
-    mTool = new KMenu(i18n("Tools"),menu);
-    KAction *aSetting = new KAction(KIcon("configure"), i18n("Configure KminiDLNA"), mTool);
-    connect(aSetting, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)), this, SLOT(showSettings()));
-    mTool->addAction(aSetting);
-    mTool->addAction(KStandardAction::quit(kapp, SLOT(quit()), this));
-    menu->addMenu(mTool);
-    aboutMenu = new KHelpMenu(menu, KCmdLineArgs::aboutData());
+    menu = new KMenuBar ( this );
+    setMenuBar ( menu );
+    mTool = new KMenu ( i18n ( "Tools" ),menu );
+    KAction *aSetting = new KAction ( KIcon ( "configure" ), i18n ( "Configure KminiDLNA" ), mTool );
+    connect ( aSetting, SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), this, SLOT ( showSettings() ) );
+    mTool->addAction ( aSetting );
+    mTool->addAction ( KStandardAction::quit (this, SLOT(quitKminiDLNA()), this));
+    menu->addMenu ( mTool );
+    aboutMenu = new KHelpMenu ( menu, KCmdLineArgs::aboutData() );
     mAbout = aboutMenu->menu();
-    menu->addMenu(aboutMenu->menu());
+    menu->addMenu ( aboutMenu->menu() );
 }
 
 void KminiDLNA::showSettings()
 {
-    qDebug() << "Not implemented";
-    SettingsDialog *sdlg = new SettingsDialog(this);
-    sdlg->show();
+    SettingsDialog *sdlg = new SettingsDialog ( this );
+    sdlg->exec();
+    loadSettings();
 }
 
 /**
@@ -95,9 +103,12 @@ void KminiDLNA::showSettings()
  */
 void KminiDLNA::onBtnStopStart()
 {
-    if (dlnaProcess->minidlnaStatus()) {
+    if ( dlnaProcess->minidlnaStatus() )
+    {
         dlnaProcess->minidlnaKill();
-    } else {
+    }
+    else
+    {
         dlnaProcess->minidlnaStart();
     }
 
@@ -108,17 +119,18 @@ void KminiDLNA::onBtnStopStart()
  */
 void KminiDLNA::loadSettings()
 {
-    KConfigGroup config = KGlobal::config()->group("General");
-    qDebug() << config.readEntry("closetotray", false);;
+    KConfigGroup config = KGlobal::config()->group ( "General" );
+    sm_closeToTray = config.readEntry ( "closetotray", false );
 
-    sm_closeToTray = config.readEntry("closetotray", false);
-  
 
-    if (config.readEntry("runonstart", false)) {
-        if (!dlnaProcess->minidlnaStatus()) {
+    if ( config.readEntry ( "runonstart", false ) )
+    {
+        if ( !dlnaProcess->minidlnaStatus() )
+        {
             dlnaProcess->minidlnaStart();
         }
     }
+    dlnaProcess->loadSettings();
 }
 
 /**
@@ -126,19 +138,26 @@ void KminiDLNA::loadSettings()
  */
 void KminiDLNA::onMiniDLNAState ( QProcess::ProcessState state )
 {
-    switch (state){
-      case QProcess::Running:
-	mw->setStopStart(true);
-	systemtray->setIcon(QIcon(":/images/run.png"));
-	break;
-      case QProcess::Starting:
-	mw->setRunning();
-	break;
-      default:
-	mw->setStopStart(false);
-	systemtray->setIcon(QIcon(":/images/ikona.png"));
+    switch ( state )
+    {
+    case QProcess::Running:
+        mw->setStopStart ( true );
+        systemtray->setIcon ( QIcon ( ":/images/run.png" ) );
+        break;
+    case QProcess::Starting:
+        mw->setRunning();
+        break;
+    default:
+        mw->setStopStart ( false );
+        systemtray->setIcon ( QIcon ( ":/images/ikona.png" ) );
     }
 }
+void KminiDLNA::quitKminiDLNA()
+{
+    dlnaProcess->minidlnaKill();
+    kapp->quit();
+}
+
 
 
 

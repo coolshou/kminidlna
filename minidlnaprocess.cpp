@@ -24,17 +24,17 @@
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <QTextStream>
+#include <KConfigGroup>
 
 #include <sys/types.h>
 #include <signal.h>
+#include <QDir>
 
 
 
 MinidlnaProcess::MinidlnaProcess()
 {
-    minidlnas  = "/usr/sbin/minidlna";
-    pathPidFile = "/tmp/minidlna.pid";
-    arg << "-P"<< pathPidFile;
+    loadSettings();
     t_pid = new PidThread ( this );
     connect ( t_pid, SIGNAL ( foundPidFile ( bool ) ), this, SLOT ( onPidFile ( bool ) ) );
 
@@ -50,8 +50,9 @@ MinidlnaProcess::~MinidlnaProcess()
     }
     delete minidlna;
 
-    if(minidlnaStatus()){
-      kill(t_pid->getPid(), 15);
+    if ( minidlnaStatus() )
+    {
+        kill ( t_pid->getPid(), 15 );
     }
     if ( t_pid != 0 )
     {
@@ -69,13 +70,11 @@ MinidlnaProcess::~MinidlnaProcess()
  */
 void MinidlnaProcess::minidlnaStart()
 {
-    qDebug() << "START";
-    if ( !QFile::exists ( pathPidFile ) )
+    if ( !QFile::exists ( t_pid->getPidPath() ) )
     {
-        qDebug() << "t_pid not run";
         minidlna->start ( minidlnas, arg );
         emit minidlnaStatus ( QProcess::Starting );
-        t_pid->setPathPidFile ( pathPidFile );
+        t_pid->setPathPidFile ( pathPidFile+"/minidlna.pid" );
         t_pid->start();
     }
     else
@@ -92,13 +91,13 @@ void MinidlnaProcess::minidlnaStart()
  */
 void MinidlnaProcess::minidlnaKill()
 {
-    qDebug() << "STOP";
-    if ( QFile::exists ( pathPidFile ) )
+    if ( QFile::exists ( t_pid->getPidPath() ) )
     {
-        if(t_pid->getPid()<0){
-	  return;
+        if ( t_pid->getPid() <0 )
+        {
+            return;
         }
-        kill(t_pid->getPid(), 15);
+        kill ( t_pid->getPid(), 15 );
         emit minidlnaStatus ( QProcess::NotRunning );
     }
 }
@@ -109,7 +108,7 @@ void MinidlnaProcess::minidlnaKill()
  */
 bool MinidlnaProcess::minidlnaStatus()
 {
-    if ( QFile::exists ( pathPidFile ) )
+    if ( QFile::exists ( t_pid->getPidPath() ) )
     {
         return true;
     }
@@ -121,7 +120,6 @@ bool MinidlnaProcess::minidlnaStatus()
  */
 void MinidlnaProcess::onPidFile ( bool found )
 {
-    qDebug() << "Pid file status: " << found;
     if ( found )
     {
         emit minidlnaStatus ( QProcess::Running );
@@ -131,6 +129,56 @@ void MinidlnaProcess::onPidFile ( bool found )
         emit minidlnaStatus ( QProcess::NotRunning );
     }
 }
+
+void MinidlnaProcess::loadSettings()
+{
+    KConfigGroup config = KGlobal::config()->group ( "minidlna" );
+    QString minidlnapath = config.readEntry ( "minidlnapath", "/usr/sbin/minidlna" );
+    if ( QFile::exists ( minidlnapath ) )
+    {
+	  qDebug() << "Change path: " << minidlnapath;
+	 minidlnas = minidlnapath;
+    }else{
+      //TODO if not exists
+      QFileInfo def("/usr/sbin/minidlna");
+      if(def.exists() && def.isExecutable()){
+	qDebug() << "setting default executable path: " << def.absoluteFilePath();
+	minidlnas = def.absoluteFilePath();
+      }else{
+      qDebug()<< "minidlna in " << minidlnapath << " was not found";
+      }
+    }
+    
+    QString pidpath = config.readEntry("pidpath", "/tmp");
+    QFileInfo pid(pidpath);
+    if(pid.isDir() && pid.isWritable()){
+      qDebug() << "Change pid directory: " << pidpath;
+      pathPidFile = pidpath;
+    }else{
+      //TODO if not exists
+      qDebug()<< "pid directory is not writable or it was not found";
+    }
+    
+    if(config.readEntry ( "scanfile", true )){
+      scanFile = true;
+    }else{
+      scanFile = false;
+    }
+    
+    setArg();
+}
+
+void MinidlnaProcess::setArg()
+{
+    arg.clear();
+    arg << "-P" << pathPidFile+"/minidlna.pid";
+    if(scanFile){
+      arg << "-R";
+    }
+    
+    qDebug() << arg[0] << "\t" << arg[1];
+}
+
 
 
 
@@ -148,14 +196,16 @@ PidThread::PidThread ( QObject* parent ) : QThread ( parent ), pid ( -1 )
 
 void PidThread::run()
 {
+  
     int i = 0;
     while ( !QFile::exists ( pathPidFile ) )
     {
-        if ( i>10 )
+        if ( i>20 )
         {
             emit foundPidFile ( false );
+	    return;
         }
-        qDebug() << i++;
+        qDebug() << "KminiDLNA: minidlna starting " << i++;
         sleep ( 1 );
 
     }
@@ -169,7 +219,7 @@ void PidThread::run()
     QTextStream stream ( &pidfile );
     pid = stream.readLine().toInt();
     pidfile.close();
-    qDebug() << "Pid is: " << pid;
+    qDebug() << "KminiDLNA: minidlna pid is: " << pid;
 }
 
 void PidThread::setPathPidFile ( const QString& path )
@@ -181,6 +231,13 @@ int PidThread::getPid() const
 {
     return pid;
 }
+
+QString PidThread::getPidPath() const
+{
+    return pathPidFile;
+}
+
+
 
 
 

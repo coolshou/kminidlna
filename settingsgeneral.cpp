@@ -71,6 +71,7 @@ void SettingsGeneral::initGUI()
     ll->addWidget(m_runOnStart);
 
     m_remRun = new QCheckBox(i18n("Remember running"), group);
+    m_remRun->setEnabled(false);
     ll->addWidget(m_remRun);
 
     ll->addSpacerItem(new QSpacerItem(40, 200));

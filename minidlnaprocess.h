@@ -31,6 +31,7 @@ public:
     virtual void run();
     void setPathPidFile ( const QString& path );
     int getPid() const;
+    QString getPidPath() const;
 private:
     int pid;
     QString pathPidFile;
@@ -48,12 +49,15 @@ public:
     void minidlnaStart();
     void minidlnaKill();
     bool minidlnaStatus();
+    void loadSettings();
 private:
     QProcess* minidlna;
     QString minidlnas;
     QStringList arg;
     QString pathPidFile;
     PidThread* t_pid;
+    bool scanFile;
+    void setArg();
 
 signals:
     void minidlnaStatus ( QProcess::ProcessState state );

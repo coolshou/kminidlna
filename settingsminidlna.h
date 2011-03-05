@@ -37,9 +37,14 @@ private:
     void initGUI();
     QLineEdit* m_minidlnaPath;
     QToolButton* m_browsePath;
+    QLineEdit* m_pidFilePath;
+    QToolButton* m_pidbrowsePath;
+    QCheckBox* m_loadFile;
     void loadSettings();
 private slots:
     void onBrowsePath();
+public slots:
+    void onPidBrowsePath();
 };
 
 #endif // SETTINGSMINIDLNA_H

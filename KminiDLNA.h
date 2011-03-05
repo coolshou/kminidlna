@@ -37,6 +37,7 @@ private slots:
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
     void onBtnStopStart();  
+    void quitKminiDLNA();
 };
 
 #endif // KminiDLNA_H

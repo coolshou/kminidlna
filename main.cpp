@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {    
   
     Q_INIT_RESOURCE(resource);
-    KAboutData aboutData("KminiDLNA",
+    KAboutData aboutData("kminidlna",
 			  0,
 			 ki18n("KminiDLNA"),
 			 "0.1",

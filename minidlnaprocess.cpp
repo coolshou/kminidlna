@@ -28,7 +28,7 @@
 
 #include <sys/types.h>
 #include <signal.h>
-#include <QDir>
+#include <QFileInfo>
 
 
 
@@ -74,7 +74,7 @@ void MinidlnaProcess::minidlnaStart()
     {
         minidlna->start ( minidlnas, arg );
         emit minidlnaStatus ( QProcess::Starting );
-        t_pid->setPathPidFile ( pathPidFile+"/minidlna.pid" );
+        t_pid->setPathPidFile ( pathPidFile+"minidlna.pid" );
         t_pid->start();
     }
     else
@@ -136,46 +136,64 @@ void MinidlnaProcess::loadSettings()
     QString minidlnapath = config.readEntry ( "minidlnapath", "/usr/sbin/minidlna" );
     if ( QFile::exists ( minidlnapath ) )
     {
-	  qDebug() << "Change path: " << minidlnapath;
-	 minidlnas = minidlnapath;
-    }else{
-      //TODO if not exists
-      QFileInfo def("/usr/sbin/minidlna");
-      if(def.exists() && def.isExecutable()){
-	qDebug() << "setting default executable path: " << def.absoluteFilePath();
-	minidlnas = def.absoluteFilePath();
+        qDebug() << "Change path: " << minidlnapath;
+        minidlnas = minidlnapath;
+    }
+    else
+    {
+
+        QFileInfo def ( "/usr/sbin/minidlna" );
+        if ( def.exists() && def.isExecutable() )
+        {
+            qDebug() << "setted default executable path: " << def.absoluteFilePath();
+            minidlnas = def.absoluteFilePath();
+        }
+        else
+        {
+            //TODO add error mesage
+            qDebug() << "minidlna in " << minidlnapath << " was not found";
+        }
+    }
+
+    QString pidpath = config.readEntry ( "pidpath", "/tmp/" );
+    QFileInfo pid ( pidpath );
+    if ( pid.isDir() && pid.isWritable() )
+    {
+        qDebug() << "Change pid directory: " << pidpath;
+        pathPidFile = pidpath;
+    }
+    else
+    {
+      QFileInfo def("/tmp/");
+      if(def.isDir() && def.isWritable()){
+	qDebug()<< "setted default pid directory: "<< def.absolutePath();
       }else{
-      qDebug()<< "minidlna in " << minidlnapath << " was not found";
+        //TODO add error mesage
+        qDebug() << "pid directory is not writable or it was not found";
       }
     }
-    
-    QString pidpath = config.readEntry("pidpath", "/tmp");
-    QFileInfo pid(pidpath);
-    if(pid.isDir() && pid.isWritable()){
-      qDebug() << "Change pid directory: " << pidpath;
-      pathPidFile = pidpath;
-    }else{
-      //TODO if not exists
-      qDebug()<< "pid directory is not writable or it was not found";
+
+    if ( config.readEntry ( "scanfile", true ) )
+    {
+        scanFile = true;
     }
-    
-    if(config.readEntry ( "scanfile", true )){
-      scanFile = true;
-    }else{
-      scanFile = false;
+    else
+    {
+        scanFile = false;
     }
-    
+
     setArg();
 }
 
 void MinidlnaProcess::setArg()
 {
     arg.clear();
-    arg << "-P" << pathPidFile+"/minidlna.pid";
-    if(scanFile){
-      arg << "-R";
+    arg << "-P" << pathPidFile+"minidlna.pid";
+    if ( scanFile )
+    {
+        arg << "-R";
     }
-    
+
     qDebug() << arg[0] << "\t" << arg[1];
 }
 
@@ -196,14 +214,14 @@ PidThread::PidThread ( QObject* parent ) : QThread ( parent ), pid ( -1 )
 
 void PidThread::run()
 {
-  
+
     int i = 0;
     while ( !QFile::exists ( pathPidFile ) )
     {
         if ( i>20 )
         {
             emit foundPidFile ( false );
-	    return;
+            return;
         }
         qDebug() << "KminiDLNA: minidlna starting " << i++;
         sleep ( 1 );

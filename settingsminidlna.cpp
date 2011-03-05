@@ -115,7 +115,7 @@ void SettingsMiniDLNA::onBrowsePath()
 void SettingsMiniDLNA::onPidBrowsePath()
 {
 //     KUrl url = KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text() ), this, i18n("Pid file directory"));
-    m_pidFilePath->setText ( KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text() ), this, i18n("Pid file directory")) );
+    m_pidFilePath->setText ( KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text()), this, i18n("Pid file directory")) + "/" );
 }
 
 

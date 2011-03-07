@@ -121,6 +121,7 @@ void KminiDLNA::createMenu()
     mTool->addAction ( aSetting );
 
     KAction* aSetFolder = new KAction(KIcon("list-add"), i18n("Set folders"), mTool);
+    aSetFolder->setEnabled(false);
     connect(aSetFolder,SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), this, SLOT ( showSettings() ));
     mTool->addAction(aSetFolder);
 

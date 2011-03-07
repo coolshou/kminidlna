@@ -1,19 +1,21 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Tomáš Poledný <email>
+KminiDLNA
+http://gitorious.org/kminidlna/pages/Home
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 
@@ -25,7 +27,7 @@
 SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
 {
     setWindowModality( Qt::WindowModal );
-    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply | KDialog::Default);
     setFaceType( KPageDialog::List);
     setWindowTitle(i18n("Configure KminiDLNA"));
     setMinimumSize(450, 250);
@@ -43,6 +45,7 @@ SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(p
     addPage(kp_minidlna);
 
     connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
+    connect(this, SIGNAL(defaultClicked()), this, SLOT(onDefault()));
     connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
 
 
@@ -59,7 +62,19 @@ void SettingsDialog::onApply()
     KPageWidgetItem* w = currentPage();
     if (w->objectName() == "gen") {
         s_general->applySettings();
-    } else if(w->objectName() == "minidlna"){
+    } else if (w->objectName() == "minidlna") {
         s_minidlna->applySettings();
     }
 }
+
+void SettingsDialog::onDefault()
+{
+    //TODO remake 
+    KPageWidgetItem* w = currentPage();
+    if (w->objectName() == "gen") {
+        s_general->setDefaults();
+    } else if (w->objectName() == "minidlna") {
+        s_minidlna->setDefaults();
+    }
+}
+

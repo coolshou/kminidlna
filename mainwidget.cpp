@@ -1,26 +1,30 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Tomáš Poledný <email>
+KminiDLNA
+http://gitorious.org/kminidlna/pages/Home
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 
 #include "mainwidget.h"
 #include <KLocalizedString>
-#include "KminiDLNA.h"
+#include "kminidlna.h"
 #include <QDebug>
+#include <KIcon>
+#include <QIcon>
 
 MainWidget::MainWidget(QWidget *parent):QWidget(parent)
 {
@@ -39,11 +43,18 @@ void MainWidget::initGUI()
     setLayout(mainlayout);
     kled = new KLed(Qt::gray, KLed::Off, KLed::Sunken, KLed::Circular);
     kled->setMaximumSize(20,20);
-    btnStopStart = new QPushButton(i18n("Start"));
+    btnStopStart = new QPushButton(KIcon("media-playback-start"), i18n("Start"));
     QHBoxLayout *layoutRun = new QHBoxLayout();
+//     layoutRun->addWidget(new QPixmap (QIcon(":/images/ikona.png")));
+    QLabel* lbla = new QLabel("Test",this);
+    lbla->setPixmap(QPixmap(":/images/ikona.png"));
+    layoutRun->addWidget(lbla);
+    
     layoutRun->addWidget(new QLabel(i18n("minidlna run:")));
     layoutRun->addWidget(kled);
     mainlayout->addLayout(layoutRun);;
+    
+    mainlayout->addSpacerItem(new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Expanding));
     mainlayout->addWidget(btnStopStart);
     minidlna = new QProcess(this);
     connect(btnStopStart, SIGNAL(pressed()), this, SLOT(onBtnPressed()));
@@ -66,17 +77,20 @@ void MainWidget::setStopStart(bool ss)
         kled->setColor(Qt::green);
         kled->setState(KLed::On);
         btnStopStart->setText(i18n("Stop"));
+	btnStopStart->setIcon(KIcon("media-playback-stop"));
     } else {
         kled->setColor(Qt::gray);
         kled->setState(KLed::Off);
         btnStopStart->setText(i18n("Start"));
+	btnStopStart->setIcon(KIcon("media-playback-start"));
     }
 }
 
 void MainWidget::setRunning()
 {
-    btnStopStart->setText(i18n("Starting"));
+    btnStopStart->setText(i18n("Starting ..."));
     btnStopStart->setEnabled(false);
+    btnStopStart->setIcon(KIcon("media-record"));
 }
 
 

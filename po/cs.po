@@ -1,0 +1,108 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Tomáš Poledný, 2011.
+# Tomáš Poledný <saljacky@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: www kminidlna\n"
+"POT-Creation-Date: 2011-03-06 14:06+0100\n"
+"PO-Revision-Date: 2011-03-06 14:16+0100\n"
+"Last-Translator: Tomáš Poledný <saljacky@gmail.com>\n"
+"Language-Team: Czech <kde-i18n-doc@kde.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: kminidlna.cpp:90 main.cpp:34
+msgid "KminiDLNA"
+msgstr ""
+
+#: kminidlna.cpp:90
+msgid "KminiDLNA was minimalized."
+msgstr "KminiDLNA byl minimalizován."
+
+#: kminidlna.cpp:103
+msgid "Tools"
+msgstr "Nástroje"
+
+#: kminidlna.cpp:104 settingsdialog.cpp:32
+msgid "Configure KminiDLNA"
+msgstr "Nastavení KminiDLNA "
+
+#: main.cpp:36
+msgid "Frotnend for minidlna"
+msgstr "Frontend pro minidlna"
+
+#: main.cpp:39
+msgid "Tomáš Poledný"
+msgstr ""
+
+#: main.cpp:39
+msgid "Author"
+msgstr "Autor "
+
+#: mainwidget.cpp:44 mainwidget.cpp:74
+msgid "Start"
+msgstr "Start"
+
+#: mainwidget.cpp:46
+msgid "minidlna run:"
+msgstr "minidlna beží"
+
+#: mainwidget.cpp:70
+msgid "Stop"
+msgstr "Stop"
+
+#: mainwidget.cpp:80
+msgid "Starting ..."
+msgstr "Startuji ..."
+
+#: minidlnaprocess.cpp:236
+msgid "Error"
+msgstr "Chyba"
+
+#: settingsdialog.cpp:36 settingsgeneral.cpp:63
+msgid "General"
+msgstr "Hlavní "
+
+#: settingsdialog.cpp:42 settingsminidlna.cpp:53
+msgid "minidlna"
+msgstr ""
+
+#: settingsgeneral.cpp:69
+msgid "Close to system tray"
+msgstr "Zavírat do systémové části"
+
+#: settingsgeneral.cpp:72
+msgid "Run on start"
+msgstr "Spustit po spuštění"
+
+#: settingsgeneral.cpp:75
+msgid "Remember running"
+msgstr "Pamatuj si předchozí stav"
+
+#: settingsminidlna.cpp:60
+msgid "minidlna path:"
+msgstr "Umístění minidlna:"
+
+#: settingsminidlna.cpp:74
+msgid "Path to pid file:"
+msgstr "Cesta pro pid file:"
+
+#: settingsminidlna.cpp:86
+msgid "Scan file on start minidlna"
+msgstr "Načíst kolekci při startu"
+
+#: settingsminidlna.cpp:112
+msgid "minidlna path"
+msgstr "Umístění minidlna:"
+
+#: settingsminidlna.cpp:121
+msgid "Pid file directory"
+msgstr "Adresář s pid souboremfile"
+

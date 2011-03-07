@@ -1,19 +1,21 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Tomáš Poledný <email>
+KminiDLNA
+http://gitorious.org/kminidlna/pages/Home
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 #include "settingsminidlna.h"
 
@@ -30,9 +32,10 @@
 #include <KUrl>
 
 
-SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f )
+SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f ), d_minidlnaPath("/usr/sbin/minidlna"), d_pidFilePath("/tmp/")
 {
     initGUI();
+    loadSettings();
 }
 
 SettingsMiniDLNA::~SettingsMiniDLNA()
@@ -56,7 +59,7 @@ void SettingsMiniDLNA::initGUI()
     //PATH to minidlna
     hl0->addWidget ( new QLabel ( i18n ( "minidlna path:" ),groupmini ) );
 
-    m_minidlnaPath = new QLineEdit ( "/usr/sbin/minidlna", groupmini );
+    m_minidlnaPath = new QLineEdit ( "", groupmini );
     hl0->addWidget ( m_minidlnaPath );
 
     m_browsePath = new QToolButton ( groupmini );
@@ -70,7 +73,7 @@ void SettingsMiniDLNA::initGUI()
     QHBoxLayout* hl1 = new QHBoxLayout();
     hl1->addWidget ( new QLabel ( i18n ( "Path to pid file:" ), groupmini ) );
 
-    m_pidFilePath = new QLineEdit ( "/tmp/", groupmini );
+    m_pidFilePath = new QLineEdit ( "", groupmini );
     hl1->addWidget ( m_pidFilePath );
 
     m_pidbrowsePath = new QToolButton ( groupmini );
@@ -79,13 +82,11 @@ void SettingsMiniDLNA::initGUI()
     hl1->addWidget ( m_pidbrowsePath );
 
     vl->addLayout ( hl1 );
-    
+
     m_loadFile = new QCheckBox(i18n("Scan file on start minidlna"),groupmini);
     vl->addWidget(m_loadFile);
-    
-    vl->addSpacerItem(new QSpacerItem(40, 200));
 
-    loadSettings();
+    vl->addSpacerItem(new QSpacerItem(40, 200));
 }
 
 
@@ -101,23 +102,34 @@ void SettingsMiniDLNA::applySettings()
 void SettingsMiniDLNA::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group ( "minidlna" );
-    m_minidlnaPath->setText ( config.readEntry ( "minidlnapath", "/usr/sbin/minidlna" ) );
-    m_pidFilePath->setText(config.readEntry("pidpath", "/tmp"));
+    m_minidlnaPath->setText ( config.readEntry ( "minidlnapath", d_minidlnaPath ) );
+    m_pidFilePath->setText(config.readEntry("pidpath", d_pidFilePath));
     m_loadFile->setChecked(config.readEntry("scanfile", false));
 }
 
 void SettingsMiniDLNA::onBrowsePath()
 {
     KUrl url = KFileDialog::getOpenUrl ( KUrl ( m_minidlnaPath->text() ), "minidlna", this, i18n("minidlna path") );
-    m_minidlnaPath->setText ( url.path() );
+    if (!url.isEmpty()) {
+        m_minidlnaPath->setText ( url.path() );
+    }
 }
 
 void SettingsMiniDLNA::onPidBrowsePath()
 {
 //     KUrl url = KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text() ), this, i18n("Pid file directory"));
-    m_pidFilePath->setText ( KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text()), this, i18n("Pid file directory")) + "/" );
+    QString path = KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text()), this, i18n("Pid file directory") + "/" );
+    if (!path.isEmpty()) {
+        m_pidFilePath->setText (path);
+    }
 }
 
+void SettingsMiniDLNA::setDefaults()
+{
+    m_minidlnaPath->setText(d_minidlnaPath);
+    m_pidFilePath->setText(d_pidFilePath);
+    m_loadFile->setChecked(true);    
+}
 
 
 

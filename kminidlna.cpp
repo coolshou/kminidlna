@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KStandardAction>
 #include <KConfigDialog>
 #include "settingsdialog.h"
+#include "mediadirwidget.h"
 
 KminiDLNA::KminiDLNA()
 {
@@ -121,8 +122,8 @@ void KminiDLNA::createMenu()
     mTool->addAction ( aSetting );
 
     KAction* aSetFolder = new KAction(KIcon("list-add"), i18n("Set folders"), mTool);
-    aSetFolder->setEnabled(false);
-    connect(aSetFolder,SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), this, SLOT ( showSettings() ));
+//     aSetFolder->setEnabled(false);
+    connect(aSetFolder,SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), this, SLOT (showMediaDir() ));
     mTool->addAction(aSetFolder);
 
     mTool->addSeparator();
@@ -205,6 +206,13 @@ void KminiDLNA::quitKminiDLNA()
     dlnaProcess->minidlnaKill();
     kapp->quit();
 }
+
+void KminiDLNA::showMediaDir()
+{
+    MediaDirWidget* mdw = new MediaDirWidget(this);
+    mdw->exec();
+}
+
 
 
 

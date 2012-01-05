@@ -135,7 +135,9 @@ void MinidlnaProcess::onPidFile ( bool found )
 void MinidlnaProcess::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group ( "minidlna" );
-    QString minidlnapath = config.readEntry ( "minidlnapath", "/usr/sbin/minidlna" );
+    
+    //set minidlna path
+    QString minidlnapath = config.readEntry ( "minidlnapath", MiniDLNA::MINIDLNA_PATH );
     if ( QFile::exists ( minidlnapath ) )
     {
         qDebug() << "Change path: " << minidlnapath;
@@ -144,7 +146,7 @@ void MinidlnaProcess::loadSettings()
     else
     {
 
-        QFileInfo def ( "/usr/sbin/minidlna" );
+        QFileInfo def ( MiniDLNA::MINIDLNA_PATH);
         if ( def.exists() && def.isExecutable() )
         {
             qDebug() << "setted default executable path: " << def.absoluteFilePath();
@@ -157,7 +159,8 @@ void MinidlnaProcess::loadSettings()
         }
     }
 
-    QString pidpath = config.readEntry ( "pidpath", "/tmp/" );
+    //Set pid path
+    QString pidpath = config.readEntry ( "pidpath", MiniDLNA::PIDFILE_PATH );
     QFileInfo pid ( pidpath );
     if ( pid.isDir() && pid.isWritable() )
     {
@@ -166,13 +169,13 @@ void MinidlnaProcess::loadSettings()
     }
     else
     {
-      QFileInfo def("/tmp/");
-      if(def.isDir() && def.isWritable()){
-	qDebug()<< "setted default pid directory: "<< def.absolutePath();
-      }else{
-        //TODO add error mesage
-        qDebug() << "pid directory is not writable or it was not found";
-      }
+        QFileInfo def(MiniDLNA::PIDFILE_PATH);
+        if (def.isDir() && def.isWritable()) {
+            qDebug()<< "setted default pid directory: "<< def.absolutePath();
+        } else {
+            //TODO add error mesage
+            qDebug() << "pid directory is not writable or it was not found";
+        }
     }
 
     if ( config.readEntry ( "scanfile", true ) )
@@ -183,6 +186,38 @@ void MinidlnaProcess::loadSettings()
     {
         scanFile = false;
     }
+
+    //Default configuration file
+    if (config.readEntry("default_conf_file", true)) {
+        defConfFile = true;
+    } else {
+        defConfFile = false;
+    }
+
+    //Path to conf file
+    QString conffilepath = config.readEntry ( "conf_file_path", MiniDLNA::CONFFILE_PATH );
+    QFileInfo confFile(conffilepath);
+    if ( confFile.exists() && confFile.isReadable())
+    {
+        qDebug() << "Change path: " << conffilepath;
+        path_conffile = conffilepath;
+    }
+    else
+    {
+        confFile.setFile ( MiniDLNA::CONFFILE_PATH );
+        if ( confFile.exists() && confFile.isReadable() )
+        {
+            qDebug() << "setted default executable path: " << confFile.absoluteFilePath();
+            path_conffile = confFile.absoluteFilePath();
+        }
+        else
+        {
+            //TODO add error mesage
+            qDebug() << "minidlna in " << minidlnapath << " was not found";
+        }
+    }
+
+
 
     setArg();
 }
@@ -195,8 +230,12 @@ void MinidlnaProcess::setArg()
     {
         arg << "-R";
     }
+    
+    if(!defConfFile){
+      arg << "-f" << path_conffile;
+    }
 
-    qDebug() << arg[0] << "\t" << arg[1];
+    qDebug() << arg;
 }
 
 

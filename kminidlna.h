@@ -55,6 +55,7 @@ private:
     bool sm_closeToTray;
 private slots:
     void showSettings();
+    void showMediaDir();
     void onMiniDLNAState(QProcess::ProcessState state);
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);

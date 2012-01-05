@@ -30,9 +30,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KFileDialog>
 #include <QGroupBox>
 #include <KUrl>
+#include "minidlnaprocess.h"
 
 
-SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f ), d_minidlnaPath("/usr/sbin/minidlna"), d_pidFilePath("/tmp/")
+SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f )
 {
     initGUI();
     loadSettings();
@@ -83,10 +84,38 @@ void SettingsMiniDLNA::initGUI()
 
     vl->addLayout ( hl1 );
 
-    m_loadFile = new QCheckBox(i18n("Scan file on start minidlna"),groupmini);
-    vl->addWidget(m_loadFile);
+    //Conf file group
+    QGroupBox* groupminiconf = new QGroupBox ( i18n ( "minidlna configuration" ), this );
+    central->addWidget ( groupminiconf );
+    QVBoxLayout* vlminiconf = new QVBoxLayout ( groupminiconf );
 
-    vl->addSpacerItem(new QSpacerItem(40, 200));
+    //Defaut path
+    m_checkDefaultPath = new QCheckBox(i18n("Use default path to configuration file (/etc/minidlna.conf)"));
+    vlminiconf->addWidget(m_checkDefaultPath);
+    connect(m_checkDefaultPath, SIGNAL(stateChanged(int)), this, SLOT(checkedDefautlPath(int)));
+
+    //Conf file selection
+    QHBoxLayout* hlconf = new QHBoxLayout();
+    m_lblConfFile = new QLabel ( i18n ( "Path to conf file:" ), groupmini);
+    hlconf->addWidget ( m_lblConfFile);
+
+    m_confFilePath = new QLineEdit ( "", groupminiconf );
+    hlconf->addWidget ( m_confFilePath );
+
+    m_browseConfFile = new QToolButton ( groupminiconf );
+    m_browseConfFile->setIcon ( KIcon ( "document-open" ) );
+    connect ( m_browseConfFile, SIGNAL ( pressed() ), this, SLOT ( onBrowseConfFile() ) );
+    hlconf->addWidget ( m_browseConfFile );
+
+    vlminiconf->addLayout ( hlconf );
+
+
+
+    //Scan file on start
+    m_loadFile = new QCheckBox(i18n("Scan file on start minidlna"),groupmini);
+    vlminiconf->addWidget(m_loadFile);
+
+    vlminiconf->addSpacerItem(new QSpacerItem(40, 100));
 }
 
 
@@ -96,15 +125,19 @@ void SettingsMiniDLNA::applySettings()
     config.writeEntry ( "minidlnapath", m_minidlnaPath->text() );
     config.writeEntry("pidpath", m_pidFilePath->text());
     config.writeEntry("scanfile", m_loadFile->isChecked());
+    config.writeEntry("default_conf_file", m_checkDefaultPath->isChecked());
+    config.writeEntry("conf_file_path", m_confFilePath->text());
     config.sync();
 }
 
 void SettingsMiniDLNA::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group ( "minidlna" );
-    m_minidlnaPath->setText ( config.readEntry ( "minidlnapath", d_minidlnaPath ) );
-    m_pidFilePath->setText(config.readEntry("pidpath", d_pidFilePath));
+    m_minidlnaPath->setText ( config.readEntry ( "minidlnapath", MiniDLNA::MINIDLNA_PATH ) );
+    m_pidFilePath->setText(config.readEntry("pidpath", MiniDLNA::PIDFILE_PATH));
     m_loadFile->setChecked(config.readEntry("scanfile", false));
+    m_checkDefaultPath->setChecked(config.readEntry("default_conf_file", true));
+    m_confFilePath->setText(config.readEntry("conf_file_path", MiniDLNA::CONFFILE_PATH));
 }
 
 void SettingsMiniDLNA::onBrowsePath()
@@ -126,10 +159,35 @@ void SettingsMiniDLNA::onPidBrowsePath()
 
 void SettingsMiniDLNA::setDefaults()
 {
-    m_minidlnaPath->setText(d_minidlnaPath);
-    m_pidFilePath->setText(d_pidFilePath);
-    m_loadFile->setChecked(true);    
+    m_minidlnaPath->setText(MiniDLNA::MINIDLNA_PATH);
+    m_pidFilePath->setText(MiniDLNA::PIDFILE_PATH);
+    m_loadFile->setChecked(true);
+    m_checkDefaultPath->setChecked(true);
+    m_confFilePath->setText(MiniDLNA::CONFFILE_PATH);
 }
+
+void SettingsMiniDLNA::onBrowseConfFile()
+{
+    QString path = KFileDialog::getOpenFileName(KUrl(m_confFilePath->text()), "",this, i18n("Configuration file") + "/");
+    if (!path.isEmpty()) {
+        m_confFilePath->setText (path);
+    }
+}
+
+void SettingsMiniDLNA::checkedDefautlPath(int checked)
+{
+    if (checked == Qt::Checked) {
+        m_browseConfFile->setEnabled(false);
+        m_confFilePath->setEnabled(false);
+        m_lblConfFile->setEnabled(false);
+    } else {
+        m_browseConfFile->setEnabled(true);
+        m_confFilePath->setEnabled(true);
+        m_lblConfFile->setEnabled(true);
+    }
+}
+
+
 
 
 

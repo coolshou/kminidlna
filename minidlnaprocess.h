@@ -58,7 +58,9 @@ private:
     QStringList arg;
     QString pathPidFile;
     PidThread* t_pid;
+    QString path_conffile;
     bool scanFile;
+    bool defConfFile;
     void setArg();
 
 signals:
@@ -66,5 +68,11 @@ signals:
 private slots:
     void onPidFile ( bool found );
 };
+
+namespace MiniDLNA {
+static const QString MINIDLNA_PATH = "/usr/sbin/minidlna";
+static const QString PIDFILE_PATH = "/tmp/";
+static const QString CONFFILE_PATH = "/etc/minidlna.conf";
+}
 
 #endif // MINIDLNAPROCESS_H

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QToolButton>
+#include <QLabel>
 
 class QToolButton;
 class SettingsMiniDLNA : public QWidget
@@ -42,14 +43,19 @@ private:
     QToolButton* m_browsePath;
     QLineEdit* m_pidFilePath;
     QToolButton* m_pidbrowsePath;
+    QLineEdit* m_confFilePath;
+    QToolButton* m_browseConfFile;
+    QLabel* m_lblConfFile;
     QCheckBox* m_loadFile;
+    QCheckBox* m_checkDefaultPath;
     void loadSettings();
-    const QString d_minidlnaPath;
-    const QString d_pidFilePath;
+    
 private slots:
     void onBrowsePath();
+    void onBrowseConfFile();
 public slots:
     void onPidBrowsePath();
+    void checkedDefautlPath(int);
 };
 
 #endif // SETTINGSMINIDLNA_H

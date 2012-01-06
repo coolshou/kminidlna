@@ -34,8 +34,8 @@ public:
     explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
     virtual ~SettingsDialog();
 private:
-    SettingsGeneral* s_general;
-    SettingsMiniDLNA* s_minidlna;
+    SettingsGeneral* m_general;
+    SettingsMiniDLNA* m_minidlna;
 private slots:
     void onApply();
     void onDefault();

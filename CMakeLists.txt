@@ -2,13 +2,13 @@ project(kminidlna)
 cmake_minimum_required(VERSION 2.6)
 find_package(KDE4 REQUIRED)
 find_package(Qt4 REQUIRED)
-add_subdirectory( po  server)
+add_subdirectory(po)
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(VERSION "0.1")
-set(kminidlna_SRCS configuration.cpp mediadirmodel.cpp mediadirwidget.cpp settingsminidlna.cpp settingsgeneral.cpp settingsdialog.cpp minidlnaprocess.cpp mainwidget.cpp kminidlna.cpp main.cpp server/serverrequest.cpp server/restserver.cpp)
+set(kminidlna_SRCS minidlna_configuration.cpp mediadirmodel.cpp mediadirwidget.cpp settingsminidlna.cpp settingsgeneral.cpp settingsdialog.cpp minidlna_process.cpp mainwidget.cpp kminidlna.cpp main.cpp server/serverrequest.cpp server/restserver.cpp)
 set(kminidlna_RCCS resource.qrc)
 
 # qt4_automoc(${KminiDLNA_SRCS})

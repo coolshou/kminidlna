@@ -32,14 +32,14 @@ SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(p
     setWindowTitle(i18n("Configure KminiDLNA"));
     setMinimumSize(450, 250);
 
-    s_general = new SettingsGeneral(this);
-    KPageWidgetItem* kp_general = new KPageWidgetItem(s_general, i18n("General"));
+    m_general = new SettingsGeneral(this);
+    KPageWidgetItem* kp_general = new KPageWidgetItem(m_general, i18n("General"));
     kp_general->setObjectName("gen");
     kp_general->setIcon(KIcon(":/images/ikona.png"));
     addPage(kp_general);
 
-    s_minidlna = new SettingsMiniDLNA(this);
-    KPageWidgetItem* kp_minidlna = new KPageWidgetItem(s_minidlna, i18n("minidlna"));
+    m_minidlna = new SettingsMiniDLNA(this);
+    KPageWidgetItem* kp_minidlna = new KPageWidgetItem(m_minidlna, i18n("minidlna"));
     kp_minidlna->setObjectName("minidlna");
     kp_minidlna->setIcon(KIcon("configure"));
     addPage(kp_minidlna);
@@ -61,9 +61,9 @@ void SettingsDialog::onApply()
     //TODO add control for changing page to ask if you want save settings
     KPageWidgetItem* w = currentPage();
     if (w->objectName() == "gen") {
-        s_general->applySettings();
+        m_general->applySettings();
     } else if (w->objectName() == "minidlna") {
-        s_minidlna->applySettings();
+        m_minidlna->applySettings();
     }
 }
 
@@ -72,9 +72,9 @@ void SettingsDialog::onDefault()
     //TODO remake 
     KPageWidgetItem* w = currentPage();
     if (w->objectName() == "gen") {
-        s_general->setDefaults();
+        m_general->setDefaults();
     } else if (w->objectName() == "minidlna") {
-        s_minidlna->setDefaults();
+        m_minidlna->setDefaults();
     }
 }
 

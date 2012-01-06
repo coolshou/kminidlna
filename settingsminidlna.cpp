@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KFileDialog>
 #include <QGroupBox>
 #include <KUrl>
-#include "minidlnaprocess.h"
+#include "minidlna_process.h"
 
 
 SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f )

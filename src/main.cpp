@@ -21,21 +21,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KAboutData>
 #include <KApplication>
 #include <KCmdLineArgs>
+#include "kminidlna_version.h"
 
 
 #include "view/kminidlna.h"
 
 int main(int argc, char** argv)
-{    
-  
+{
+
     Q_INIT_RESOURCE(resource);
+// #ifdef VERSION
+    QString versionName = VERSION;
+// #endif
     KAboutData aboutData("kminidlna",
-			  0,
-			 ki18n("KminiDLNA"),
-			 "0.1",
-			 ki18n("Frotnend for minidlna"),
-			 KAboutData::License_GPL_V2);
-    
+                         0,
+                         ki18n("KminiDLNA"),
+                         versionName.toLocal8Bit(),
+                         ki18n("Frotnend for minidlna"),
+                         KAboutData::License_GPL_V2);
+
     aboutData.addAuthor(ki18n("Tomáš Poledný"), ki18n("Author"), QByteArray("saljacky@gmail.com"));
     aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/ikona.png")));
     aboutData.setBugAddress("Author email");

@@ -2,20 +2,17 @@ project(kminidlna)
 cmake_minimum_required(VERSION 2.6)
 find_package(KDE4 REQUIRED)
 find_package(Qt4 REQUIRED)
+
 add_subdirectory(po)
+add_subdirectory(src)
+
+# set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
-set(VERSION "0.1")
-set(kminidlna_SRCS minidlna_configuration.cpp mediadirmodel.cpp mediadirwidget.cpp settingsminidlna.cpp settingsgeneral.cpp settingsdialog.cpp minidlna_process.cpp mainwidget.cpp kminidlna.cpp main.cpp server/serverrequest.cpp server/restserver.cpp)
-set(kminidlna_RCCS resource.qrc)
+set(VERSION "0.19")
 
-# qt4_automoc(${KminiDLNA_SRCS})
-kde4_add_app_icon(kminidlna_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/resource/kminidlna.png")
-qt4_add_resources(kminidlna_RCCS_SRCS ${kminidlna_RCCS})
-kde4_add_executable(kminidlna ${kminidlna_SRCS} ${kminidlna_RCCS_SRCS})
-target_link_libraries(kminidlna ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-install(TARGETS kminidlna DESTINATION  ${BIN_INSTALL_DIR})
-install(PROGRAMS kminidlna.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/resource/kminidlna.png DESTINATION ${ICON_INSTALL_DIR})
+# target_link_libraries(kminidlna ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})

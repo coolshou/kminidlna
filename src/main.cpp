@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KCmdLineArgs>
 
 
-#include "kminidlna.h"
+#include "view/kminidlna.h"
 
 int main(int argc, char** argv)
 {    

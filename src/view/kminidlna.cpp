@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KStandardAction>
 #include <KConfigDialog>
 #include "settingsdialog.h"
-#include "mediadirwidget.h"
+#include "../view/mediadirwidget.h"
 
 KminiDLNA::KminiDLNA()
 {
@@ -213,6 +213,7 @@ void KminiDLNA::showMediaDir()
     mdw->exec();
 }
 
+// #include "kminidlna.moc"
 
 
 

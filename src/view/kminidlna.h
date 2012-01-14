@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KMenu>
 #include <KAction>
 #include "mainwidget.h"
-#include "minidlna_process.h"
+#include "../core/minidlna_process.h"
 
 class KminiDLNA : public KMainWindow
 {

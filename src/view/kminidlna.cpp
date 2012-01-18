@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settingsdialog.h"
 #include "../view/mediadirwidget.h"
 
-KminiDLNA::KminiDLNA()
+KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
 {
     dlnaProcess = new MinidlnaProcess();
     initGUI();

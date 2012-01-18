@@ -7,15 +7,15 @@
 #include <QFileInfo>
 #include "serverrequest.h"
 
-RESTServer::RESTServer(int port, QObject* parent) : QTcpServer(parent) {
+bool RESTServer::m_runing = false;
+
+RESTServer::RESTServer(int port, QObject* parent) : QTcpServer(parent), m_port(port) {
     m_certPath = "cert/server.crt";
     QFile fkey("cert/server.key");
     fkey.open(QIODevice::ReadOnly | QIODevice::Text);
     m_key = new QSslKey(&fkey, QSsl::Rsa);
     fkey.close();
-    listen(QHostAddress::Any, port);
-
-
+    m_runing = listen(QHostAddress::Any, port);
     m_notFoundFileHtmlPath = "404.html";
 }
 
@@ -23,11 +23,9 @@ RESTServer::RESTServer(int port, QObject* parent) : QTcpServer(parent) {
  * Incoming connection on server
  */
 void RESTServer::incomingConnection(int socketDescriptor) {
-//     qDebug() << "nove spojeni " << socketDescriptor;
     nextPendingConnection();
     QSslSocket* socket = new QSslSocket();
     qDebug() << "Prichazi spojeni "<< socketDescriptor;
-//     QIODevice* f;
 
 
     if (socket->setSocketDescriptor(socketDescriptor)) {
@@ -141,20 +139,6 @@ void RESTServer::errorySSL(QList< QSslError > errs)
     }
 }
 
-bool RESTServer::isBasicAuthorizated(const QStringList& authlist) const
-{
-//     if (authlist[1].compare("Basic", Qt::CaseInsensitive) == 0) {//zda je to basic
-//         QString base = authlist[2];
-//         qDebug() << QByteArray::fromBase64(base.toAscii());
-//         QString heslo = QByteArray("tomas:superman").toBase64();
-//         qDebug() << base<< " moje kodovani " << heslo;
-//         if (heslo.compare(base, Qt::CaseInsensitive) == 0) {
-//             return true;
-//         }
-//     }
-    return false;
-}
-
 ServerRequest* RESTServer::receiveRequestHeader(QTcpSocket* socket)
 {
     ServerRequest* req = new ServerRequest();
@@ -266,5 +250,11 @@ void RESTServer::sendOnGETReply(QTcpSocket* socket, const ServerRequest* req)
         }
     }
 }
+
+bool RESTServer::isRuning()
+{
+    return m_runing;
+}
+
 
 // #include "restserver.moc"

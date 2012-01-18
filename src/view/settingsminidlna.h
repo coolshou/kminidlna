@@ -27,9 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLineEdit>
 #include <QToolButton>
 #include <QLabel>
+#include "abstractsettings.h"
 
-class QToolButton;
-class SettingsMiniDLNA : public QWidget
+// class QToolButton;
+class SettingsMiniDLNA : public AbstractSettings
 {
     Q_OBJECT
 public:

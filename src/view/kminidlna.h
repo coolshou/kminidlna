@@ -35,7 +35,7 @@ class KminiDLNA : public KMainWindow
 {
 Q_OBJECT
 public:
-    KminiDLNA();
+    explicit KminiDLNA(QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~KminiDLNA();
 protected:
     void closeEvent(QCloseEvent *event);

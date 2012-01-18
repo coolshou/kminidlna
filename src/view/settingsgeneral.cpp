@@ -40,32 +40,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 	rememberrun (false)
  *
  */
-SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
+SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f)
 {
     initGUI();
+    loadSettings();
 }
 
 SettingsGeneral::~SettingsGeneral()
 {
-
 }
 
-/**
- *
- * Load Widget gui
- *
- */
 void SettingsGeneral::initGUI()
 {
-
-
     QVBoxLayout *central = new QVBoxLayout(this);
+    
     QGroupBox *group = new QGroupBox(i18n("General"), this);
     QVBoxLayout *ll = new QVBoxLayout(group);
     central->addWidget(group);
-    group->setLayout(ll);
-//     setLayout(central);
-//     setLayout(ll);
+    
     m_closeToTray = new QCheckBox(i18n("Close to system tray"), group);
     ll->addWidget(m_closeToTray);
 
@@ -76,10 +68,7 @@ void SettingsGeneral::initGUI()
     m_remRun->setEnabled(false);
     ll->addWidget(m_remRun);
 
-    ll->addSpacerItem(new QSpacerItem(40, 200));
-
-    loadSettings();
-
+   ll->addSpacerItem(new QSpacerItem(40, 400));
 }
 
 /**

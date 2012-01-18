@@ -1,6 +1,7 @@
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES}  )
 
-set( VIEW_SRCS
+set( VIEW_SRCS settingsserver.cpp
+	  abstractsettings.cpp
 	  kminidlna.cpp
 	  mainwidget.cpp
 	  settingsdialog.cpp

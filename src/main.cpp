@@ -21,32 +21,62 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KAboutData>
 #include <KApplication>
 #include <KCmdLineArgs>
+#include <KConfigGroup>
+#include <QDebug>
 #include "kminidlna_version.h"
-
-
 #include "view/kminidlna.h"
+#include "server/restserver.h"
+
+void loadCommandLine(int argc, char** argv, KAboutData* aboutData) {
+    KCmdLineArgs::init(argc, argv, aboutData);
+
+    KCmdLineOptions options;
+    options.add("restserver", ki18n("Run http server with REST interface (default is off)"));
+    options.add("nogui", ki18n("Run without GUI (default is on)"));
+    options.add("start-dlna", ki18n("Start MiniDLNA server (default is off)"));
+
+    KCmdLineArgs::addCmdLineOptions(options);
+}
 
 int main(int argc, char** argv)
 {
 
     Q_INIT_RESOURCE(resource);
-// #ifdef VERSION
     QString versionName = VERSION;
-// #endif
+
     KAboutData aboutData("kminidlna",
                          0,
-                         ki18n("KminiDLNA"),
+                         ki18n("KMiniDLNA"),
                          versionName.toLocal8Bit(),
-                         ki18n("Frotnend for minidlna"),
+                         ki18n("Frotnend for MiniDLNA"),
                          KAboutData::License_GPL_V2);
 
     aboutData.addAuthor(ki18n("Tomáš Poledný"), ki18n("Author"), QByteArray("saljacky@gmail.com"));
     aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/ikona.png")));
     aboutData.setBugAddress("Author email");
-    KCmdLineArgs::init(argc, argv, &aboutData);
+
+    loadCommandLine(argc, argv, &aboutData);
+
     KApplication app;
     app.setWindowIcon(QIcon(":/images/ikona.png"));
-    KminiDLNA *mainWindow = new KminiDLNA();
-    mainWindow->show();
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    if (args->isSet("gui")) {//isset without --no!
+	qDebug() << "Main: GUI start";
+        KminiDLNA *mainWindow = new KminiDLNA();
+        mainWindow->show();
+    }
+    
+    KConfigGroup config = KGlobal::config()->group("server");
+    if (args->isSet("restserver")) {
+        
+        RESTServer *server = new RESTServer(config.readEntry("port", Server::DEFAULT_PORT), &app);
+	qDebug() << "Main: HTTP Server start on port " << server->port();
+    }
+    if (args->isSet("start-dlna")) {
+	//TODO start minidlna
+    }
+    args->clear();
+
     return app.exec();
 }

@@ -1,6 +1,6 @@
 # cmake_minimum_required(VERSION 2.6)
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
-set(VERSION "0.19")
+set(VERSION "0.19 alpha")
 
 configure_file(kminidlna_version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/kminidlna_version.h )
 
@@ -8,6 +8,7 @@ configure_file(kminidlna_version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/kminidlna_v
 add_subdirectory(view)
 add_subdirectory(server)
 add_subdirectory(core)
+
 
 set(kminidlna_SRCS main.cpp)
 set(kminidlna_RCCS resource.qrc)

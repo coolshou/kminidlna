@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "../core/minidlna_process.h"
 
 
-SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : QWidget ( parent, f )
+SettingsMiniDLNA::SettingsMiniDLNA ( QWidget* parent, Qt::WindowFlags f ) : AbstractSettings(parent, f)
 {
     initGUI();
     loadSettings();
@@ -49,40 +49,40 @@ SettingsMiniDLNA::~SettingsMiniDLNA()
  */
 void SettingsMiniDLNA::initGUI()
 {
-
     QVBoxLayout* central = new QVBoxLayout ( this );
-    QGroupBox* groupmini = new QGroupBox ( i18n ( "minidlna" ), this );
+    
+    QGroupBox* groupmini = new QGroupBox ( i18n ( "minidlna" ), this);
     central->addWidget ( groupmini );
 
     QVBoxLayout* vl = new QVBoxLayout ( groupmini );
-    QHBoxLayout* hl0 =  new QHBoxLayout();
+    QHBoxLayout* llhMiniDLNAPath =  new QHBoxLayout();
 
     //PATH to minidlna
-    hl0->addWidget ( new QLabel ( i18n ( "minidlna path:" ),groupmini ) );
+    llhMiniDLNAPath->addWidget ( new QLabel ( i18n ( "minidlna path:" ),groupmini ) );
 
     m_minidlnaPath = new QLineEdit ( "", groupmini );
-    hl0->addWidget ( m_minidlnaPath );
+    llhMiniDLNAPath->addWidget ( m_minidlnaPath );
 
     m_browsePath = new QToolButton ( groupmini );
     m_browsePath->setIcon ( KIcon ( "document-open" ) );
     connect ( m_browsePath, SIGNAL ( pressed() ), this, SLOT ( onBrowsePath() ) );
-    hl0->addWidget ( m_browsePath );
+    llhMiniDLNAPath->addWidget ( m_browsePath );
 
-    vl->addLayout ( hl0 );
+    vl->addLayout ( llhMiniDLNAPath );
 
     //PATH pid file
-    QHBoxLayout* hl1 = new QHBoxLayout();
-    hl1->addWidget ( new QLabel ( i18n ( "Path to pid file:" ), groupmini ) );
+    QHBoxLayout* llhPIDPath = new QHBoxLayout();
+    llhPIDPath->addWidget ( new QLabel ( i18n ( "Path to pid file:" ), groupmini ) );
 
     m_pidFilePath = new QLineEdit ( "", groupmini );
-    hl1->addWidget ( m_pidFilePath );
+    llhPIDPath->addWidget ( m_pidFilePath );
 
     m_pidbrowsePath = new QToolButton ( groupmini );
     m_pidbrowsePath->setIcon ( KIcon ( "document-open" ) );
     connect ( m_pidbrowsePath, SIGNAL ( pressed() ), this, SLOT ( onPidBrowsePath() ) );
-    hl1->addWidget ( m_pidbrowsePath );
+    llhPIDPath->addWidget ( m_pidbrowsePath );
 
-    vl->addLayout ( hl1 );
+    vl->addLayout ( llhPIDPath );
 
     //Conf file group
     QGroupBox* groupminiconf = new QGroupBox ( i18n ( "minidlna configuration" ), this );

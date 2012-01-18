@@ -18,6 +18,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+//TODO add control for changing page to ask if you want save settings
+
 
 #include "settingsdialog.h"
 #include "settingsgeneral.h"
@@ -26,29 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
 {
-    setWindowModality( Qt::WindowModal );
-    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply | KDialog::Default);
-    setFaceType( KPageDialog::List);
-    setWindowTitle(i18n("Configure KminiDLNA"));
-    setMinimumSize(450, 250);
-
-    m_general = new SettingsGeneral(this);
-    KPageWidgetItem* kp_general = new KPageWidgetItem(m_general, i18n("General"));
-    kp_general->setObjectName("gen");
-    kp_general->setIcon(KIcon(":/images/ikona.png"));
-    addPage(kp_general);
-
-    m_minidlna = new SettingsMiniDLNA(this);
-    KPageWidgetItem* kp_minidlna = new KPageWidgetItem(m_minidlna, i18n("minidlna"));
-    kp_minidlna->setObjectName("minidlna");
-    kp_minidlna->setIcon(KIcon("configure"));
-    addPage(kp_minidlna);
-
-    connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
-    connect(this, SIGNAL(defaultClicked()), this, SLOT(onDefault()));
-    connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
-
-
+    initGUI();
 }
 
 SettingsDialog::~SettingsDialog()
@@ -58,23 +38,46 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::onApply()
 {
-    //TODO add control for changing page to ask if you want save settings
     KPageWidgetItem* w = currentPage();
-    if (w->objectName() == "gen") {
-        m_general->applySettings();
-    } else if (w->objectName() == "minidlna") {
-        m_minidlna->applySettings();
-    }
+    AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
+    tmp->applySettings();
 }
 
 void SettingsDialog::onDefault()
 {
-    //TODO remake 
     KPageWidgetItem* w = currentPage();
-    if (w->objectName() == "gen") {
-        m_general->setDefaults();
-    } else if (w->objectName() == "minidlna") {
-        m_minidlna->setDefaults();
-    }
+    AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
+    tmp->setDefaults();
+}
+
+void SettingsDialog::initGUI()
+{
+    setWindowModality( Qt::WindowModal );
+    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply | KDialog::Default);
+    setFaceType( KPageDialog::List);
+    setWindowTitle(i18n("Configure KminiDLNA"));
+    setMinimumSize(450, 250);
+
+    m_general = new SettingsGeneral(this);
+    KPageWidgetItem* generalPage = new KPageWidgetItem(m_general, i18n("General"));
+    generalPage->setObjectName("gen");
+    generalPage->setIcon(KIcon(":/images/ikona.png"));
+    addPage(generalPage);
+
+    m_minidlna = new SettingsMiniDLNA(this);
+    KPageWidgetItem* minidlnaPage = new KPageWidgetItem(m_minidlna, i18n("MiniDLNA"));
+    minidlnaPage->setObjectName("MiniDLNA");
+    minidlnaPage->setIcon(KIcon("configure"));
+    addPage(minidlnaPage);
+
+    m_server = new SettingsServer(this);
+    KPageWidgetItem* serverPage = new KPageWidgetItem(m_server, i18n("Server interface"));
+    serverPage->setObjectName("server");
+    serverPage->setIcon(KIcon("applications-internet"));
+    addPage(serverPage);
+
+    connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
+    connect(this, SIGNAL(defaultClicked()), this, SLOT(onDefault()));
+    connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
 }
 

@@ -22,26 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef MINIDLNAPROCESS_H
 #define MINIDLNAPROCESS_H
 #include <QProcess>
-#include <QFile>
-#include <QThread>
+#include "pidthread.h"
+#include "../server/interface/restinterfaces.h"
 
-class PidThread: public QThread
-{
-    Q_OBJECT;
-public:
-    explicit PidThread ( QObject* parent = 0 );
-    virtual void run();
-    void setPathPidFile ( const QString& path );
-    int getPid() const;
-    QString getPidPath() const;
-private:
-    int pid;
-    QString pathPidFile;
-signals:
-    void foundPidFile ( bool found );
-};
 
-class MinidlnaProcess: public QObject
+
+class MinidlnaProcess: public QObject, public RESTInterfaces
 {
     Q_OBJECT
 

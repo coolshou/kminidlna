@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-MinidlnaProcess::MinidlnaProcess()
+MinidlnaProcess::MinidlnaProcess(): RESTInterfaces()
 {
     loadSettings();
     t_pid = new PidThread ( this );
@@ -43,8 +43,9 @@ MinidlnaProcess::MinidlnaProcess()
 //     connect(kapp, SIGNAL(aboutToQuit()), this, SLOT());
 }
 
-MinidlnaProcess::~MinidlnaProcess()
+MinidlnaProcess::~MinidlnaProcess() 
 {
+    
     if ( minidlna->state() == QProcess::Running )
     {
         minidlna->kill();
@@ -63,7 +64,6 @@ MinidlnaProcess::~MinidlnaProcess()
         }
         delete t_pid;
     }
-
 }
 
 /**
@@ -135,7 +135,7 @@ void MinidlnaProcess::onPidFile ( bool found )
 void MinidlnaProcess::loadSettings()
 {
     KConfigGroup config = KGlobal::config()->group ( "minidlna" );
-    
+
     //set minidlna path
     QString minidlnapath = config.readEntry ( "minidlnapath", MiniDLNA::MINIDLNA_PATH );
     if ( QFile::exists ( minidlnapath ) )
@@ -230,80 +230,10 @@ void MinidlnaProcess::setArg()
     {
         arg << "-R";
     }
-    
-    if(!defConfFile){
-      arg << "-f" << path_conffile;
+
+    if (!defConfFile) {
+        arg << "-f" << path_conffile;
     }
 
     qDebug() << arg;
 }
-
-
-
-
-/**
- *
- *
- *
- * PART THREAD TO LOOK FOR PID FILE
- *
- *
- */
-PidThread::PidThread ( QObject* parent ) : QThread ( parent ), pid ( -1 )
-{
-}
-
-void PidThread::run()
-{
-
-    int i = 0;
-    while ( !QFile::exists ( pathPidFile ) )
-    {
-        if ( i>20 )
-        {
-            emit foundPidFile ( false );
-            return;
-        }
-        qDebug() << "KminiDLNA: minidlna starting " << i++;
-        sleep ( 1 );
-
-    }
-    emit foundPidFile ( true );
-    QFile pidfile ( pathPidFile );
-    if ( !pidfile.open ( QIODevice::ReadOnly ) )
-    {
-        KMessageBox::information ( 0,i18n ( "Error" ), pidfile.errorString() );
-    }
-
-    QTextStream stream ( &pidfile );
-    pid = stream.readLine().toInt();
-    pidfile.close();
-    qDebug() << "KminiDLNA: minidlna pid is: " << pid;
-}
-
-void PidThread::setPathPidFile ( const QString& path )
-{
-    pathPidFile = path;
-}
-
-int PidThread::getPid() const
-{
-    return pid;
-}
-
-QString PidThread::getPidPath() const
-{
-    return pathPidFile;
-}
-
-
-
-
-
-
-
-
-
-
-
-

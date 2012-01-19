@@ -17,27 +17,30 @@
 */
 
 
-#ifndef RESTINTERFACES_H
-#define RESTINTERFACES_H
-#include <QList>
+#ifndef PIDTHREAD_H
+#define PIDTHREAD_H
+
+#include <QThread>
 #include <QString>
-#include "restresource.h"
-#include <QStringList>
-#include <QHash>
+#include <QFile>
+#include <KMessageBox>
+#include <QDebug>
+#include <KLocalizedString>
 
-class RESTInterfaces
+class PidThread: public QThread
 {
-
+    Q_OBJECT;
 public:
-    RESTInterfaces();
-    virtual ~RESTInterfaces();
-    virtual QStringList adresses();
-    virtual bool hasResourceOnAddress(QString adress);
-    virtual void addResource(RESTresource* res);
-    virtual bool removeResource(RESTresource* res);
-    virtual RESTresource* resourceOnAddress(QString address);
-protected:
-    QHash<QString, RESTresource* > m_adresses;
+    explicit PidThread ( QObject* parent = 0 );
+    virtual void run();
+    void setPathPidFile ( const QString& path );
+    int getPid() const;
+    QString getPidPath() const;
+private:
+    int pid;
+    QString pathPidFile;
+signals:
+    void foundPidFile ( bool found );
 };
 
-#endif // RESTINTERFACES_H
+#endif // PIDTHREAD_H

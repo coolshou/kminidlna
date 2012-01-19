@@ -28,21 +28,42 @@ RESTInterfaces::~RESTInterfaces()
 
 }
 
+
 void RESTInterfaces::addResource(RESTresource* res)
 {
-    if(!m_resource.contains(res)){
-      m_resource.append(res);
-      m_addresses << res->addres();
+    if (!m_adresses.contains(res->addres())) {
+        m_adresses[res->addres()] = res;
     }
 }
+
 bool RESTInterfaces::removeResource(RESTresource* res)
 {
-    if(m_resource.contains(res)){
-	m_addresses.removeOne(res->addres());
-	return m_resource.removeOne(res);
+    if (m_adresses.contains(res->addres())) {
+        if (m_adresses.remove(res->addres()) > 0) {
+            return true;
+        }
+
     }
     return false;
 }
 
+QStringList RESTInterfaces::adresses()
+{
+    QStringList list(m_adresses.keys());
+    return list;
+}
 
+bool RESTInterfaces::hasResourceOnAddress(QString adress)
+{
+    if (m_adresses.contains(adress) > 0) {
+        return true;
+    }
+    return false;
+}
 
+RESTresource* RESTInterfaces::resourceOnAddress(QString address)
+{
+    if (hasResourceOnAddress(address))
+        return m_adresses[address];
+    return 0;
+}

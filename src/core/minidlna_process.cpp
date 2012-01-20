@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/types.h>
 #include <signal.h>
 #include <QFileInfo>
+#include "../server/restserver.h"
+#include "../server/interface/restminidlna.h"
 
 
 
@@ -39,8 +41,12 @@ MinidlnaProcess::MinidlnaProcess(): RESTInterfaces()
     t_pid = new PidThread ( this );
     connect ( t_pid, SIGNAL ( foundPidFile ( bool ) ), this, SLOT ( onPidFile ( bool ) ) );
 
+    loadResource();
     minidlna = new QProcess();
+    
 //     connect(kapp, SIGNAL(aboutToQuit()), this, SLOT());
+    RESTServer* server = RESTServer::getInstance();
+    server->addInterfaces(this);
 }
 
 MinidlnaProcess::~MinidlnaProcess() 
@@ -65,6 +71,13 @@ MinidlnaProcess::~MinidlnaProcess()
         delete t_pid;
     }
 }
+
+MinidlnaProcess* MinidlnaProcess::getInstance()
+{
+    static MinidlnaProcess instance;
+    return &instance;
+}
+
 
 /**
  * start minidlna a send signal
@@ -216,9 +229,6 @@ void MinidlnaProcess::loadSettings()
             qDebug() << "minidlna in " << minidlnapath << " was not found";
         }
     }
-
-
-
     setArg();
 }
 
@@ -237,3 +247,9 @@ void MinidlnaProcess::setArg()
 
     qDebug() << arg;
 }
+
+void MinidlnaProcess::loadResource()
+{
+    addResource(new RESTMiniDLNA(this));
+}
+

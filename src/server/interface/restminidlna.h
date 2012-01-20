@@ -17,30 +17,27 @@
 */
 
 
-#ifndef RESTRESOURCE_H
-#define RESTRESOURCE_H
-#include <QString>
-#include <QDomDocument>
-#include <QXmlSchema>
-#include <QXmlSchemaValidator>
+#ifndef RESTMINIDLNA_H
+#define RESTMINIDLNA_H
 
-class RESTresource: public QObject
+#include "restresource.h"
+#include "../../core/minidlna_process.h"
+
+class RESTMiniDLNA : public RESTresource
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    explicit RESTresource(QString address, QObject* parent =0);
-    RESTresource(const RESTresource& other);
-    virtual ~RESTresource();
-    bool operator== (const RESTresource& other);
-    virtual QString addres();
-    virtual void setAddres(QString addres);
-    virtual QDomDocument* resource() = 0;
-    virtual bool setResource(QDomDocument* resource) = 0;
+    RESTMiniDLNA(QObject* process = 0, QString address = "/minidlna-state.xml");
+    virtual ~RESTMiniDLNA();
+    virtual QDomDocument* resource();
+    virtual bool setResource(QDomDocument* resource);
     virtual bool isValidResource(QDomDocument* resource);
-protected:
-    QDomDocument* m_document;
-    QString m_address;
-    QXmlSchema m_schema;
+    
+private:
+  QDomText m_stateText;
+private slots:
+  void onMiniDLNAState(QProcess::ProcessState state);
+    
 };
 
-#endif // RESTRESOURCE_H
+#endif // RESTMINIDLNA_H

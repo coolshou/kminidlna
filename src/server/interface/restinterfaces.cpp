@@ -18,6 +18,7 @@
 
 
 #include "restinterfaces.h"
+#include <QDebug>
 
 RESTInterfaces::RESTInterfaces()
 {
@@ -53,10 +54,15 @@ QStringList RESTInterfaces::adresses()
     return list;
 }
 
-bool RESTInterfaces::hasResourceOnAddress(QString adress)
+bool RESTInterfaces::hasResourceOnAddress(QString address)
 {
-    if (m_adresses.contains(adress) > 0) {
+  qDebug() << "RESTInterfaces::hasResourceOnAddress:" << address;
+    int count = m_adresses.contains(address);
+    if (count == 1) {
         return true;
+    }else if(count > 1){
+      qDebug() << "On address \"" << address << " are more resources";
+      return true;
     }
     return false;
 }

@@ -14,21 +14,34 @@
 #include "serverrequest.h"
 #include "interface/restinterfaces.h"
 
-
+/**
+ *
+ * @patern singleton
+ */
 class RESTServer : public QTcpServer {
     Q_OBJECT
 public:
-    RESTServer(int port, QObject* parent = 0);
     virtual ~RESTServer();
-    inline int port(){return m_port;};
     static bool isRuning();
     void addInterfaces(RESTInterfaces* interface);
     bool removeInterfaces(RESTInterfaces* interface);
+    static RESTServer* getInstance();
+    void start();
+    
+    inline int port() {
+        return m_port;
+    };
+    inline void setPort(int port) {
+        m_port = port;
+    };
+
 protected slots:
     virtual void incomingConnection(int socketDescriptor);
     void handshakeComplete();
     void connectionClosed();
     void receiveData();
+protected:
+    RESTServer(QObject* parent = 0);
 private:
     QString m_certPath;
     QSslKey* m_key;
@@ -37,12 +50,13 @@ private:
     quint16 m_port;
     static bool m_runing;
     QList<RESTInterfaces*> m_intefaces;
-    
+
     void sendNoContent(QSslSocket* socket);
     void sendMSG(QSslSocket* socket, const QString msg);
     void receivedPUT(QSslSocket* socket, const QStringList& firstLine, const QHash<QString, QStringList>& header);
-    void sendOnGETReply(QTcpSocket* socket, const ServerRequest* req);
+    void processGETAndSendReply(QTcpSocket* socket, const ServerRequest* req);
     void sendOnPUTReply(QTcpSocket* socket, const ServerRequest* req);
+    void send404NotFound(QTcpSocket* socket);
 
     ServerRequest* receiveRequestHeader(QTcpSocket* socket);
 

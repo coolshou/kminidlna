@@ -79,7 +79,6 @@ bool ServerRequest::isAuthorized(const QByteArray& authBase64)
             QStringList* auth = m_header.value("Authorization");//get line with authorization
 	    
             if (auth->length() > 2) {
-	      
                 if (auth->at(1) == "Basic") {
                     if (auth->at(2).compare(authBase64,Qt::CaseInsensitive) == 0) {
                         return true;
@@ -112,6 +111,9 @@ bool ServerRequest::setFirstLine(QString firstLine)
     return parseFirstLine();
 }
 
+/**
+ * @return address
+ */
 QString ServerRequest::path() const
 {
     if(m_firstLine.length()>2){

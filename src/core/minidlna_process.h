@@ -24,20 +24,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QProcess>
 #include "pidthread.h"
 #include "../server/interface/restinterfaces.h"
+#include "../server/interface/restminidlna.h"
 
 
-
+/**
+ * @patern singleton
+ */
 class MinidlnaProcess: public QObject, public RESTInterfaces
 {
     Q_OBJECT
 
 public:
-    MinidlnaProcess();
+    static MinidlnaProcess* getInstance();
     virtual ~MinidlnaProcess();
     void minidlnaStart();
     void minidlnaKill();
     bool minidlnaStatus();
     void loadSettings();
+protected:
+        MinidlnaProcess();
 private:
     QProcess* minidlna;
     QString minidlnas;
@@ -48,10 +53,11 @@ private:
     bool scanFile;
     bool defConfFile;
     void setArg();
+    void loadResource();
 
 signals:
     void minidlnaStatus ( QProcess::ProcessState state );
-private slots:
+public slots:
     void onPidFile ( bool found );
 };
 

@@ -31,7 +31,7 @@ void loadCommandLine(int argc, char** argv, KAboutData* aboutData) {
     KCmdLineArgs::init(argc, argv, aboutData);
 
     KCmdLineOptions options;
-    options.add("restserver", ki18n("Run http server with REST interface (default is off)"));
+    options.add("norestserver", ki18n("Run http server with REST interface (default is off)"));
     options.add("nogui", ki18n("Run without GUI (default is on)"));
     options.add("start-dlna", ki18n("Start MiniDLNA server (default is off)"));
 
@@ -61,20 +61,24 @@ int main(int argc, char** argv)
     app.setWindowIcon(QIcon(":/images/ikona.png"));
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->isSet("gui")) {//isset without --no!
-	qDebug() << "Main: GUI start";
+    if (args->isSet("gui")) {//isSet without --no!
+        qDebug() << "Main: GUI start";
         KminiDLNA *mainWindow = new KminiDLNA();
         mainWindow->show();
     }
-    
+
     KConfigGroup config = KGlobal::config()->group("server");
     if (args->isSet("restserver")) {
-        
-        RESTServer *server = new RESTServer(config.readEntry("port", Server::DEFAULT_PORT), &app);
-	qDebug() << "Main: HTTP Server start on port " << server->port();
+        RESTServer *server = RESTServer::getInstance();
+        server->setPort(config.readEntry("port", Server::DEFAULT_PORT));
+        if (config.readEntry("run_server_on_start", false)) {
+            server->start();
+            qDebug() << "Main: HTTP Server start on port " << server->port();
+        }
     }
     if (args->isSet("start-dlna")) {
-	//TODO start minidlna
+        MinidlnaProcess* process = MinidlnaProcess::getInstance();
+	process->minidlnaStart();
     }
     args->clear();
 

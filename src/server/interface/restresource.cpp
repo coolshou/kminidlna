@@ -19,7 +19,7 @@
 
 #include "restresource.h"
 
-RESTresource::RESTresource(): m_document(0)
+RESTresource::RESTresource(QString address, QObject* parent): QObject(parent), m_document(0), m_address(address)
 {
 
 }
@@ -33,21 +33,21 @@ RESTresource::~RESTresource()
 
 QString RESTresource::addres()
 {
-    return m_addres;
+    return m_address;
 }
 
 void RESTresource::setAddres(QString addres)
 {
-    m_addres = addres;
+    m_address = addres;
 }
 
 bool RESTresource::isValidResource(QDomDocument* resource)
 {
-    if (!m_schema.isValid()) {
-        return false;
-    }
-
-    QXmlSchemaValidator validator(m_schema);
+//     if (!m_schema.isValid()) {
+//         return false;
+//     }
+// 
+//     QXmlSchemaValidator validator(m_schema);
 
 //     if(validator.val
     //FIXME
@@ -56,7 +56,7 @@ bool RESTresource::isValidResource(QDomDocument* resource)
 
 bool RESTresource::operator==(const RESTresource& other)
 {
-    if (other.m_addres == m_addres && other.m_document == m_document) {
+    if (other.m_address == m_address && other.m_document == m_document) {
         return true;
     }
     return false;

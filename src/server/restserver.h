@@ -13,55 +13,63 @@
 #include <QList>
 #include "serverrequest.h"
 #include "interface/restinterfaces.h"
+#include "interface/basicrestresource.h"
 
 /**
  *
  * @patern singleton
  */
-class RESTServer : public QTcpServer {
+class RESTServer : public QTcpServer, public RESTInterfaces {
     Q_OBJECT
 public:
     virtual ~RESTServer();
-    static bool isRuning();
     void addInterfaces(RESTInterfaces* interface);
     bool removeInterfaces(RESTInterfaces* interface);
     static RESTServer* getInstance();
-    void start();
-    
+    void startServer();
+    void stopServer();
+    inline bool isRuning() {
+        return m_runing;
+    };
+
     inline int port() {
         return m_port;
     };
     inline void setPort(int port) {
         m_port = port;
     };
+    
+public slots:
+    void errorsSSL(QList<QSslError>);
 
 protected slots:
     virtual void incomingConnection(int socketDescriptor);
     void handshakeComplete();
     void connectionClosed();
     void receiveData();
-protected:
-    RESTServer(QObject* parent = 0);
+
 private:
     QString m_certPath;
     QSslKey* m_key;
     QSslCertificate m_cert;
     QString m_notFoundFileHtmlPath;
     quint16 m_port;
-    static bool m_runing;
+    bool m_runing;
+    QByteArray m_loginpass;
     QList<RESTInterfaces*> m_intefaces;
+    RESTServer(QObject* parent = 0);
 
-    void sendNoContent(QSslSocket* socket);
-    void sendMSG(QSslSocket* socket, const QString msg);
-    void receivedPUT(QSslSocket* socket, const QStringList& firstLine, const QHash<QString, QStringList>& header);
+    void sendNoContent(QTcpSocket* socket);
+    void sendMSG(QTcpSocket* socket, const QString msg);
     void processGETAndSendReply(QTcpSocket* socket, const ServerRequest* req);
-    void sendOnPUTReply(QTcpSocket* socket, const ServerRequest* req);
+    void processPUTAndSendReply(QTcpSocket* socket, ServerRequest* req);
     void send404NotFound(QTcpSocket* socket);
+    void loadResource();
+    void loadConfig();
 
     ServerRequest* receiveRequestHeader(QTcpSocket* socket);
-
-public slots:
-    void errorySSL(QList<QSslError>);
+signals:
+  void run(bool state);
 };
 
 namespace Server {

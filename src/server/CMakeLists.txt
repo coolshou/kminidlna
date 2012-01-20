@@ -1,6 +1,6 @@
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES}  )
 
-set( SERVER_SRCS interface/restminidlna.cpp interface/restinterfaces.cpp interface/restresource.cpp
+set( SERVER_SRCS interface/basicrestresource.cpp interface/restminidlna.cpp interface/restinterfaces.cpp interface/restresource.cpp
       restserver.cpp
       serverrequest.cpp
 	)

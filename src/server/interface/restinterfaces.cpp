@@ -32,15 +32,15 @@ RESTInterfaces::~RESTInterfaces()
 
 void RESTInterfaces::addResource(RESTresource* res)
 {
-    if (!m_adresses.contains(res->addres())) {
-        m_adresses[res->addres()] = res;
+    if (!m_resources.contains(res->addres())) {
+        m_resources[res->addres()] = res;
     }
 }
 
 bool RESTInterfaces::removeResource(RESTresource* res)
 {
-    if (m_adresses.contains(res->addres())) {
-        if (m_adresses.remove(res->addres()) > 0) {
+    if (m_resources.contains(res->addres())) {
+        if (m_resources.remove(res->addres()) > 0) {
             return true;
         }
 
@@ -50,18 +50,18 @@ bool RESTInterfaces::removeResource(RESTresource* res)
 
 QStringList RESTInterfaces::adresses()
 {
-    QStringList list(m_adresses.keys());
+    QStringList list(m_resources.keys());
     return list;
 }
 
 bool RESTInterfaces::hasResourceOnAddress(QString address)
 {
   qDebug() << "RESTInterfaces::hasResourceOnAddress:" << address;
-    int count = m_adresses.contains(address);
+    int count = m_resources.contains(address);
     if (count == 1) {
         return true;
     }else if(count > 1){
-      qDebug() << "On address \"" << address << " are more resources";
+      qDebug() << "RESTInterfaces: On address \"" << address << " are more resources";
       return true;
     }
     return false;
@@ -70,6 +70,6 @@ bool RESTInterfaces::hasResourceOnAddress(QString address)
 RESTresource* RESTInterfaces::resourceOnAddress(QString address)
 {
     if (hasResourceOnAddress(address))
-        return m_adresses[address];
+        return m_resources[address];
     return 0;
 }

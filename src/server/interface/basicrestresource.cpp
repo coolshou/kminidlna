@@ -17,27 +17,45 @@
 */
 
 
-#ifndef RESTINTERFACES_H
-#define RESTINTERFACES_H
-#include <QList>
-#include <QString>
-#include "restresource.h"
-#include <QStringList>
-#include <QHash>
+#include "basicrestresource.h"
 
-class RESTInterfaces
+BasicRESTResource::BasicRESTResource(QString address, QObject* parent):RESTresource(address, parent)
 {
 
-public:
-    RESTInterfaces();
-    virtual ~RESTInterfaces();
-    virtual QStringList adresses();
-    virtual bool hasResourceOnAddress(QString adress);
-    virtual void addResource(RESTresource* res);
-    virtual bool removeResource(RESTresource* res);
-    virtual RESTresource* resourceOnAddress(QString address);
-protected:
-    QHash<QString, RESTresource* > m_resources;
-};
+}
 
-#endif // RESTINTERFACES_H
+BasicRESTResource::~BasicRESTResource()
+{
+
+}
+
+bool BasicRESTResource::isValidResource(QDomDocument* resource)
+{
+    return false;
+}
+
+QDomDocument* BasicRESTResource::resource()
+{
+    return m_document;
+}
+
+bool BasicRESTResource::setResource(QDomDocument* resource)
+{
+    return false;
+}
+
+/**
+ * @param xml without xml header
+ */
+bool BasicRESTResource::setXML(QByteArray xml)
+{
+    xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + xml;
+    m_document = new QDomDocument();
+    
+    return m_document->setContent(xml);
+    
+}
+
+
+
+

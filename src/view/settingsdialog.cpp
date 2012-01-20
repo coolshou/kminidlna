@@ -18,13 +18,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-//TODO add control for changing page to ask if you want save settings
-
-
 #include "settingsdialog.h"
 #include "settingsgeneral.h"
 #include <KDE/KLocalizedString>
+#include <KPushButton>
 #include <QDebug>
+#include <KMessageBox>
 
 SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
 {
@@ -40,7 +39,10 @@ void SettingsDialog::onApply()
 {
     KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
-    tmp->applySettings();
+    if (tmp->isChanged()) {
+        tmp->applySettings();
+    }
+    m_apply->setEnabled(false);
 }
 
 void SettingsDialog::onDefault()
@@ -53,31 +55,75 @@ void SettingsDialog::onDefault()
 void SettingsDialog::initGUI()
 {
     setWindowModality( Qt::WindowModal );
-    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply | KDialog::Default);
+    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply /*| KDialog::Default*/);
+    m_apply = button(KDialog::Apply);
     setFaceType( KPageDialog::List);
     setWindowTitle(i18n("Configure KminiDLNA"));
     setMinimumSize(450, 250);
 
     m_general = new SettingsGeneral(this);
+    connect(m_general, SIGNAL(changed()),
+            this, SLOT(onChange()));
     KPageWidgetItem* generalPage = new KPageWidgetItem(m_general, i18n("General"));
     generalPage->setObjectName("gen");
     generalPage->setIcon(KIcon(":/images/ikona.png"));
     addPage(generalPage);
 
     m_minidlna = new SettingsMiniDLNA(this);
+    connect(m_minidlna, SIGNAL(changed()),
+            this, SLOT(onChange()));
     KPageWidgetItem* minidlnaPage = new KPageWidgetItem(m_minidlna, i18n("MiniDLNA"));
     minidlnaPage->setObjectName("MiniDLNA");
     minidlnaPage->setIcon(KIcon("configure"));
     addPage(minidlnaPage);
 
     m_server = new SettingsServer(this);
+    connect(m_server, SIGNAL(changed()),
+            this, SLOT(onChange()));
     KPageWidgetItem* serverPage = new KPageWidgetItem(m_server, i18n("Server interface"));
     serverPage->setObjectName("server");
     serverPage->setIcon(KIcon("applications-internet"));
     addPage(serverPage);
 
-    connect(this, SIGNAL(applyClicked()), this, SLOT(onApply()));
-    connect(this, SIGNAL(defaultClicked()), this, SLOT(onDefault()));
-    connect(this, SIGNAL(okClicked()), this, SLOT(onApply()));
+    //Buttons clicked
+    connect(this, SIGNAL(applyClicked()),
+            this, SLOT(onApply()));
+    connect(this, SIGNAL(defaultClicked()),
+            this, SLOT(onDefault()));
+    connect(this, SIGNAL(okClicked()),
+            this, SLOT(onApply()));
+
+    connect(this,SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)),
+            this, SLOT(curentPageChanged(KPageWidgetItem*,KPageWidgetItem*)));
+    m_apply->setEnabled(false);
 }
+
+void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before)
+{
+    AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(before->widget());
+    if (tmp->isChanged()) {
+
+        int ret = KMessageBox::warningYesNoCancel(this, i18n("Settings was changed.\nDo you want apply changes?"), i18n("Setting was changed"));
+        switch (ret) {
+        case KMessageBox::Yes:
+            onApply();
+            break;
+        case KMessageBox::No:
+            tmp->loadSettings();
+            m_apply->setEnabled(false);
+            break;
+        default:
+            setCurrentPage(before);
+        }
+    }
+}
+
+void SettingsDialog::onChange()
+{
+//     if(!m_apply->isEnabled()){
+    m_apply->setEnabled(true);
+//     }
+}
+
+
 

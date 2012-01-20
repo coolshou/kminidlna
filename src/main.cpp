@@ -70,9 +70,8 @@ int main(int argc, char** argv)
     KConfigGroup config = KGlobal::config()->group("server");
     if (args->isSet("restserver")) {
         RESTServer *server = RESTServer::getInstance();
-        server->setPort(config.readEntry("port", Server::DEFAULT_PORT));
         if (config.readEntry("run_server_on_start", false)) {
-            server->start();
+            server->startServer();
             qDebug() << "Main: HTTP Server start on port " << server->port();
         }
     }

@@ -17,27 +17,20 @@
 */
 
 
-#ifndef RESTINTERFACES_H
-#define RESTINTERFACES_H
-#include <QList>
-#include <QString>
+#ifndef BASICRESTRESOURCE_H
+#define BASICRESTRESOURCE_H
 #include "restresource.h"
-#include <QStringList>
-#include <QHash>
 
-class RESTInterfaces
+class BasicRESTResource : public RESTresource
 {
 
 public:
-    RESTInterfaces();
-    virtual ~RESTInterfaces();
-    virtual QStringList adresses();
-    virtual bool hasResourceOnAddress(QString adress);
-    virtual void addResource(RESTresource* res);
-    virtual bool removeResource(RESTresource* res);
-    virtual RESTresource* resourceOnAddress(QString address);
-protected:
-    QHash<QString, RESTresource* > m_resources;
+    BasicRESTResource(QString address, QObject* parent= 0);
+    virtual ~BasicRESTResource();
+    bool setXML(QByteArray xml);
+    virtual QDomDocument* resource();
+    virtual bool setResource(QDomDocument* resource);
+    virtual bool isValidResource(QDomDocument* resource);
 };
 
-#endif // RESTINTERFACES_H
+#endif // BASICRESTRESOURCE_H

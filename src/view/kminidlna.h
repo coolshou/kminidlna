@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KAction>
 #include "mainwidget.h"
 #include "../core/minidlna_process.h"
+#include "../server/restserver.h"
 
 class KminiDLNA : public KMainWindow
 {
@@ -49,10 +50,12 @@ private:
     KMenu *mTool;
     KMenu *mAbout;
     MinidlnaProcess *dlnaProcess;
+    KAction* m_actionStartStopRESTServer;
     MainWidget *mw;
     KAction* trayStopStart;
     void loadSettings();
-    bool sm_closeToTray;
+    bool m_closeToTray;
+    
 private slots:
     void showSettings();
     void showMediaDir();
@@ -61,6 +64,8 @@ public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
     void onBtnStopStart();  
     void quitKminiDLNA();
+    void onActionStartStopServer();
+    void onRESTServerRun(bool);
 };
 
 #endif // KminiDLNA_H

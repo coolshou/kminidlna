@@ -38,6 +38,7 @@ public:
     virtual ~SettingsMiniDLNA();
     void applySettings();
     void setDefaults();
+    void loadSettings();
 private:
     void initGUI();
     QLineEdit* m_minidlnaPath;
@@ -49,7 +50,7 @@ private:
     QLabel* m_lblConfFile;
     QCheckBox* m_loadFile;
     QCheckBox* m_checkDefaultPath;
-    void loadSettings();
+    
     
 private slots:
     void onBrowsePath();

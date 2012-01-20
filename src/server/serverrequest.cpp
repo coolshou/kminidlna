@@ -93,12 +93,11 @@ bool ServerRequest::isAuthorized(const QByteArray& authBase64)
 
 bool ServerRequest::insertRawHeaderLine(QString line)
 {
+    if(line == "\r\n"){
+      return false;
+    }
     QStringList* ln = new QStringList(line.split(QRegExp("[ \r\n][ \r\n]*")));
     if (!ln->isEmpty()) {
-        if (ln->at(0) == "\r\n") {//test end of header
-	    delete ln;
-            return false;
-        }
         m_header.insert((*ln)[0].remove(":"), ln); //remove :
         return true;
     }

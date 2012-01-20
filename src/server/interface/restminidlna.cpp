@@ -42,19 +42,27 @@ RESTMiniDLNA::~RESTMiniDLNA()
 
 bool RESTMiniDLNA::isValidResource(QDomDocument* resource)
 {
+  //FIXME
     return true;
 }
 
 QDomDocument* RESTMiniDLNA::resource()
 {
-
     return m_document;
 }
 
 bool RESTMiniDLNA::setResource(QDomDocument* resource)
 {
+  //FIXME
+    //DBG
+    QDomText state = resource->documentElement().firstChildElement("state").firstChild().toText();
+    if(state.data() == "running"){
+      MinidlnaProcess::getInstance()->minidlnaStart();
+    }
+
     
-    return false;
+    return true;
+    //End DBG
 }
 
 void RESTMiniDLNA::onMiniDLNAState(QProcess::ProcessState state)

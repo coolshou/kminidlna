@@ -53,11 +53,15 @@ void SettingsServer::initGUI()
     m_port->setMinimum(1);
     m_port->setMaximum(Server::MAX_NUMBER_OF_PORT);
     m_port->setValue(Server::DEFAULT_PORT);
+    connect(m_port, SIGNAL(valueChanged(int)),
+            this, SLOT(someChanged()));
     llPort->addWidget(m_port);
 
     llGeneral->addLayout(llPort);
 
     m_onStartRun = new QCheckBox(i18n("Run on start"), group);
+    connect(m_onStartRun, SIGNAL(stateChanged(int)),
+            this, SLOT(someChanged()));
     llGeneral->addWidget(m_onStartRun);
 
     //LOGIN GROUP
@@ -70,6 +74,8 @@ void SettingsServer::initGUI()
     QHBoxLayout* llUsername = new QHBoxLayout();
     llUsername->addWidget(new QLabel(i18n("Username:"), groupLogin));
     m_username = new QLineEdit(groupLogin);
+    connect(m_username, SIGNAL(textChanged(QString)),
+            this, SLOT(someChanged()));
     llUsername->addWidget(m_username);
     llLogin->addLayout(llUsername);
     //Password
@@ -77,18 +83,18 @@ void SettingsServer::initGUI()
     llPassword->addWidget(new QLabel(i18n("Password:"), groupLogin));
     m_password = new QLineEdit(groupLogin);
     m_password->setEchoMode(QLineEdit::Password);
+    connect(m_password, SIGNAL(textChanged(QString)),
+            this, SLOT(someChanged()));
     llPassword->addWidget(m_password);
     llLogin->addLayout(llPassword);
 
     //SPACER
     llLogin->addSpacerItem(new QSpacerItem(40, 200));
-    
-    m_btnControll = new QPushButton(i18n("Start"), this);
-    central->addWidget(m_btnControll);
 }
 
 void SettingsServer::applySettings()
 {
+    AbstractSettings::applySettings();
     KConfigGroup config = KGlobal::config()->group("server");
     config.writeEntry ( "port", m_port->value() );
     config.writeEntry("run_server_on_start", m_onStartRun->isChecked());
@@ -113,6 +119,7 @@ void SettingsServer::loadSettings()
     m_username->setText(config.readEntry("username", Server::DEFAULT_PASSWORD));
     QString decodedpassword = Server::DEFAULT_PASSWORD;
     m_password->setText(QByteArray::fromBase64(config.readEntry("password", decodedpassword.toUtf8().toBase64())));
+    m_changed = false;
 }
 
 

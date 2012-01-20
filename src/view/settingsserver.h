@@ -40,9 +40,9 @@ public:
     virtual ~SettingsServer();
     void applySettings();
     void setDefaults();
+    void loadSettings();
 private:
     void initGUI();
-    void loadSettings();
     QSpinBox* m_port;
     QLineEdit* m_username;
     QLineEdit* m_password;

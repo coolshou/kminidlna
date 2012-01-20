@@ -36,12 +36,12 @@ public:
     virtual ~SettingsGeneral();
     void applySettings();
     void setDefaults();
+    void loadSettings();
 private:
     void initGUI();
     QCheckBox* m_closeToTray;
     QCheckBox* m_runOnStart;
     QCheckBox* m_remRun;
-    void loadSettings();
 };
 
 #endif // SETTINGSGENERAL_H

@@ -38,10 +38,14 @@ private:
     SettingsGeneral* m_general;
     SettingsMiniDLNA* m_minidlna;
     SettingsServer* m_server;
+    KPushButton*  m_apply;
     void initGUI();
 private slots:
     void onApply();
     void onDefault();
+public slots:
+    void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
+    void onChange();
 };
 
 #endif // SETTINGSDIALOG_H

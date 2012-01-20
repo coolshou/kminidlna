@@ -50,7 +50,7 @@ SettingsMiniDLNA::~SettingsMiniDLNA()
 void SettingsMiniDLNA::initGUI()
 {
     QVBoxLayout* central = new QVBoxLayout ( this );
-    
+
     QGroupBox* groupmini = new QGroupBox ( i18n ( "minidlna" ), this);
     central->addWidget ( groupmini );
 
@@ -61,11 +61,14 @@ void SettingsMiniDLNA::initGUI()
     llhMiniDLNAPath->addWidget ( new QLabel ( i18n ( "minidlna path:" ),groupmini ) );
 
     m_minidlnaPath = new QLineEdit ( "", groupmini );
+    connect(m_minidlnaPath, SIGNAL(textChanged(QString)),
+            this, SLOT(someChanged()));
     llhMiniDLNAPath->addWidget ( m_minidlnaPath );
 
     m_browsePath = new QToolButton ( groupmini );
     m_browsePath->setIcon ( KIcon ( "document-open" ) );
-    connect ( m_browsePath, SIGNAL ( pressed() ), this, SLOT ( onBrowsePath() ) );
+    connect ( m_browsePath, SIGNAL ( pressed() ),
+              this, SLOT ( onBrowsePath() ) );
     llhMiniDLNAPath->addWidget ( m_browsePath );
 
     vl->addLayout ( llhMiniDLNAPath );
@@ -75,6 +78,8 @@ void SettingsMiniDLNA::initGUI()
     llhPIDPath->addWidget ( new QLabel ( i18n ( "Path to pid file:" ), groupmini ) );
 
     m_pidFilePath = new QLineEdit ( "", groupmini );
+    connect(m_pidFilePath, SIGNAL(textChanged(QString)),
+            this, SLOT(someChanged()));
     llhPIDPath->addWidget ( m_pidFilePath );
 
     m_pidbrowsePath = new QToolButton ( groupmini );
@@ -91,6 +96,8 @@ void SettingsMiniDLNA::initGUI()
 
     //Defaut path
     m_checkDefaultPath = new QCheckBox(i18n("Use default path to configuration file (/etc/minidlna.conf)"));
+    connect(m_checkDefaultPath, SIGNAL(stateChanged(int)),
+            this, SLOT(someChanged()));
     vlminiconf->addWidget(m_checkDefaultPath);
     connect(m_checkDefaultPath, SIGNAL(stateChanged(int)), this, SLOT(checkedDefautlPath(int)));
 
@@ -100,11 +107,14 @@ void SettingsMiniDLNA::initGUI()
     hlconf->addWidget ( m_lblConfFile);
 
     m_confFilePath = new QLineEdit ( "", groupminiconf );
+    connect(m_confFilePath, SIGNAL(textChanged(QString)),
+            this, SLOT(someChanged()));
     hlconf->addWidget ( m_confFilePath );
 
     m_browseConfFile = new QToolButton ( groupminiconf );
     m_browseConfFile->setIcon ( KIcon ( "document-open" ) );
-    connect ( m_browseConfFile, SIGNAL ( pressed() ), this, SLOT ( onBrowseConfFile() ) );
+    connect ( m_browseConfFile, SIGNAL ( pressed() ),
+              this, SLOT ( onBrowseConfFile() ) );
     hlconf->addWidget ( m_browseConfFile );
 
     vlminiconf->addLayout ( hlconf );
@@ -113,6 +123,8 @@ void SettingsMiniDLNA::initGUI()
 
     //Scan file on start
     m_loadFile = new QCheckBox(i18n("Scan file on start minidlna"),groupmini);
+    connect(m_loadFile, SIGNAL(stateChanged(int)),
+            this, SLOT(someChanged()));
     vlminiconf->addWidget(m_loadFile);
 
     vlminiconf->addSpacerItem(new QSpacerItem(40, 100));
@@ -121,6 +133,7 @@ void SettingsMiniDLNA::initGUI()
 
 void SettingsMiniDLNA::applySettings()
 {
+    AbstractSettings::applySettings();
     KConfigGroup config = KGlobal::config()->group ( "minidlna" );
     config.writeEntry ( "minidlnapath", m_minidlnaPath->text() );
     config.writeEntry("pidpath", m_pidFilePath->text());
@@ -138,6 +151,7 @@ void SettingsMiniDLNA::loadSettings()
     m_loadFile->setChecked(config.readEntry("scanfile", false));
     m_checkDefaultPath->setChecked(config.readEntry("default_conf_file", true));
     m_confFilePath->setText(config.readEntry("conf_file_path", MiniDLNA::CONFFILE_PATH));
+    m_changed = false;
 }
 
 void SettingsMiniDLNA::onBrowsePath()

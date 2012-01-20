@@ -59,12 +59,18 @@ void SettingsGeneral::initGUI()
     central->addWidget(group);
     
     m_closeToTray = new QCheckBox(i18n("Close to system tray"), group);
+    connect(m_closeToTray, SIGNAL(stateChanged(int)),
+	    this, SLOT(someChanged()));
     ll->addWidget(m_closeToTray);
 
     m_runOnStart = new QCheckBox(i18n("Run on start"), group);
+    connect(m_runOnStart, SIGNAL(stateChanged(int)),
+	    this, SLOT(someChanged()));
     ll->addWidget(m_runOnStart);
 
     m_remRun = new QCheckBox(i18n("Remember running"), group);
+    connect(m_remRun, SIGNAL(stateChanged(int)),
+	    this, SLOT(someChanged()));
     m_remRun->setEnabled(false);
     ll->addWidget(m_remRun);
 
@@ -82,6 +88,7 @@ void SettingsGeneral::initGUI()
  */
 void SettingsGeneral::applySettings()
 {
+    AbstractSettings::applySettings();
     KConfigGroup config = KGlobal::config()->group( "General" );
     config.writeEntry("closetotray", m_closeToTray->isChecked());
     config.writeEntry("runonstart", m_runOnStart->isChecked());
@@ -105,6 +112,7 @@ void SettingsGeneral::loadSettings()
     m_closeToTray->setChecked(config.readEntry("closetotray", false));
     m_runOnStart->setChecked(config.readEntry("runonstart", false));
     m_remRun->setChecked(config.readEntry("rememberrun", false));
+    m_changed = false;
 }
 
 void SettingsGeneral::setDefaults()

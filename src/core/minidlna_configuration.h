@@ -21,8 +21,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 #include <QLinkedList>
-#include "../view/mediadirmodel.h"
-#include "../view/mediadirwidget.h"
 #include "minidlna_process.h"
 
 
@@ -62,14 +60,12 @@ class Configuration
 public:
     Configuration(QString path = MiniDLNA::CONFFILE_PATH);
     virtual ~Configuration();
-    QLinkedList<MediaDirItem*>& getMediaDir();
     bool reload();
     bool creatFile(QString path);
     
     
 private:
     bool loadData();
-    QLinkedList<MediaDirItem*> list_mediaDir;
     void parseLine(QString line);
     
     QString path;

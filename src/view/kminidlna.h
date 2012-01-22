@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mainwidget.h"
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
+#include "mediafolders.h"
 
 class KminiDLNA : public KMainWindow
 {
@@ -58,7 +59,6 @@ private:
     
 private slots:
     void showSettings();
-    void showMediaDir();
     void onMiniDLNAState(QProcess::ProcessState state);
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
@@ -66,6 +66,7 @@ public slots:
     void quitKminiDLNA();
     void onActionStartStopServer();
     void onRESTServerRun(bool);
+    void setFolders();
 };
 
 #endif // KminiDLNA_H

@@ -34,14 +34,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KStandardAction>
 #include <KConfigDialog>
 #include "settingsdialog.h"
-#include "../view/mediadirwidget.h"
 
 KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
 {
     dlnaProcess = MinidlnaProcess::getInstance();
     initGUI();
-    connect ( dlnaProcess, SIGNAL ( minidlnaStatus ( QProcess::ProcessState ) ), 
-	      this, SLOT ( onMiniDLNAState ( QProcess::ProcessState ) ) );
+    connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
+            this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
     loadSettings();
 }
 
@@ -52,109 +51,102 @@ KminiDLNA::~KminiDLNA()
 
 void KminiDLNA::initGUI()
 {
-    mw = new MainWidget ( this );
-    setCentralWidget ( mw );
+    mw = new MainWidget(this);
+    setCentralWidget(mw);
     createMenu();
     initSystemTray();
-    connect ( mw, SIGNAL ( pressedBtnStopStart() ), 
-	      this, SLOT ( onBtnStopStart() ) );
+    connect(mw, SIGNAL(pressedBtnStopStart()),
+            this, SLOT(onBtnStopStart()));
 }
 void KminiDLNA::initSystemTray()
 {
-    systemtray = new KSystemTrayIcon ( QIcon ( ":/images/ikona.png" ),this );
+    systemtray = new KSystemTrayIcon(QIcon(":/images/ikona.png"), this);
 
     //add MENU
     KMenu* trayMenu = new KMenu("KminiDLNA", this);
-    trayMenu->addTitle( QIcon(":/images/ikona.png"), KGlobal::mainComponent().aboutData()->programName() );
+    trayMenu->addTitle(QIcon(":/images/ikona.png"), KGlobal::mainComponent().aboutData()->programName());
 
     trayStopStart = new KAction(KIcon("media-playback-start"), i18n("Start minidlna"), trayMenu);
-    connect( trayStopStart, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)), 
-	     this, SLOT(onBtnStopStart()));
+    connect(trayStopStart, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
+            this, SLOT(onBtnStopStart()));
     trayMenu->addAction(trayStopStart);
 
     trayMenu->addSeparator();
-    trayMenu->addAction( KStandardAction::quit (this, SLOT(quitKminiDLNA()), this));
+    trayMenu->addAction(KStandardAction::quit(this, SLOT(quitKminiDLNA()), this));
     systemtray->setContextMenu(trayMenu);
 
     systemtray->show();
-    connect ( systemtray, SIGNAL ( activated ( QSystemTrayIcon::ActivationReason ) ), 
-	      this, SLOT ( systemTrayActived ( QSystemTrayIcon::ActivationReason ) ) );
-    connect (systemtray, SIGNAL(quitSelected()), 
-	     this, SLOT(quitKminiDLNA()));
+    connect (systemtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+             this, SLOT(systemTrayActived(QSystemTrayIcon::ActivationReason)));
+    connect (systemtray, SIGNAL(quitSelected()),
+             this, SLOT(quitKminiDLNA()));
 }
 
-void KminiDLNA::systemTrayActived ( QSystemTrayIcon::ActivationReason reason )
+void KminiDLNA::systemTrayActived (QSystemTrayIcon::ActivationReason reason)
 {
-    if ( reason == QSystemTrayIcon::Trigger )
-    {
-        if ( isVisible() == true )
-        {
-            if ( canBeRestored ( 1 ) )
-            {
-                restore ( 1, false );
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (isVisible() == true) {
+            if (canBeRestored(1)) {
+                restore (1, false);
             }
-        }
-        else
-        {
-            restore ( 1 );
+        } else {
+            restore(1);
         }
     }
 }
 
 void KminiDLNA::closeEvent ( QCloseEvent* event )
 {
-    if ( systemtray->isVisible() && m_closeToTray )
-    {
+    if (systemtray->isVisible() && m_closeToTray) {
         hide();
-        systemtray->showMessage ( i18n ( "KminiDLNA" ), i18n ( "KminiDLNA was minimalized." ),QSystemTrayIcon::Information, 8000 );
+        systemtray->showMessage(i18n("KminiDLNA"), i18n("KminiDLNA was minimalized."),QSystemTrayIcon::Information, 8000);
         event->ignore();
-    }
-    else
-    {
-        KMainWindow::closeEvent ( event );
+    } else {
+        KMainWindow::closeEvent(event);
     }
 }
 
 void KminiDLNA::createMenu()
 {
-    menu = new KMenuBar ( this );
-    setMenuBar ( menu );
-    mTool = new KMenu ( i18n ( "Tools" ),menu );
+    menu = new KMenuBar(this);
+    setMenuBar(menu);
+    mTool = new KMenu(i18n("Tools"), menu);
 
-    KAction *aSetting = new KAction ( KIcon ( "configure" ), i18n ( "Configure KminiDLNA" ), mTool );
-    connect ( aSetting, SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), 
-	      this, SLOT ( showSettings() ) );
-    mTool->addAction ( aSetting );
+    KAction *aSetting = new KAction(KIcon("configure"), i18n("Configure KminiDLNA"), mTool);
+    connect(aSetting, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
+            this, SLOT(showSettings()));
+    mTool->addAction(aSetting);
 
     KAction* aSetFolder = new KAction(KIcon("list-add"), i18n("Set folders"), mTool);
-    aSetFolder->setEnabled(false);
-    connect(aSetFolder,SIGNAL ( triggered ( Qt::MouseButtons,Qt::KeyboardModifiers ) ), 
-	    this, SLOT (showMediaDir() ));
+//     aSetFolder->setEnabled(false);
+    connect(aSetFolder, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
+	    this, SLOT(setFolders()));
     mTool->addAction(aSetFolder);
-    
+
     m_actionStartStopRESTServer = new KAction(KIcon("applications-internet"), i18n("Start HTTP REST server"), mTool);
-    connect(m_actionStartStopRESTServer, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)), 
-	    this, SLOT(onActionStartStopServer()));
-    connect(RESTServer::getInstance(), SIGNAL(run(bool)), 
-	    this, SLOT(onRESTServerRun(bool)));
+    connect(m_actionStartStopRESTServer, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
+            this, SLOT(onActionStartStopServer()));
+    connect(RESTServer::getInstance(), SIGNAL(run(bool)),
+            this, SLOT(onRESTServerRun(bool)));
     mTool->addAction(m_actionStartStopRESTServer);
-    
+
     mTool->addSeparator();
 
-    mTool->addAction ( KStandardAction::quit (this, SLOT(quitKminiDLNA()), this));
+    mTool->addAction(KStandardAction::quit(this, SLOT(quitKminiDLNA()),this));
 
-    menu->addMenu ( mTool );
-    aboutMenu = new KHelpMenu ( menu, KCmdLineArgs::aboutData() );
+    menu->addMenu(mTool);
+    aboutMenu = new KHelpMenu(menu, KCmdLineArgs::aboutData());
     mAbout = aboutMenu->menu();
-    menu->addMenu ( aboutMenu->menu() );
+    menu->addMenu(aboutMenu->menu());
 }
 
 void KminiDLNA::showSettings()
 {
-    SettingsDialog *sdlg = new SettingsDialog ( this );
+    SettingsDialog *sdlg = new SettingsDialog(this);
     sdlg->exec();
     loadSettings();
-    
+    delete sdlg;
+
 }
 
 /**
@@ -162,12 +154,9 @@ void KminiDLNA::showSettings()
  */
 void KminiDLNA::onBtnStopStart()
 {
-    if ( dlnaProcess->minidlnaStatus() )
-    {
+    if (dlnaProcess->minidlnaStatus()) {
         dlnaProcess->minidlnaKill();
-    }
-    else
-    {
+    } else {
         dlnaProcess->minidlnaStart();
     }
 }
@@ -177,20 +166,19 @@ void KminiDLNA::onBtnStopStart()
  */
 void KminiDLNA::loadSettings()
 {
-    KConfigGroup config = KGlobal::config()->group ( "General" );
-    m_closeToTray = config.readEntry ( "closetotray", false );
+    KConfigGroup config = KGlobal::config()->group("General");
+    m_closeToTray = config.readEntry("closetotray", false);
 }
 
 /**
  * Slot: If is minidlna status changed
  */
-void KminiDLNA::onMiniDLNAState ( QProcess::ProcessState state )
+void KminiDLNA::onMiniDLNAState(QProcess::ProcessState state)
 {
-    switch ( state )
-    {
+    switch (state) {
     case QProcess::Running:
-        mw->setStopStart ( true );
-        systemtray->setIcon ( QIcon ( ":/images/run.png" ) );
+        mw->setStopStart(true);
+        systemtray->setIcon(QIcon(":/images/run.png"));
         trayStopStart->setIcon(KIcon("media-playback-stop"));
         trayStopStart->setText(i18n("Stop"));
         break;
@@ -198,8 +186,8 @@ void KminiDLNA::onMiniDLNAState ( QProcess::ProcessState state )
         mw->setRunning();
         break;
     default:
-        mw->setStopStart ( false );
-        systemtray->setIcon ( QIcon ( ":/images/ikona.png" ) );
+        mw->setStopStart(false);
+        systemtray->setIcon(QIcon(":/images/ikona.png"));
         trayStopStart->setIcon(KIcon("media-playback-start"));
         trayStopStart->setText(i18n("Start"));
     }
@@ -210,29 +198,32 @@ void KminiDLNA::quitKminiDLNA()
     kapp->quit();
 }
 
-void KminiDLNA::showMediaDir()
-{
-    MediaDirWidget* mdw = new MediaDirWidget(this);
-    mdw->exec();
-}
-
 void KminiDLNA::onActionStartStopServer()
 {
-  RESTServer* server = RESTServer::getInstance();
-    if(server->isRuning()){
-      server->stopServer();
-    }else{
-      server->startServer();
+    RESTServer* server = RESTServer::getInstance();
+    if (server->isRuning()) {
+        server->stopServer();
+    } else {
+        server->startServer();
     }
 }
 
 void KminiDLNA::onRESTServerRun(bool run)
 {
-    if(run){
-      m_actionStartStopRESTServer->setText(i18n("Stop HTTP REST server"));
-    }else{
-      m_actionStartStopRESTServer->setText(i18n("Start HTTP REST server"));
+    if (run) {
+        m_actionStartStopRESTServer->setText(i18n("Stop HTTP REST server"));
+    } else {
+        m_actionStartStopRESTServer->setText(i18n("Start HTTP REST server"));
     }
 }
+
+void KminiDLNA::setFolders()
+{
+  KDialog* dlg = new KDialog(this);
+  dlg->setMainWidget(new MediaFolders(dlg));
+  dlg->exec();
+  delete dlg;
+}
+
 
 

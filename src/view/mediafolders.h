@@ -17,28 +17,30 @@
 */
 
 
-#ifndef RESTMINIDLNA_H
-#define RESTMINIDLNA_H
+#ifndef MEDIAFOLDERS_H
+#define MEDIAFOLDERS_H
 
-#include "restresource.h"
-#include "../../core/minidlna_process.h"
-#include <QProcess>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QTableView>
 
-class RESTMiniDLNA : public RESTresource
+
+class MediaFolders : public QWidget
 {
-Q_OBJECT
+
 public:
-    RESTMiniDLNA(QObject* process = 0, QString address = "/minidlna-state.xml");
-    virtual ~RESTMiniDLNA();
-    virtual QDomDocument* resource();
-    virtual bool setResource(QDomDocument* resource);
-    virtual bool isValidResource(QDomDocument* resource);
-    
+    explicit MediaFolders(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~MediaFolders();
+    void addLine(QString line);
+    void loadModel();
 private:
-  QDomText m_stateText;
-private slots:
-  void onMiniDLNAState(QProcess::ProcessState state);
+    void initGUI();
+    QStandardItemModel* m_model;
+    QTableView* m_tableView;
     
 };
 
-#endif // RESTMINIDLNA_H
+#endif // MEDIAFOLDERS_H

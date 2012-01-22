@@ -153,7 +153,6 @@ void MinidlnaProcess::loadSettings()
     QString minidlnapath = config.readEntry ( "minidlnapath", MiniDLNA::MINIDLNA_PATH );
     if ( QFile::exists ( minidlnapath ) )
     {
-        qDebug() << "Change path: " << minidlnapath;
         minidlnas = minidlnapath;
     }
     else
@@ -162,7 +161,6 @@ void MinidlnaProcess::loadSettings()
         QFileInfo def ( MiniDLNA::MINIDLNA_PATH);
         if ( def.exists() && def.isExecutable() )
         {
-            qDebug() << "setted default executable path: " << def.absoluteFilePath();
             minidlnas = def.absoluteFilePath();
         }
         else
@@ -177,14 +175,13 @@ void MinidlnaProcess::loadSettings()
     QFileInfo pid ( pidpath );
     if ( pid.isDir() && pid.isWritable() )
     {
-        qDebug() << "Change pid directory: " << pidpath;
         pathPidFile = pidpath;
     }
     else
     {
         QFileInfo def(MiniDLNA::PIDFILE_PATH);
         if (def.isDir() && def.isWritable()) {
-            qDebug()<< "setted default pid directory: "<< def.absolutePath();
+//             qDebug()<< "setted default pid directory: "<< def.absolutePath();
         } else {
             //TODO add error mesage
             qDebug() << "pid directory is not writable or it was not found";
@@ -212,7 +209,6 @@ void MinidlnaProcess::loadSettings()
     QFileInfo confFile(conffilepath);
     if ( confFile.exists() && confFile.isReadable())
     {
-        qDebug() << "Change path: " << conffilepath;
         path_conffile = conffilepath;
     }
     else
@@ -220,7 +216,6 @@ void MinidlnaProcess::loadSettings()
         confFile.setFile ( MiniDLNA::CONFFILE_PATH );
         if ( confFile.exists() && confFile.isReadable() )
         {
-            qDebug() << "setted default executable path: " << confFile.absoluteFilePath();
             path_conffile = confFile.absoluteFilePath();
         }
         else
@@ -244,8 +239,6 @@ void MinidlnaProcess::setArg()
     if (!defConfFile) {
         arg << "-f" << path_conffile;
     }
-
-    qDebug() << arg;
 }
 
 void MinidlnaProcess::loadResource()

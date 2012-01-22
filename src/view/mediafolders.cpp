@@ -17,28 +17,41 @@
 */
 
 
-#ifndef RESTMINIDLNA_H
-#define RESTMINIDLNA_H
+#include "mediafolders.h"
 
-#include "restresource.h"
-#include "../../core/minidlna_process.h"
-#include <QProcess>
-
-class RESTMiniDLNA : public RESTresource
+MediaFolders::MediaFolders(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
 {
-Q_OBJECT
-public:
-    RESTMiniDLNA(QObject* process = 0, QString address = "/minidlna-state.xml");
-    virtual ~RESTMiniDLNA();
-    virtual QDomDocument* resource();
-    virtual bool setResource(QDomDocument* resource);
-    virtual bool isValidResource(QDomDocument* resource);
-    
-private:
-  QDomText m_stateText;
-private slots:
-  void onMiniDLNAState(QProcess::ProcessState state);
-    
-};
+    loadModel();
+    initGUI();
+}
 
-#endif // RESTMINIDLNA_H
+MediaFolders::~MediaFolders()
+{
+
+}
+
+void MediaFolders::initGUI()
+{
+    QVBoxLayout* mainlayout = new QVBoxLayout(this);
+    setLayout(mainlayout);
+    
+    m_tableView = new QTableView(this);
+    m_tableView->setModel(m_model);
+    mainlayout->addWidget(m_tableView);
+//     layoutRun->addWidget(new QPixmap (QIcon(":/images/ikona.png")));
+
+}
+
+void MediaFolders::loadModel()
+{
+    m_model = new QStandardItemModel(0, 4, this);
+    m_model->appendColumn();
+}
+
+void MediaFolders::addLine(QString line)
+{
+
+}
+
+
+

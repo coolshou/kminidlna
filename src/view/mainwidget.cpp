@@ -56,7 +56,6 @@ void MainWidget::initGUI()
     
     mainlayout->addSpacerItem(new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Expanding));
     mainlayout->addWidget(btnStopStart);
-    minidlna = new QProcess(this);
     connect(btnStopStart, SIGNAL(pressed()), this, SLOT(onBtnPressed()));
 }
 

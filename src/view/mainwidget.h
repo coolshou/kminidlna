@@ -43,7 +43,6 @@ private:
     void initGUI();
     QVBoxLayout *mainlayout;
     QLabel *lbl;
-    QProcess *minidlna;
     KLed *kled;
     QPushButton *btnStopStart;
     QString minidlnas;

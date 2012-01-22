@@ -49,14 +49,6 @@ bool Configuration::creatFile(QString path) {
     return true;
 }
 
-
-/**
- * @return - linked list with MediaDirItem
- */
-QLinkedList< MediaDirItem* >& Configuration::getMediaDir(){
-    return list_mediaDir;
-}
-
 /**
  * load data
  */

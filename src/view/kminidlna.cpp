@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KAction>
 #include <KStandardAction>
 #include <KConfigDialog>
-#include "settingsdialog.h"
 
 KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
 {
@@ -219,8 +218,7 @@ void KminiDLNA::onRESTServerRun(bool run)
 
 void KminiDLNA::setFolders()
 {
-  KDialog* dlg = new KDialog(this);
-  dlg->setMainWidget(new MediaFolders(dlg));
+  MediaFoldersDialog* dlg = new MediaFoldersDialog(this);
   dlg->exec();
   delete dlg;
 }

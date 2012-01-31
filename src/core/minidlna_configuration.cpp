@@ -20,12 +20,12 @@
 
 #include "minidlna_configuration.h"
 
-Configuration::Configuration(QString path) : path(path) {
+Configuration::Configuration(QString path) : m_path(path) {
     if (loadData()) {
-        qDebug() << "Configuration: this> File not loaded will be use default";
+        qDebug() << "Configuration: File not loaded will be use default";
         path = MiniDLNA::CONFFILE_PATH;
         if (!loadData()) {
-            qDebug() << "Configuration: this> File not loaded. Please set path to configuration file";
+            qDebug() << "Configuration: File not loaded. Please set path to configuration file";
         }
     }
 }
@@ -37,8 +37,8 @@ Configuration::~Configuration() {
 /**
  * Function copy predefined configuration file
  */
-bool Configuration::creatFile(QString path) {
-    this->path = path;
+bool Configuration::createFile(QString path) {
+    this->m_path = path;
     QFile conf(path);
     if (conf.exists()) {
         qDebug() << "Configuration: creatFile> File exists";
@@ -53,12 +53,11 @@ bool Configuration::creatFile(QString path) {
  * load data
  */
 bool Configuration::loadData() {
-    QFile conf(path);
+    QFile conf(m_path);
     if (!conf.exists()) {
         return false;
     }
     if (conf.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        //TODO parse config file as minidlna
         QTextStream in(&conf);
         while (!in.atEnd()) {
             QString line  = in.readLine();
@@ -67,7 +66,7 @@ bool Configuration::loadData() {
         conf.close();
 
     } else {
-        qDebug() << "Configuration: loadData> File " << path << " is not readable";
+        qDebug() << "Configuration: loadData() File \"" << m_path << "\" is not readable";
         return false;
     }
     return true;
@@ -135,5 +134,11 @@ void Configuration::parseLine(QString line) {
 
 
 }
+
+QList< MediaFolder* > Configuration::mediaFolders()
+{
+    return m_mediaFolder;
+}
+
 
 

@@ -20,8 +20,10 @@
 
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
-#include <QLinkedList>
+#include <QList>
+
 #include "minidlna_process.h"
+#include "model/mediafolder.h"
 
 
 /**
@@ -29,48 +31,50 @@
  */
 /* enum of option available in the miniupnpd.conf */
 enum upnpconfigoptions {
-	UPNP_INVALID = 0,
-	UPNPIFNAME = 1,			/* ext_ifname */
-	UPNPLISTENING_IP,		/* listening_ip */
-	UPNPPORT,			/* port */
-	UPNPPRESENTATIONURL,		/* presentation_url */
-	UPNPNOTIFY_INTERVAL,		/* notify_interval */
-	UPNPSYSTEM_UPTIME,		/* system_uptime */
-	UPNPUUID,			/* uuid */
-	UPNPSERIAL,			/* serial */
-	UPNPMODEL_NAME,			/* model_name */
-	UPNPMODEL_NUMBER,		/* model_number */
-	UPNPFRIENDLYNAME,		/* how the system should show up to DLNA clients */
-	UPNPMEDIADIR,			/* directory to search for UPnP-A/V content */
-	UPNPALBUMART_NAMES,		/* list of '/'-delimited file names to check for album art */
-	UPNPINOTIFY,			/* enable inotify on the media directories */
-	UPNPDBDIR,			/* base directory to store the database and album art cache */
-	UPNPLOGDIR,			/* base directory to store the log file */
-	ENABLE_TIVO,			/* enable support for streaming images and music to TiVo */
-	ENABLE_DLNA_STRICT		/* strictly adhere to DLNA specs */
+    UPNP_INVALID = 0,
+    UPNPIFNAME = 1,			/* ext_ifname */
+    UPNPLISTENING_IP,		/* listening_ip */
+    UPNPPORT,			/* port */
+    UPNPPRESENTATIONURL,		/* presentation_url */
+    UPNPNOTIFY_INTERVAL,		/* notify_interval */
+    UPNPSYSTEM_UPTIME,		/* system_uptime */
+    UPNPUUID,			/* uuid */
+    UPNPSERIAL,			/* serial */
+    UPNPMODEL_NAME,			/* model_name */
+    UPNPMODEL_NUMBER,		/* model_number */
+    UPNPFRIENDLYNAME,		/* how the system should show up to DLNA clients */
+    UPNPMEDIADIR,			/* directory to search for UPnP-A/V content */
+    UPNPALBUMART_NAMES,		/* list of '/'-delimited file names to check for album art */
+    UPNPINOTIFY,			/* enable inotify on the media directories */
+    UPNPDBDIR,			/* base directory to store the database and album art cache */
+    UPNPLOGDIR,			/* base directory to store the log file */
+    ENABLE_TIVO,			/* enable support for streaming images and music to TiVo */
+    ENABLE_DLNA_STRICT		/* strictly adhere to DLNA specs */
 };
 
 /**
  * This class is used for load media dir and save configuration minidlna to configuration file
- * 
+ *
  */
-class Configuration
+class Configuration: public QObject
 {
-
+Q_OBJECT
 public:
-    Configuration(QString path = MiniDLNA::CONFFILE_PATH);
+    Configuration(QString path = ""/*MiniDLNA::CONFFILE_PATH*/ );
     virtual ~Configuration();
     bool reload();
-    bool creatFile(QString path);
-    
-    
+    bool createFile(QString path);
+    QList<MediaFolder *> mediaFolders();
+
+
 private:
     bool loadData();
     void parseLine(QString line);
-    
-    QString path;
-    
-    
+
+    QString m_path;
+    QList<MediaFolder *> m_mediaFolder;
+
+
 };
 
 #endif // CONFIGURATION_H

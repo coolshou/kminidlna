@@ -21,6 +21,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef KminiDLNA_H
 #define KminiDLNA_H
 
+#include "mainwidget.h"
+#include "../core/minidlna_process.h"
+#include "../server/restserver.h"
+#include "settingsdialog.h"
+#include "mediafoldersdialog.h"
+
 #include <KMainWindow>
 #include <KSystemTrayIcon>
 #include <QCloseEvent>
@@ -28,10 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KHelpMenu>
 #include <KMenu>
 #include <KAction>
-#include "mainwidget.h"
-#include "../core/minidlna_process.h"
-#include "../server/restserver.h"
-#include "mediafolders.h"
 
 class KminiDLNA : public KMainWindow
 {

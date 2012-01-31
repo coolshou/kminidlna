@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "pidthread.h"
 #include "../server/interface/restinterfaces.h"
 #include "../server/interface/restminidlna.h"
+#include "minidlna_configuration.h"
 
 
 /**
@@ -41,8 +42,9 @@ public:
     void minidlnaKill();
     bool minidlnaStatus();
     void loadSettings();
+//     Configuration* configuration();
 protected:
-        MinidlnaProcess();
+    MinidlnaProcess();
 private:
     QProcess* minidlna;
     QString minidlnas;
@@ -54,6 +56,7 @@ private:
     bool defConfFile;
     void setArg();
     void loadResource();
+//     Configuration* m_config;
 
 signals:
     void minidlnaStatus ( QProcess::ProcessState state );

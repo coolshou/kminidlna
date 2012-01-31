@@ -246,3 +246,9 @@ void MinidlnaProcess::loadResource()
     addResource(new RESTMiniDLNA(this));
 }
 
+// Configuration* MinidlnaProcess::configuration()
+// {
+//     return m_config;
+// }
+
+

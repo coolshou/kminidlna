@@ -1,6 +1,6 @@
 /*
     <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Tomáš Poledný <email>
+    Copyright (C) 2012  TomÃ¡Å¡ PolednÃ½ <email>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,23 +17,34 @@
 */
 
 
-#ifndef MEDIADIRWIDGET_H
-#define MEDIADIRWIDGET_H
+#ifndef MEDIAFOLDERS_H
+#define MEDIAFOLDERS_H
 
-#include <KDialog>
+#include "../core/model/mediafolder.h"
+
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QStandardItem>
+#include <QStandardItemModel>
 #include <QTableView>
+#include <KDialog>
 
-class MediaDirWidget : public KDialog
+
+class MediaFoldersDialog : public KDialog
 {
-
+Q_OBJECT
 public:
-    MediaDirWidget(QWidget* parent = 0, Qt::WFlags flags = 0);
-    virtual ~MediaDirWidget();
+    explicit MediaFoldersDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~MediaFoldersDialog();
+    void addLine(QString line);
+    void loadModel();
 private:
     void initGUI();
-    QTableView*  m_qlistview;
-    QWidget* main;
-    void loadMediaDirs();
+    QStandardItemModel* m_model;
+    QTableView* m_tableView;
+    QList<MediaFolder *> m_rows;
+    
 };
 
-#endif // MEDIADIRWIDGET_H
+#endif // MEDIAFOLDERS_H

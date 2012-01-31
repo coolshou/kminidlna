@@ -1,7 +1,7 @@
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES}  )
 
 set( CORE_SRCS pidthread.cpp
-	minidlna_configuration.cpp
+	configurationfile.cpp
 	minidlna_process.cpp
 	
 	model/mediafolder.cpp

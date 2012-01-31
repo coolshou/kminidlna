@@ -24,28 +24,30 @@
 #include <KLocalizedString>
 
 
-class MediaFolder : public QObject
-{
-Q_OBJECT
-public:
-    enum MediaType {NONE, VIDEO, AUDIO, IMAGES};
-    MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent = 0);
-    MediaFolder(QString line, int lineNumber = -1, QObject* parent = 0);
-    virtual ~MediaFolder();
-    virtual bool operator==(const MediaFolder& other) const;
-    QList<QStandardItem *>& row();
-    void setMediaType(MediaType mediaType);
-    void setFolder(QString path);
-    MediaType mediaType();
-    QString folder();
+class MediaFolder : public QObject {
+        Q_OBJECT
+    public:
+        enum MediaType {NONE, VIDEO, AUDIO, IMAGES};
+        MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent = 0);
+        MediaFolder(QString line, int lineNumber = -1, QObject* parent = 0);
+        explicit MediaFolder(QObject* parent = 0);
+        MediaFolder(const MediaFolder& other);
 
-private:
-    QStandardItem* m_mediaType;
-    QStandardItem* m_folder;
-    int m_lineNumber;
-    QList<QStandardItem *> m_row;
+        virtual ~MediaFolder();
+        virtual bool operator==(const MediaFolder& other) const;
+        QList< QStandardItem* >* row();
+        void setMediaType(MediaType mediaType);
+        void setFolder(QString path);
+        MediaType mediaType() const;
+        QString folder() const;
+        QStandardItem* standardItemMediaType();
+        QStandardItem* standardItemFolder();
+	QString mediaTypeToString();
+
+    private:
+        MediaType m_mediaType;
+        QString m_folder;
+        int m_lineNumber;
 };
-
-enum MediaType {NONE, VIDEO, AUDIO, PHOTO};
 
 #endif // MEDIAFOLDER_H

@@ -22,41 +22,48 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef MINIDLNAPROCESS_H
 #define MINIDLNAPROCESS_H
 #include <QProcess>
+
 #include "pidthread.h"
 #include "../server/interface/restinterfaces.h"
 #include "../server/interface/restminidlna.h"
-#include "minidlna_configuration.h"
+#include "configurationfile.h"
 
 
 /**
  * @patern singleton
  */
-class MinidlnaProcess: public QObject, public RESTInterfaces
+class MiniDLNAProcess: public QObject, public RESTInterfaces
 {
     Q_OBJECT
 
 public:
-    static MinidlnaProcess* getInstance();
-    virtual ~MinidlnaProcess();
+    static MiniDLNAProcess
+* getInstance();
+    virtual ~MiniDLNAProcess
+();
     void minidlnaStart();
     void minidlnaKill();
     bool minidlnaStatus();
-    void loadSettings();
-//     Configuration* configuration();
+    void loadConfiguration();
+    ConfigurationFile* configFile();
 protected:
-    MinidlnaProcess();
+    MiniDLNAProcess
+();
 private:
+    void loadSettings();
+    void loadConfigFile();
     QProcess* minidlna;
     QString minidlnas;
     QStringList arg;
     QString pathPidFile;
     PidThread* t_pid;
-    QString path_conffile;
+    QString m_confFilePath
+;
     bool scanFile;
-    bool defConfFile;
+    bool m_useDefaultConfFile;
     void setArg();
     void loadResource();
-//     Configuration* m_config;
+    ConfigurationFile* m_confFile;
 
 signals:
     void minidlnaStatus ( QProcess::ProcessState state );

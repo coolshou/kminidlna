@@ -19,66 +19,105 @@
 
 #include "mediafolder.h"
 
-MediaFolder::MediaFolder(QString folder, MediaFolder::MediaType mediaType, QObject* parent): QObject(parent), m_lineNumber(-1)
-{
-    m_folder = new QStandardItem(folder);
-    m_mediaType = new QStandardItem();
-    setMediaType(mediaType);
-    m_row.append(m_folder);
-    m_row.append(m_mediaType);
+MediaFolder::MediaFolder(QString folder, MediaFolder::MediaType mediaType, QObject* parent)
+        : QObject(parent),  m_mediaType(mediaType), m_lineNumber(-1) {
+    m_folder = folder;
 }
 
-MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent): QObject(parent), m_lineNumber(lineNumber)
-{
+MediaFolder::MediaFolder(QObject* parent): QObject(parent) {
+    m_folder = "";
+    m_mediaType = NONE;
+}
+
+MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent): QObject(parent), m_lineNumber(lineNumber) {
+    m_folder = "";
+    m_mediaType = NONE;
+}
+
+MediaFolder::MediaFolder(const MediaFolder& other) {
+    m_folder = other.m_folder;
+    m_lineNumber = other.m_lineNumber;
+    m_mediaType = other.m_mediaType;
+}
+
+MediaFolder::~MediaFolder() {
 
 }
 
-MediaFolder::~MediaFolder()
-{
 
-}
-
-
-bool MediaFolder::operator==(const MediaFolder& other) const
-{
+bool MediaFolder::operator==(const MediaFolder& other) const {
+    if (other.m_folder == m_folder && other.m_mediaType == m_mediaType && other.m_lineNumber == m_lineNumber) {
+        return true;
+    }
     return false;
 }
 
-QString MediaFolder::folder()
-{
-    return m_folder->data().toString();
+QString MediaFolder::folder() const {
+    return m_folder;
 }
 
-MediaFolder::MediaType MediaFolder::mediaType()
-{
-    return *(MediaType *) m_mediaType->data().data();
+MediaFolder::MediaType MediaFolder::mediaType() const {
+    return m_mediaType;
 }
 
-QList< QStandardItem* >& MediaFolder::row()
-{
-    return m_row;
+/**
+ * You must delete list after using it!!!
+ */
+QList< QStandardItem* >* MediaFolder::row() {
+    QList<QStandardItem *>* ret = new QList<QStandardItem *>();
+    ret->append(standardItemFolder());
+    ret->append(standardItemMediaType());
+    return ret;
 }
 
-void MediaFolder::setFolder(QString path)
-{
-    m_folder->setText(path);
+void MediaFolder::setFolder(QString path) {
+    m_folder = path;
 }
 
-void MediaFolder::setMediaType(MediaFolder::MediaType mediaType)
-{
-    m_mediaType->setData(mediaType);
+void MediaFolder::setMediaType(MediaFolder::MediaType mediaType) {
+    m_mediaType = mediaType;
 
-    switch (mediaType) {
+
+}
+
+/**
+ * must be used in model for delete
+ */
+QStandardItem* MediaFolder::standardItemFolder() {
+    QStandardItem* ret = new QStandardItem();
+    ret->setData(m_folder);
+    ret->setText(m_folder);
+    return ret;
+}
+
+
+/**
+ * must be used in model for delete
+ */
+QStandardItem* MediaFolder::standardItemMediaType() {
+    QStandardItem* ret = new QStandardItem();
+    ret->setData(m_mediaType);
+    ret->setText(mediaTypeToString());
+    return ret;
+}
+
+QString MediaFolder::mediaTypeToString() {
+    QString ret;
+    switch (m_mediaType) {
     case VIDEO:
-        m_mediaType->setText(i18n("Video"));
+        ret = i18n("Video");
         break;
     case AUDIO:
-        m_mediaType->setText(i18n("Audio"));
+        ret = i18n("Audio");
         break;
     case IMAGES:
-        m_mediaType->setText(i18n("Images"));
+        ret = i18n("Images");
         break;
     default:
-        m_mediaType->setText(i18n(""));
+        ret = i18n("");
     }
+    return ret;
 }
+
+
+

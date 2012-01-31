@@ -36,7 +36,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
 {
-    dlnaProcess = MinidlnaProcess::getInstance();
+    dlnaProcess = MiniDLNAProcess
+::getInstance();
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
             this, SLOT(onMiniDLNAState(QProcess::ProcessState)));

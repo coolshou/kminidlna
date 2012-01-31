@@ -52,7 +52,8 @@ private:
     KHelpMenu *aboutMenu;
     KMenu *mTool;
     KMenu *mAbout;
-    MinidlnaProcess *dlnaProcess;
+    MiniDLNAProcess
+ *dlnaProcess;
     KAction* m_actionStartStopRESTServer;
     MainWidget *mw;
     KAction* trayStopStart;

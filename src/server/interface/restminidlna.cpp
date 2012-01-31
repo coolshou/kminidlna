@@ -58,7 +58,7 @@ bool RESTMiniDLNA::setResource(QDomDocument* resource)
     QDomText state = resource->documentElement().firstChildElement("state").firstChild().toText();
     if (!state.isNull()) {
         if (state.data() == "running") {
-            MinidlnaProcess::getInstance()->minidlnaStart();
+            MiniDLNAProcess::getInstance()->minidlnaStart();
             return true;
         }
     }

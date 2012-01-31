@@ -21,6 +21,7 @@
 #define MEDIAFOLDERS_H
 
 #include "../core/model/mediafolder.h"
+#include "../core/configurationfile.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -29,22 +30,31 @@
 #include <QStandardItemModel>
 #include <QTableView>
 #include <KDialog>
+#include <QToolButton>
 
 
-class MediaFoldersDialog : public KDialog
-{
-Q_OBJECT
-public:
-    explicit MediaFoldersDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~MediaFoldersDialog();
-    void addLine(QString line);
-    void loadModel();
-private:
-    void initGUI();
-    QStandardItemModel* m_model;
-    QTableView* m_tableView;
-    QList<MediaFolder *> m_rows;
-    
+class MediaFoldersDialog : public KDialog {
+        Q_OBJECT
+    public:
+        explicit MediaFoldersDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
+        virtual ~MediaFoldersDialog();
+        void addLine(QString line);
+        void loadModel();
+	bool isModelChanged();
+    private:
+        void initGUI();
+        QStandardItemModel* m_model;
+        QTableView* m_tableView;
+        ConfigurationFile* m_configFile;
+        QToolButton* m_add;
+        QToolButton* m_remove;
+	bool m_changedModel;
+    public slots:
+        void onAddButtonClicked();
+        void onRemoveButtonClicked();
+        void onEditButtonClicked();
+    void onOKClicked();
+
 };
 
 #endif // MEDIAFOLDERS_H

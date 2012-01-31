@@ -18,26 +18,33 @@
 */
 
 
-#include "minidlna_configuration.h"
+#include "configurationfile.h"
+#include <QDebug>
+#include <QFile>
+#include <QTextStream>
+// #include "minidlna_process.h"
 
-Configuration::Configuration(QString path) : m_path(path) {
+ConfigurationFile::ConfigurationFile(QString path, QObject* parent) : QObject(parent), m_path(path) {
     if (loadData()) {
-        qDebug() << "Configuration: File not loaded will be use default";
-        path = MiniDLNA::CONFFILE_PATH;
-        if (!loadData()) {
-            qDebug() << "Configuration: File not loaded. Please set path to configuration file";
-        }
+        qDebug() << "ConfigurationFile: Conf file is not loaded";
     }
+
+
+    //DBG
+    m_mediaFolders << new MediaFolder("/home/", MediaFolder::VIDEO, this);
+    m_mediaFolders << new MediaFolder("/media/sda1", MediaFolder::AUDIO, this);
+
+    //EndDBG
+
 }
 
-Configuration::~Configuration() {
-
+ConfigurationFile::~ConfigurationFile() {
 }
 
 /**
  * Function copy predefined configuration file
  */
-bool Configuration::createFile(QString path) {
+bool ConfigurationFile::createFile(QString path) {
     this->m_path = path;
     QFile conf(path);
     if (conf.exists()) {
@@ -52,7 +59,7 @@ bool Configuration::createFile(QString path) {
 /**
  * load data
  */
-bool Configuration::loadData() {
+bool ConfigurationFile::loadData() {
     QFile conf(m_path);
     if (!conf.exists()) {
         return false;
@@ -75,7 +82,7 @@ bool Configuration::loadData() {
 /**
  * load data again
  */
-bool Configuration::reload() {
+bool ConfigurationFile::reload() {
     return loadData();
 }
 
@@ -106,7 +113,7 @@ static const struct {
     { ENABLE_DLNA_STRICT, "strict_dlna" }
 };
 
-void Configuration::parseLine(QString line) {
+void ConfigurationFile::parseLine(QString line) {
 
     //Empty line
     if (line[0] == '\0') {
@@ -135,10 +142,17 @@ void Configuration::parseLine(QString line) {
 
 }
 
-QList< MediaFolder* > Configuration::mediaFolders()
-{
-    return m_mediaFolder;
+QList<MediaFolder *>& ConfigurationFile::mediaFolders(){
+    return m_mediaFolders;
 }
+
+bool ConfigurationFile::saveMediaDirectoryModel(QStandardItemModel* model)
+{
+    qDebug() << "model saved";
+    //TODO save model
+    return false;
+}
+
 
 
 

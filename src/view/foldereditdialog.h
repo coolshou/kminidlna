@@ -17,30 +17,31 @@
 */
 
 
-#ifndef MEDIAFOLDERS_H
-#define MEDIAFOLDERS_H
+#ifndef FOLDEREDITDIALOG_H
+#define FOLDEREDITDIALOG_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QTableView>
+#include <kdialog.h>
+#include <QLineEdit>
+#include <QComboBox>
+#include "../core/model/mediafolder.h"
 
 
-class MediaFolders : public QWidget
-{
-
+class FolderEditDialog : public KDialog {
+    Q_OBJECT
 public:
-    explicit MediaFolders(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~MediaFolders();
-    void addLine(QString line);
-    void loadModel();
+    explicit FolderEditDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
+    FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent = 0, Qt::WFlags flags = 0);
+    virtual ~FolderEditDialog();
+    MediaFolder& mediaFolder();
 private:
     void initGUI();
-    QStandardItemModel* m_model;
-    QTableView* m_tableView;
-    
+    QLineEdit* m_ledFolderPath;
+    QComboBox* m_cbxMediaType;
+
+    void setMediaType(MediaFolder::MediaType mediaType);
+
+private slots:
+    void onFindFolderClicked();
 };
 
-#endif // MEDIAFOLDERS_H
+#endif // FOLDEREDITDIALOG_H

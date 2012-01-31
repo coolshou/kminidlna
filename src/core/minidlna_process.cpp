@@ -35,46 +35,40 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-MinidlnaProcess::MinidlnaProcess(): RESTInterfaces()
-{
-    loadSettings();
-    t_pid = new PidThread ( this );
-    connect ( t_pid, SIGNAL ( foundPidFile ( bool ) ), this, SLOT ( onPidFile ( bool ) ) );
+MiniDLNAProcess::MiniDLNAProcess(): RESTInterfaces() {
+    m_confFile = 0;
+    loadConfiguration();
+    t_pid = new PidThread(this);
+    connect(t_pid, SIGNAL(foundPidFile(bool)),
+            this, SLOT(onPidFile(bool)));
 
     loadResource();
     minidlna = new QProcess();
-    
-//     connect(kapp, SIGNAL(aboutToQuit()), this, SLOT());
+
     RESTServer* server = RESTServer::getInstance();
     server->addInterfaces(this);
 }
 
-MinidlnaProcess::~MinidlnaProcess() 
-{
-    
-    if ( minidlna->state() == QProcess::Running )
-    {
+MiniDLNAProcess::~MiniDLNAProcess() {
+
+    if (minidlna->state() == QProcess::Running) {
         minidlna->kill();
     }
     delete minidlna;
 
-    if ( minidlnaStatus() )
-    {
-        kill ( t_pid->getPid(), 15 );
+    if (minidlnaStatus()) {
+        kill(t_pid->getPid(), 15);
     }
-    if ( t_pid != 0 )
-    {
-        if ( t_pid->isRunning() )
-        {
+    if (t_pid != 0) {
+        if (t_pid->isRunning()) {
             t_pid->terminate();
         }
         delete t_pid;
     }
 }
 
-MinidlnaProcess* MinidlnaProcess::getInstance()
-{
-    static MinidlnaProcess instance;
+MiniDLNAProcess* MiniDLNAProcess::getInstance() {
+    static MiniDLNAProcess instance;
     return &instance;
 }
 
@@ -82,20 +76,15 @@ MinidlnaProcess* MinidlnaProcess::getInstance()
 /**
  * start minidlna a send signal
  */
-void MinidlnaProcess::minidlnaStart()
-{
-    if ( !QFile::exists ( t_pid->getPidPath() ) )
-    {
-        minidlna->start ( minidlnas, arg );
-        emit minidlnaStatus ( QProcess::Starting );
-        t_pid->setPathPidFile ( pathPidFile+"minidlna.pid" );
+void MiniDLNAProcess::minidlnaStart() {
+    if (!QFile::exists(t_pid->getPidPath())) {
+        minidlna->start(minidlnas, arg);
+        emit minidlnaStatus(QProcess::Starting);
+        t_pid->setPathPidFile(pathPidFile + "minidlna.pid");
         t_pid->start();
-    }
-    else
-    {
+    } else {
         //get PID FROM FILE
-
-        onPidFile ( true );
+        onPidFile(true);
     }
 }
 
@@ -103,16 +92,13 @@ void MinidlnaProcess::minidlnaStart()
 /**
  * kill minidlna a send signal
  */
-void MinidlnaProcess::minidlnaKill()
-{
-    if ( QFile::exists ( t_pid->getPidPath() ) )
-    {
-        if ( t_pid->getPid() <0 )
-        {
+void MiniDLNAProcess::minidlnaKill() {
+    if (QFile::exists(t_pid->getPidPath())) {
+        if (t_pid->getPid() < 0) {
             return;
         }
-        kill ( t_pid->getPid(), 15 );
-        emit minidlnaStatus ( QProcess::NotRunning );
+        kill(t_pid->getPid(), 15);
+        emit minidlnaStatus(QProcess::NotRunning);
     }
 }
 
@@ -120,11 +106,8 @@ void MinidlnaProcess::minidlnaKill()
  * Status of minidlna process
  * @return true if minidlna runnning, false if not running
  */
-bool MinidlnaProcess::minidlnaStatus()
-{
-    if ( QFile::exists ( t_pid->getPidPath() ) )
-    {
-// 	emit minidlnaStatus ( QProcess::Running );
+bool MiniDLNAProcess::minidlnaStatus() {
+    if (QFile::exists(t_pid->getPidPath())) {
         return true;
     }
     return false;
@@ -133,122 +116,98 @@ bool MinidlnaProcess::minidlnaStatus()
 /**
  * SLOT send status minidlna to KminiDLNA
  */
-void MinidlnaProcess::onPidFile ( bool found )
-{
-    if ( found )
-    {
-        emit minidlnaStatus ( QProcess::Running );
-    }
-    else
-    {
-        emit minidlnaStatus ( QProcess::NotRunning );
+void MiniDLNAProcess::onPidFile(bool found) {
+    if (found) {
+        emit minidlnaStatus(QProcess::Running);
+    } else {
+        emit minidlnaStatus(QProcess::NotRunning);
     }
 }
 
-void MinidlnaProcess::loadSettings()
-{
-    KConfigGroup config = KGlobal::config()->group ( "minidlna" );
+void MiniDLNAProcess::loadConfiguration() {
+    loadSettings();
+}
+
+void MiniDLNAProcess::loadSettings() {
+    KConfigGroup config = KGlobal::config()->group("minidlna");
 
     //set minidlna path
-    QString minidlnapath = config.readEntry ( "minidlnapath", MiniDLNA::MINIDLNA_PATH );
-    if ( QFile::exists ( minidlnapath ) )
-    {
+    QString minidlnapath = config.readEntry("minidlnapath", MiniDLNA::MINIDLNA_PATH);
+    if (QFile::exists(minidlnapath)) {
         minidlnas = minidlnapath;
-    }
-    else
-    {
-
-        QFileInfo def ( MiniDLNA::MINIDLNA_PATH);
-        if ( def.exists() && def.isExecutable() )
-        {
+    } else {
+        QFileInfo def(MiniDLNA::MINIDLNA_PATH);
+        if (def.exists() && def.isExecutable()) {
             minidlnas = def.absoluteFilePath();
-        }
-        else
-        {
-            //TODO add error mesage
+        } else {
             qDebug() << "minidlna in " << minidlnapath << " was not found";
         }
     }
 
     //Set pid path
-    QString pidpath = config.readEntry ( "pidpath", MiniDLNA::PIDFILE_PATH );
-    QFileInfo pid ( pidpath );
-    if ( pid.isDir() && pid.isWritable() )
-    {
+    QString pidpath = config.readEntry("pidpath", MiniDLNA::PIDFILE_PATH);
+    QFileInfo pid(pidpath);
+    if (pid.isDir() && pid.isWritable()) {
         pathPidFile = pidpath;
-    }
-    else
-    {
+    } else {
         QFileInfo def(MiniDLNA::PIDFILE_PATH);
         if (def.isDir() && def.isWritable()) {
 //             qDebug()<< "setted default pid directory: "<< def.absolutePath();
         } else {
-            //TODO add error mesage
             qDebug() << "pid directory is not writable or it was not found";
         }
     }
 
-    if ( config.readEntry ( "scanfile", true ) )
-    {
+    if (config.readEntry("scanfile", true)) {
         scanFile = true;
-    }
-    else
-    {
+    } else {
         scanFile = false;
     }
 
     //Default configuration file
-    if (config.readEntry("default_conf_file", true)) {
-        defConfFile = true;
-    } else {
-        defConfFile = false;
-    }
+    m_useDefaultConfFile = config.readEntry("default_conf_file", true);
 
     //Path to conf file
-    QString conffilepath = config.readEntry ( "conf_file_path", MiniDLNA::CONFFILE_PATH );
-    QFileInfo confFile(conffilepath);
-    if ( confFile.exists() && confFile.isReadable())
-    {
-        path_conffile = conffilepath;
-    }
-    else
-    {
-        confFile.setFile ( MiniDLNA::CONFFILE_PATH );
-        if ( confFile.exists() && confFile.isReadable() )
-        {
-            path_conffile = confFile.absoluteFilePath();
-        }
-        else
-        {
-            //TODO add error mesage
-            qDebug() << "minidlna in " << minidlnapath << " was not found";
+    QString confFilePath = config.readEntry("conf_file_path", MiniDLNA::CONFFILE_PATH);
+    if (!m_useDefaultConfFile) {
+        QFileInfo confFile(confFilePath);
+        if (confFile.exists() && confFile.isReadable()) {
+            m_confFilePath = confFilePath;
+        } else {
+            qDebug() << "minidlna config file in " << m_confFilePath << " was not found using default config file";
+            m_useDefaultConfFile = true;
+            m_confFilePath = MiniDLNA::CONFFILE_PATH;
         }
     }
     setArg();
 }
 
-void MinidlnaProcess::setArg()
-{
+void MiniDLNAProcess::setArg() {
     arg.clear();
-    arg << "-P" << pathPidFile+"minidlna.pid";
-    if ( scanFile )
-    {
+    arg << "-P" << pathPidFile + "minidlna.pid";
+    if (scanFile) {
         arg << "-R";
     }
-
-    if (!defConfFile) {
-        arg << "-f" << path_conffile;
+    if (!m_useDefaultConfFile) {
+        arg << "-f" << m_confFilePath;
     }
 }
 
-void MinidlnaProcess::loadResource()
-{
+void MiniDLNAProcess::loadResource() {
     addResource(new RESTMiniDLNA(this));
 }
 
-// Configuration* MinidlnaProcess::configuration()
-// {
-//     return m_config;
-// }
+ConfigurationFile* MiniDLNAProcess::configFile() {
+    if (m_confFile == 0) {
+        loadConfigFile();
+    }
+    return m_confFile;
+}
+
+void MiniDLNAProcess::loadConfigFile() {
+    m_confFile = new ConfigurationFile(m_confFilePath, this);
+}
+
+
 
 

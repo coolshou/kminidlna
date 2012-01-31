@@ -76,7 +76,9 @@ int main(int argc, char** argv)
         }
     }
     if (args->isSet("start-dlna")) {
-        MinidlnaProcess* process = MinidlnaProcess::getInstance();
+        MiniDLNAProcess
+* process = MiniDLNAProcess
+::getInstance();
 	process->minidlnaStart();
     }
     args->clear();

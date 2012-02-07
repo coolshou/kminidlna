@@ -72,6 +72,7 @@ class MiniDLNAProcess: public QObject, public RESTInterfaces {
 
     signals:
         void minidlnaStatus(QProcess::ProcessState state);
+	void configurationFileChanged();
 
 };
 

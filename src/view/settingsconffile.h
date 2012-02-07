@@ -25,6 +25,7 @@
 #include <QListView>
 #include <QStringListModel>
 #include <QToolButton>
+#include "../core/configurationfile.h"
 
 
 class SettingsConfFile : public AbstractSettings {
@@ -45,9 +46,11 @@ class SettingsConfFile : public AbstractSettings {
         QToolButton* m_add;
         QToolButton* m_remove;
         QStringList m_albumArtNamesList;
+	ConfigurationFile* m_actualConfFile;
     public slots:
         void onAddButtonClicked();
         void onRemoveButtonClicked();
+        void onConfigFileChanged();
 };
 
 #endif // SETTINGSCONFFILE_H

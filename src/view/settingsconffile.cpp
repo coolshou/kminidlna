@@ -28,10 +28,13 @@
 #include <QSpacerItem>
 #include <KDialog>
 #include <QLineEdit>
+#include <QLabel>
 
-SettingsConfFile::SettingsConfFile(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f) {
+SettingsConfFile::SettingsConfFile(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f), m_albumArtNamesModel(0), m_actualConfFile(0) {
     initGUI();
-    loadModel();
+    loadSettings();
+    connect(MiniDLNAProcess::getInstance(), SIGNAL(configurationFileChanged()),
+            this, SLOT(onConfigFileChanged()));
 }
 
 SettingsConfFile::~SettingsConfFile() {
@@ -40,12 +43,19 @@ SettingsConfFile::~SettingsConfFile() {
 
 
 void SettingsConfFile::applySettings() {
+
+    QStringList list = m_albumArtNamesModel->stringList();
+    if (m_actualConfFile != 0) {
+        m_actualConfFile->saveAlbumArtNames(list);
+    } else {
+        qDebug() << "SettingsConfFile: Not exist actual conf file object!";
+    }
     AbstractSettings::applySettings();
 
 }
 
 void SettingsConfFile::loadSettings() {
-
+    loadModel();
 }
 
 void SettingsConfFile::setDefaults() {
@@ -55,15 +65,16 @@ void SettingsConfFile::setDefaults() {
 void SettingsConfFile::initGUI() {
     QVBoxLayout* central = new QVBoxLayout(this);
 
-    QGroupBox* confFilegroup = new QGroupBox(i18n("Configuration file"), this);
-    central->addWidget(confFilegroup);
+    QGroupBox* albumArtNamesGroup = new QGroupBox(i18n("Album art filenames"), this);
+    central->addWidget(albumArtNamesGroup);
 
-    QVBoxLayout* confFileGroupLayout = new QVBoxLayout(confFilegroup);
+    QVBoxLayout* albumArtNamesGroupLayout = new QVBoxLayout(albumArtNamesGroup);
 
-    m_albumArtNamesView = new QListView(confFilegroup);
-    confFileGroupLayout->addWidget(m_albumArtNamesView);
+    m_albumArtNamesView = new QListView(albumArtNamesGroup);
+    albumArtNamesGroupLayout->addWidget(m_albumArtNamesView);
+    m_albumArtNamesView->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-    m_albumArtNamesControllWidget = new QWidget(confFilegroup);
+    m_albumArtNamesControllWidget = new QWidget(albumArtNamesGroup);
 
     QHBoxLayout* controllWidgetLayout = new QHBoxLayout(m_albumArtNamesControllWidget);
     controllWidgetLayout->addSpacerItem(new QSpacerItem(80, 10, QSizePolicy::Expanding));
@@ -75,35 +86,61 @@ void SettingsConfFile::initGUI() {
             this, SLOT(onAddButtonClicked()));
 
 
+
     m_remove = new QToolButton(m_albumArtNamesControllWidget);
     m_remove->setIcon(KIcon("list-remove"));
     controllWidgetLayout->addWidget(m_remove);
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(onRemoveButtonClicked()));
+    connect(m_remove, SIGNAL(clicked(bool)),
+            this, SLOT(someChanged()));
 
-    confFileGroupLayout->addWidget(m_albumArtNamesControllWidget);
+    albumArtNamesGroupLayout->addWidget(m_albumArtNamesControllWidget);
 }
 
 void SettingsConfFile::loadModel() {
-    ConfigurationFile* confFile = MiniDLNAProcess::getInstance()->configFile();
-    m_albumArtNamesList = confFile->albumArtNames();
+    m_actualConfFile = MiniDLNAProcess::getInstance()->configFile();
+    m_albumArtNamesList = m_actualConfFile->albumArtNames();
+    if (m_albumArtNamesModel != 0) {
+        disconnect(m_albumArtNamesModel);
+        delete m_albumArtNamesModel;
+    }
     m_albumArtNamesModel = new QStringListModel(m_albumArtNamesList);
+
+
     connect(m_albumArtNamesModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
             this, SLOT(someChanged()));
     m_albumArtNamesView->setModel(m_albumArtNamesModel);
+    if (m_actualConfFile->isWritable()) {
+        m_albumArtNamesControllWidget->setEnabled(true);
+        m_albumArtNamesView->setEditTriggers(QAbstractItemView::DoubleClicked);
+    } else {
+        m_albumArtNamesControllWidget->setEnabled(false);
+        m_albumArtNamesView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+    m_changed = false;
 
 }
 
 void SettingsConfFile::onAddButtonClicked() {
-//     KDialog* dlg = new KDialog(this);
-//     dlg->setButtons(KDialog::Ok | KDialog::Cancel);
-//     QLineEdit* albumArtName = new QLineEdit(i18n("Album art name"), dlg);
-//     if (dlg->exec() == QDialog::Accepted) {
-    m_albumArtNamesModel->insertRow(m_albumArtNamesModel->rowCount());
-// 	QModelIndex last = m_albumArtNamesModel->index(m_albumArtNamesModel->rowCount());
-// // 	m_albumArtNamesView->;
-//     }
-//     delete dlg;
+    KDialog* dlg = new KDialog(this);
+    dlg->setCaption(i18n("Add new album art name"));
+    dlg->setButtons(KDialog::Ok | KDialog::Cancel);
+    QHBoxLayout* mainlayout = new QHBoxLayout(dlg->mainWidget());
+
+    QLabel* lbl = new QLabel(i18n("<b>New album art name:</b>"), dlg->mainWidget());
+    mainlayout->addWidget(lbl);
+
+    QLineEdit* albumArtName = new QLineEdit(i18n("Type new name"), dlg->mainWidget());
+    mainlayout->addWidget(albumArtName);
+
+    if (dlg->exec() == QDialog::Accepted) {
+        int lastItemIdx = m_albumArtNamesModel->rowCount();
+        m_albumArtNamesModel->insertRow(lastItemIdx);
+        m_albumArtNamesModel->setData(m_albumArtNamesModel->index(lastItemIdx), albumArtName->text());
+        someChanged();
+    }
+    delete dlg;
 }
 
 void SettingsConfFile::onRemoveButtonClicked() {
@@ -112,4 +149,9 @@ void SettingsConfFile::onRemoveButtonClicked() {
         m_albumArtNamesModel->removeRow(row);
     }
 }
+
+void SettingsConfFile::onConfigFileChanged() {
+    loadModel();
+}
+
 

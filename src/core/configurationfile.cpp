@@ -278,12 +278,20 @@ bool ConfigurationFile::isWritable() {
 
 QStringList ConfigurationFile::albumArtNames() {
     QStringList albumArtNamesList;
-    QString value = m_optionsValue.value(UPNPALBUMART_NAMES);
-    albumArtNamesList = value.split("/");
+    if (m_optionsValue.contains(UPNPALBUMART_NAMES)) {
+        QString value = m_optionsValue.value(UPNPALBUMART_NAMES);
+        albumArtNamesList = value.split("/");
+    }
     return albumArtNamesList;
 }
 
 void ConfigurationFile::saveAlbumArtNames(QStringList list) {
-
+    if (m_optionsValue.contains(UPNPALBUMART_NAMES)) {
+        m_optionsValue.remove(UPNPALBUMART_NAMES);
+    }
+    if (!list.isEmpty()) {
+        m_optionsValue.insert(UPNPALBUMART_NAMES, list.join("/"));
+    }
+    saveOptions();
 }
 

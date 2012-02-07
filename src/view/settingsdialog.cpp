@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDebug>
 #include <KMessageBox>
 
-SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags) {
+SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags), m_wasNo(false) {
     initGUI();
 }
 
@@ -102,20 +102,26 @@ void SettingsDialog::initGUI() {
 }
 
 void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before) {
+    if (m_wasNo) {
+	m_wasNo = false;
+        return;
+    }
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(before->widget());
-    if (tmp->isChanged()) {
 
+    if (tmp->isChanged()) {
+        setCurrentPage(before);
         int ret = KMessageBox::warningYesNoCancel(this, i18n("Settings was changed.\nDo you want apply changes?"), i18n("Setting was changed"));
         switch (ret) {
         case KMessageBox::Yes:
             onApply();
+            setCurrentPage(current);
             break;
         case KMessageBox::No:
             tmp->loadSettings();
             m_apply->setEnabled(false);
+            m_wasNo = true;
+            setCurrentPage(current);
             break;
-        default:
-            setCurrentPage(before);
         }
     }
 }
@@ -125,6 +131,8 @@ void SettingsDialog::onChange() {
     m_apply->setEnabled(true);
 //     }
 }
+
+
 
 
 

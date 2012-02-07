@@ -41,6 +41,9 @@ private:
     SettingsConfFile* m_confFileSettings;
     SettingsServer* m_server;
     KPushButton*  m_apply;
+bool m_wasNo
+;
+
     void initGUI();
 private slots:
     void onApply();

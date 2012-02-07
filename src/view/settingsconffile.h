@@ -17,49 +17,37 @@
 */
 
 
-#ifndef MEDIAFOLDERS_H
-#define MEDIAFOLDERS_H
+#ifndef SETTINGSCONFFILE_H
+#define SETTINGSCONFFILE_H
 
-#include "../core/model/mediafolder.h"
-#include "../core/configurationfile.h"
+#include "abstractsettings.h"
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QTableView>
-#include <KDialog>
+#include <QListView>
+#include <QStringListModel>
 #include <QToolButton>
 
 
-class MediaFoldersDialog : public KDialog {
+class SettingsConfFile : public AbstractSettings {
         Q_OBJECT
+
     public:
-        explicit MediaFoldersDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
-        virtual ~MediaFoldersDialog();
-        void addLine(QString line);
-        void loadModel();
-        bool isModelChanged();
-        void setFileIsNotWritable(bool writable);
+        SettingsConfFile(QWidget* parent = 0, Qt::WindowFlags f = 0);
+        virtual void loadSettings();
+        virtual void setDefaults();
+        virtual ~SettingsConfFile();
+        virtual void applySettings();
     private:
         void initGUI();
-        QStandardItemModel* m_model;
-        QTableView* m_tableView;
-        ConfigurationFile* m_configFile;
+        void loadModel();
+        QListView* m_albumArtNamesView;
+        QStringListModel* m_albumArtNamesModel;
+        QWidget* m_albumArtNamesControllWidget;
         QToolButton* m_add;
         QToolButton* m_remove;
-        bool m_changedModel;
-        QList<MediaFolder *> m_createdMediaFolders;
-        QWidget* m_controllWidget;
-        QLabel* m_lblInfo;
-	QString m_pathToConfig;
+        QStringList m_albumArtNamesList;
     public slots:
         void onAddButtonClicked();
         void onRemoveButtonClicked();
-        void onEditButtonClicked();
-        void onOKClicked();
-
 };
 
-#endif // MEDIAFOLDERS_H
+#endif // SETTINGSCONFFILE_H

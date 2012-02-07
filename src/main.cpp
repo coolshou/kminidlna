@@ -76,12 +76,11 @@ int main(int argc, char** argv)
         }
     }
     if (args->isSet("start-dlna")) {
-        MiniDLNAProcess
-* process = MiniDLNAProcess
-::getInstance();
-	process->minidlnaStart();
+        MiniDLNAProcess* process = MiniDLNAProcess::getInstance();
+        process->minidlnaStart();
     }
     args->clear();
 
     return app.exec();
 }
+

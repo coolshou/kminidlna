@@ -27,6 +27,7 @@
 #include "foldereditdialog.h"
 #include <QPushButton>
 
+
 MediaFoldersDialog::MediaFoldersDialog(QWidget* parent, Qt::WindowFlags f): KDialog(parent, f) {
     m_model = new QStandardItemModel(0, 2, this);
     loadModel();
@@ -41,6 +42,9 @@ void MediaFoldersDialog::initGUI() {
     setCaption(i18n("Media Folders"));
     QVBoxLayout* mainlayout = new QVBoxLayout(mainWidget());
 
+    m_lblInfo = new QLabel(mainWidget());
+    mainlayout->addWidget(m_lblInfo);
+
     m_tableView = new QTableView(mainWidget());
     m_tableView->setModel(m_model);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -52,32 +56,37 @@ void MediaFoldersDialog::initGUI() {
 
     mainlayout->addWidget(m_tableView);
     //Controll part
-    QWidget* controllWidget = new QWidget(mainWidget());
-    QHBoxLayout* controllLayout = new QHBoxLayout(controllWidget);
+    m_controllWidget = new QWidget(mainWidget());
+    QHBoxLayout* controllLayout = new QHBoxLayout(m_controllWidget);
 
-    QPushButton* btnEdit = new QPushButton(i18n("Edit"), controllWidget);
+    QPushButton* btnEdit = new QPushButton(i18n("Edit"), m_controllWidget);
     connect(btnEdit, SIGNAL(clicked(bool)),
             this, SLOT(onEditButtonClicked()));
 
     controllLayout->addSpacerItem(new QSpacerItem(80, 10, QSizePolicy::Expanding));
 
-    m_add = new QToolButton(controllWidget);
+    m_add = new QToolButton(m_controllWidget);
     m_add->setIcon(KIcon("list-add"));
     controllLayout->addWidget(m_add);
     connect(m_add, SIGNAL(clicked(bool)),
             this, SLOT(onAddButtonClicked()));
 
-    m_remove = new QToolButton(controllWidget);
+    m_remove = new QToolButton(m_controllWidget);
     m_remove->setIcon(KIcon("list-remove"));
     controllLayout->addWidget(m_remove);
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(onRemoveButtonClicked()));
 
 
-    mainlayout->addWidget(controllWidget);
-    
+    mainlayout->addWidget(m_controllWidget);
+
+
+
     connect(this, SIGNAL(okClicked()),
-	    this, SLOT(onOKClicked()));
+            this, SLOT(onOKClicked()));
+
+    //set controll if conf file is not writable
+    setFileIsNotWritable(MiniDLNAProcess::getInstance()->configFile()->isWritable());
 }
 
 void MediaFoldersDialog::loadModel() {
@@ -88,6 +97,7 @@ void MediaFoldersDialog::loadModel() {
     m_model->setHorizontalHeaderLabels(headerLabels);
 
     QList<MediaFolder *>& mediaFolders = MiniDLNAProcess::getInstance()->configFile()->mediaFolders();
+    m_pathToConfig = MiniDLNAProcess::getInstance()->configFile()->path();
     QList<MediaFolder *>::const_iterator i;
 
     for (i = mediaFolders.begin(); i != mediaFolders.end(); ++i) {
@@ -96,12 +106,13 @@ void MediaFoldersDialog::loadModel() {
         delete tmp;
     }
     m_changedModel = false;
+
 }
 
 void MediaFoldersDialog::onAddButtonClicked() {
     FolderEditDialog* dlg = new FolderEditDialog(this);
     if (dlg->exec() == QDialog::Accepted) {
-        m_model->appendRow(*(dlg->mediaFolder().row()));
+        m_model->appendRow(*(dlg->mediaFolder()->row()));
     }
     delete dlg;
 }
@@ -109,8 +120,8 @@ void MediaFoldersDialog::onAddButtonClicked() {
 void MediaFoldersDialog::onRemoveButtonClicked() {
     int row = m_tableView->currentIndex().row();
     if (row >= 0 && row < m_model->rowCount()) {
-	m_model->removeRow(row);
-	m_changedModel = true;
+        m_model->removeRow(row);
+        m_changedModel = true;
     }
 }
 
@@ -121,15 +132,15 @@ void MediaFoldersDialog::onEditButtonClicked() {
         MediaFolder folder(m_model->item(row, 0)->data().toString(), type);
         FolderEditDialog* dlg = new FolderEditDialog(folder, this);
         if (dlg->exec() == QDialog::Accepted) {
-            MediaFolder& tmp = dlg->mediaFolder();
-            if (!(tmp == folder)) {
-                m_model->item(row, 0)->setText(tmp.folder());
-                m_model->item(row, 0)->setData(tmp.folder());
+            MediaFolder* tmp = dlg->mediaFolder();
+            if (!(*tmp == folder)) {
+                m_model->item(row, 0)->setText(tmp->folder());
+                m_model->item(row, 0)->setData(tmp->folder());
 
-                m_model->item(row, 1)->setText(tmp.mediaTypeToString());
-                m_model->item(row, 1)->setData(tmp.mediaType());
-                
-		m_changedModel = true;
+                m_model->item(row, 1)->setText(tmp->mediaTypeToString());
+                m_model->item(row, 1)->setData(tmp->mediaType());
+
+                m_changedModel = true;
             }
         }
         delete dlg;
@@ -137,15 +148,28 @@ void MediaFoldersDialog::onEditButtonClicked() {
 }
 
 
-bool MediaFoldersDialog::isModelChanged()
-{
+bool MediaFoldersDialog::isModelChanged() {
     return m_changedModel;
 }
 
-void MediaFoldersDialog::onOKClicked()
-{
-    MiniDLNAProcess::getInstance()->configFile()->saveMediaDirectoryModel(m_model);
+void MediaFoldersDialog::onOKClicked() {
+    ConfigurationFile* confile = MiniDLNAProcess::getInstance()->configFile();
+    if (confile->isWritable()) {
+        confile->saveMediaDirectoryModel(m_model);
+    }
 }
+
+void MediaFoldersDialog::setFileIsNotWritable(bool writable) {
+
+    m_controllWidget->setEnabled(writable);
+    if (!writable) {
+        m_lblInfo->setText("<b>"+i18n("Config file: ") + "</b>" + m_pathToConfig +
+                           " <br/><b>" + i18n("Configuration file is not writable!") + "</b");
+    }else{
+      m_lblInfo->setText("<b>"+i18n("Config file: ") + "</b>" + m_pathToConfig);
+    }
+}
+
 
 
 

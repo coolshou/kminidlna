@@ -24,13 +24,13 @@
 #include <KLocalizedString>
 
 
-class MediaFolder : public QObject {
-        Q_OBJECT
+class MediaFolder: public QObject {
+  Q_OBJECT
     public:
         enum MediaType {NONE, VIDEO, AUDIO, IMAGES};
-        MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent = 0);
-        MediaFolder(QString line, int lineNumber = -1, QObject* parent = 0);
-        explicit MediaFolder(QObject* parent = 0);
+        MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent= 0);
+        MediaFolder(QString line, int lineNumber = -1, QObject* parent= 0);
+        explicit MediaFolder(QObject* parent= 0);
         MediaFolder(const MediaFolder& other);
 
         virtual ~MediaFolder();
@@ -43,11 +43,14 @@ class MediaFolder : public QObject {
         QStandardItem* standardItemMediaType();
         QStandardItem* standardItemFolder();
 	QString mediaTypeToString();
+	bool isValid();
+	QString line();
 
     private:
         MediaType m_mediaType;
         QString m_folder;
         int m_lineNumber;
+	bool m_valid;
 };
 
 #endif // MEDIAFOLDER_H

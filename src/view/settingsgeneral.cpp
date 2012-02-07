@@ -40,41 +40,38 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 	rememberrun (false)
  *
  */
-SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f)
-{
+SettingsGeneral::SettingsGeneral(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f) {
     initGUI();
     loadSettings();
 }
 
-SettingsGeneral::~SettingsGeneral()
-{
+SettingsGeneral::~SettingsGeneral() {
 }
 
-void SettingsGeneral::initGUI()
-{
+void SettingsGeneral::initGUI() {
     QVBoxLayout *central = new QVBoxLayout(this);
-    
+
     QGroupBox *group = new QGroupBox(i18n("General"), this);
     QVBoxLayout *ll = new QVBoxLayout(group);
     central->addWidget(group);
-    
+
     m_closeToTray = new QCheckBox(i18n("Close to system tray"), group);
     connect(m_closeToTray, SIGNAL(stateChanged(int)),
-	    this, SLOT(someChanged()));
+            this, SLOT(someChanged()));
     ll->addWidget(m_closeToTray);
 
     m_runOnStart = new QCheckBox(i18n("Run on start"), group);
     connect(m_runOnStart, SIGNAL(stateChanged(int)),
-	    this, SLOT(someChanged()));
+            this, SLOT(someChanged()));
     ll->addWidget(m_runOnStart);
 
     m_remRun = new QCheckBox(i18n("Remember running"), group);
     connect(m_remRun, SIGNAL(stateChanged(int)),
-	    this, SLOT(someChanged()));
+            this, SLOT(someChanged()));
     m_remRun->setEnabled(false);
     ll->addWidget(m_remRun);
 
-   ll->addSpacerItem(new QSpacerItem(40, 400));
+    ll->addSpacerItem(new QSpacerItem(40, 400));
 }
 
 /**
@@ -86,14 +83,14 @@ void SettingsGeneral::initGUI()
  * 	runonstart  (false)
  * 	rememberrun (false)
  */
-void SettingsGeneral::applySettings()
-{
-    AbstractSettings::applySettings();
-    KConfigGroup config = KGlobal::config()->group( "General" );
+void SettingsGeneral::applySettings() {
+
+    KConfigGroup config = KGlobal::config()->group("General");
     config.writeEntry("closetotray", m_closeToTray->isChecked());
     config.writeEntry("runonstart", m_runOnStart->isChecked());
     config.writeEntry("rememberrun", m_remRun->isChecked());
     config.sync();
+    AbstractSettings::applySettings();
 }
 
 /**
@@ -105,18 +102,16 @@ void SettingsGeneral::applySettings()
  * 	runonstart  (false)
  * 	rememberrun (false)
  */
-void SettingsGeneral::loadSettings()
-{
+void SettingsGeneral::loadSettings() {
 
-    KConfigGroup config = KGlobal::config()->group( "General" );
+    KConfigGroup config = KGlobal::config()->group("General");
     m_closeToTray->setChecked(config.readEntry("closetotray", false));
     m_runOnStart->setChecked(config.readEntry("runonstart", false));
     m_remRun->setChecked(config.readEntry("rememberrun", false));
     m_changed = false;
 }
 
-void SettingsGeneral::setDefaults()
-{
+void SettingsGeneral::setDefaults() {
     m_closeToTray->setChecked(true);
     m_runOnStart->setChecked(false);
     m_remRun->setChecked(false);

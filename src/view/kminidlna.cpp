@@ -36,8 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
 {
-    dlnaProcess = MiniDLNAProcess
-::getInstance();
+    dlnaProcess = MiniDLNAProcess::getInstance();
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
             this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
@@ -120,7 +119,7 @@ void KminiDLNA::createMenu()
     KAction* aSetFolder = new KAction(KIcon("list-add"), i18n("Set folders"), mTool);
 //     aSetFolder->setEnabled(false);
     connect(aSetFolder, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
-	    this, SLOT(setFolders()));
+            this, SLOT(setFolders()));
     mTool->addAction(aSetFolder);
 
     m_actionStartStopRESTServer = new KAction(KIcon("applications-internet"), i18n("Start HTTP REST server"), mTool);
@@ -219,9 +218,9 @@ void KminiDLNA::onRESTServerRun(bool run)
 
 void KminiDLNA::setFolders()
 {
-  MediaFoldersDialog* dlg = new MediaFoldersDialog(this);
-  dlg->exec();
-  delete dlg;
+    MediaFoldersDialog* dlg = new MediaFoldersDialog(this);
+    dlg->exec();
+    delete dlg;
 }
 
 

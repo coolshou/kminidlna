@@ -25,18 +25,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDebug>
 #include <KMessageBox>
 
-SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags)
-{
+SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags) {
     initGUI();
 }
 
-SettingsDialog::~SettingsDialog()
-{
+SettingsDialog::~SettingsDialog() {
 
 }
 
-void SettingsDialog::onApply()
-{
+void SettingsDialog::onApply() {
     KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
     if (tmp->isChanged()) {
@@ -45,19 +42,17 @@ void SettingsDialog::onApply()
     m_apply->setEnabled(false);
 }
 
-void SettingsDialog::onDefault()
-{
+void SettingsDialog::onDefault() {
     KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
     tmp->setDefaults();
 }
 
-void SettingsDialog::initGUI()
-{
-    setWindowModality( Qt::WindowModal );
+void SettingsDialog::initGUI() {
+    setWindowModality(Qt::WindowModal);
     setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply /*| KDialog::Default*/);
     m_apply = button(KDialog::Apply);
-    setFaceType( KPageDialog::List);
+    setFaceType(KPageDialog::List);
     setWindowTitle(i18n("Configure KminiDLNA"));
     setMinimumSize(450, 250);
 
@@ -77,6 +72,14 @@ void SettingsDialog::initGUI()
     minidlnaPage->setIcon(KIcon("configure"));
     addPage(minidlnaPage);
 
+    m_confFileSettings = new SettingsConfFile(this);
+    connect(m_confFileSettings, SIGNAL(changed()),
+            this, SLOT(onChange()));
+    KPageWidgetItem* confFilePage = new KPageWidgetItem(m_confFileSettings, i18n("MiniDLNA configuration file"));
+    confFilePage->setObjectName("conffile");
+    confFilePage->setIcon(KIcon("text-plain"));
+    addPage(confFilePage);
+
     m_server = new SettingsServer(this);
     connect(m_server, SIGNAL(changed()),
             this, SLOT(onChange()));
@@ -93,13 +96,12 @@ void SettingsDialog::initGUI()
     connect(this, SIGNAL(okClicked()),
             this, SLOT(onApply()));
 
-    connect(this,SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)),
-            this, SLOT(curentPageChanged(KPageWidgetItem*,KPageWidgetItem*)));
+    connect(this, SIGNAL(currentPageChanged(KPageWidgetItem*, KPageWidgetItem*)),
+            this, SLOT(curentPageChanged(KPageWidgetItem*, KPageWidgetItem*)));
     m_apply->setEnabled(false);
 }
 
-void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before)
-{
+void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before) {
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(before->widget());
     if (tmp->isChanged()) {
 
@@ -118,8 +120,7 @@ void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem
     }
 }
 
-void SettingsDialog::onChange()
-{
+void SettingsDialog::onChange() {
 //     if(!m_apply->isEnabled()){
     m_apply->setEnabled(true);
 //     }

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFileInfo>
 #include "../server/restserver.h"
 #include "../server/interface/restminidlna.h"
+#include <QDir>
 
 
 
@@ -140,7 +141,7 @@ void MiniDLNAProcess::loadSettings() {
         if (def.exists() && def.isExecutable()) {
             minidlnas = def.absoluteFilePath();
         } else {
-            qDebug() << "minidlna in " << minidlnapath << " was not found";
+            qDebug() << i18n("MiniDLNA in ") << minidlnapath << i18n(" was not found");
         }
     }
 
@@ -158,38 +159,48 @@ void MiniDLNAProcess::loadSettings() {
         }
     }
 
-    if (config.readEntry("scanfile", true)) {
-        scanFile = true;
-    } else {
-        scanFile = false;
-    }
+    m_fullRescanFile = config.readEntry("scanfile", true);
 
-    //Default configuration file
-    m_useDefaultConfFile = config.readEntry("default_conf_file", true);
+    m_port = config.readEntry("minidlna_port", MiniDLNA::DEFAULTPORT);
 
-    //Path to conf file
-    QString confFilePath = config.readEntry("conf_file_path", MiniDLNA::CONFFILE_PATH);
-    if (!m_useDefaultConfFile) {
-        QFileInfo confFile(confFilePath);
-        if (confFile.exists() && confFile.isReadable()) {
-            m_confFilePath = confFilePath;
-        } else {
-            qDebug() << "minidlna config file in " << m_confFilePath << " was not found using default config file";
-            m_useDefaultConfFile = true;
-            m_confFilePath = MiniDLNA::CONFFILE_PATH;
+    //Set configuration file
+    m_usedConfFile = ConfigurationFile::ConfFile(config.readEntry("use_conf_file", -1));
+
+    QString confFilePath = config.readEntry("conf_file_path", ConfigurationFile::PATH_TO_DEFAULT_LOCAL_FILE);
+
+    QFileInfo configFile;
+    switch (m_usedConfFile) {
+    case ConfigurationFile::DEFAULT:
+        confFilePath = ConfigurationFile::PATH_TO_DEFAULT_LOCAL_FILE;
+    case ConfigurationFile::USER:
+        configFile.setFile(confFilePath);
+        if (!configFile.exists()) {
+            createConfigFile(confFilePath);
         }
+        if (configFile.isReadable()) {
+            m_confFilePath = confFilePath;
+            break;
+        }
+        qDebug() << "minidlna config file in " << m_confFilePath << " was not found using global config file";
+    case ConfigurationFile::GLOBAL:
+        m_usedConfFile = ConfigurationFile::GLOBAL;
+        m_confFilePath = MiniDLNA::GLOBALCONFFILE_PATH;
     }
+
     setArg();
 }
 
 void MiniDLNAProcess::setArg() {
     arg.clear();
     arg << "-P" << pathPidFile + "minidlna.pid";
-    if (scanFile) {
+    if (m_fullRescanFile) {
         arg << "-R";
     }
-    if (!m_useDefaultConfFile) {
+    if (m_usedConfFile != ConfigurationFile::GLOBAL) {
         arg << "-f" << m_confFilePath;
+    }
+    if (m_port != MiniDLNA::DEFAULTPORT) {
+        arg << "-p" << QString(m_port);
     }
 }
 
@@ -197,17 +208,48 @@ void MiniDLNAProcess::loadResource() {
     addResource(new RESTMiniDLNA(this));
 }
 
+/**
+ * @return actual configuration file (path from settings)
+ */
 ConfigurationFile* MiniDLNAProcess::configFile() {
     if (m_confFile == 0) {
+        qDebug() << "MiniDLNAProcess: Loading config file";
         loadConfigFile();
+    } else if (m_isConfigFileOptionsChanged) {
+        if (m_confFile->path() != m_confFilePath) {
+            delete m_confFile;
+            loadConfigFile();
+        } else {
+            m_confFile->reload();
+            m_isConfigFileOptionsChanged = false;
+        }
     }
     return m_confFile;
 }
 
 void MiniDLNAProcess::loadConfigFile() {
     m_confFile = new ConfigurationFile(m_confFilePath, this);
+    m_isConfigFileOptionsChanged = false;
 }
 
+void MiniDLNAProcess::createConfigFile(QString path) {
 
+    QFileInfo info(path);
+    QDir dir = info.dir();
+    if (!dir.exists()) {
+        if (!dir.mkpath(dir.path())) {
+            return;
+        }
+        //Create file
+        if (m_confFile != 0) {
+            delete m_confFile;
+        }
+        m_confFile = new ConfigurationFile(path, this);
+        m_confFile->createFile();
+    }
+}
 
-
+void MiniDLNAProcess::configFileChanged() {
+    loadSettings();
+    m_isConfigFileOptionsChanged = true;
+}

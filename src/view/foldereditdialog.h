@@ -32,12 +32,11 @@ public:
     explicit FolderEditDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
     FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent = 0, Qt::WFlags flags = 0);
     virtual ~FolderEditDialog();
-    MediaFolder& mediaFolder();
+    MediaFolder* mediaFolder();
 private:
     void initGUI();
     QLineEdit* m_ledFolderPath;
     QComboBox* m_cbxMediaType;
-
     void setMediaType(MediaFolder::MediaType mediaType);
 
 private slots:

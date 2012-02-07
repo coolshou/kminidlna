@@ -18,20 +18,53 @@
 */
 
 #include "mediafolder.h"
+#include <QDebug>
 
 MediaFolder::MediaFolder(QString folder, MediaFolder::MediaType mediaType, QObject* parent)
-        : QObject(parent),  m_mediaType(mediaType), m_lineNumber(-1) {
+        :  QObject(parent), m_mediaType(mediaType), m_lineNumber(-1), m_valid(true)
+{
     m_folder = folder;
 }
 
-MediaFolder::MediaFolder(QObject* parent): QObject(parent) {
+MediaFolder::MediaFolder(QObject* parent)
+        : QObject(parent), m_valid(false)
+{
     m_folder = "";
     m_mediaType = NONE;
 }
 
-MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent): QObject(parent), m_lineNumber(lineNumber) {
-    m_folder = "";
-    m_mediaType = NONE;
+MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent)
+        : QObject(parent), m_lineNumber(lineNumber), m_valid(false)
+{
+    switch (line[0].toAscii()) {
+    case 'V':
+    case 'v':
+        m_mediaType = VIDEO;
+        break;
+    case 'A':
+    case 'a':
+        m_mediaType = AUDIO;
+        break;
+    case 'P':
+    case 'p':
+        m_mediaType = IMAGES;
+        break;
+    case '/':
+        m_mediaType = NONE;
+        break;
+        //case '~': //replace ~ by home
+    default:
+        m_valid = false;
+    }
+
+    if (!m_valid) {
+        QString folder(line);
+        //TODO check if it is valid path
+        if (m_mediaType != NONE) {
+            folder.remove(0,2);
+        }
+        m_folder = folder;
+    }
 }
 
 MediaFolder::MediaFolder(const MediaFolder& other) {
@@ -118,6 +151,33 @@ QString MediaFolder::mediaTypeToString() {
     }
     return ret;
 }
+
+
+bool MediaFolder::isValid()
+{
+    return m_valid;
+}
+
+QString MediaFolder::line()
+{
+    QString line = "";
+    switch (m_mediaType) {
+    case VIDEO:
+        line += "V,";
+        break;
+    case AUDIO:
+        line += "A,";
+        break;
+    case IMAGES:
+        line += "P,";
+        break;
+    default:
+      ;
+    }
+    line += m_folder;
+    return line;
+}
+
 
 
 

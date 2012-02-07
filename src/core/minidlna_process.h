@@ -32,49 +32,54 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 /**
  * @patern singleton
  */
-class MiniDLNAProcess: public QObject, public RESTInterfaces
-{
-    Q_OBJECT
+class MiniDLNAProcess: public QObject, public RESTInterfaces {
+        Q_OBJECT
 
-public:
-    static MiniDLNAProcess
-* getInstance();
-    virtual ~MiniDLNAProcess
-();
-    void minidlnaStart();
-    void minidlnaKill();
-    bool minidlnaStatus();
-    void loadConfiguration();
-    ConfigurationFile* configFile();
-protected:
-    MiniDLNAProcess
-();
-private:
-    void loadSettings();
-    void loadConfigFile();
-    QProcess* minidlna;
-    QString minidlnas;
-    QStringList arg;
-    QString pathPidFile;
-    PidThread* t_pid;
-    QString m_confFilePath
-;
-    bool scanFile;
-    bool m_useDefaultConfFile;
-    void setArg();
-    void loadResource();
-    ConfigurationFile* m_confFile;
+    public:
+        static MiniDLNAProcess* getInstance();
+        virtual ~MiniDLNAProcess();
+        void minidlnaStart();
+        void minidlnaKill();
+        bool minidlnaStatus();
+        void loadConfiguration();
+        ConfigurationFile* configFile();
+        void configFileChanged();
 
-signals:
-    void minidlnaStatus ( QProcess::ProcessState state );
-public slots:
-    void onPidFile ( bool found );
+    protected:
+        MiniDLNAProcess();
+
+    private:
+        void loadSettings();
+        void loadConfigFile();
+        QProcess* minidlna;
+        QString minidlnas;
+        QStringList arg;
+        QString pathPidFile;
+        PidThread* t_pid;
+        QString m_confFilePath;
+
+        bool m_fullRescanFile;
+	int m_port;
+        ConfigurationFile::ConfFile m_usedConfFile;
+        void setArg();
+        void loadResource();
+        void createConfigFile(QString path);
+        bool m_isConfigFileOptionsChanged;
+        ConfigurationFile* m_confFile;
+
+    public slots:
+        void onPidFile(bool found);
+
+    signals:
+        void minidlnaStatus(QProcess::ProcessState state);
+
 };
 
 namespace MiniDLNA {
-static const QString MINIDLNA_PATH = "/usr/sbin/minidlna";
-static const QString PIDFILE_PATH = "/tmp/";
-static const QString CONFFILE_PATH = "/etc/minidlna.conf";
+    static const QString MINIDLNA_PATH = "/usr/sbin/minidlna";
+    static const QString PIDFILE_PATH = "/tmp/";
+    static const QString GLOBALCONFFILE_PATH = "/etc/minidlna.conf";
+    static const int DEFAULTPORT = 8200;
 }
 
 #endif // MINIDLNAPROCESS_H

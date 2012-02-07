@@ -22,31 +22,40 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
-// #include "minidlna_process.h"
+#include <KStandardDirs>
+#include <KApplication>
+#include <QDir>
+#include "minidlna_process.h"
 
-ConfigurationFile::ConfigurationFile(QString path, QObject* parent) : QObject(parent), m_path(path) {
+// bool ConfigurationFile::m_optionsIDLoaded = false;
+
+// QMap<ConfigurationFile::ConfigOptions, QString> m_optionsID();
+const QString ConfigurationFile::DEFAULT_LOCAL_CONF_FILE_NAME = "minidlna.conf";
+const QString ConfigurationFile::PATH_TO_DEFAULT_LOCAL_FILE = pathToDefaultLocalConfigFile();
+
+
+ConfigurationFile::ConfigurationFile(QString path, QObject* parent) : QObject(parent), m_path(path), m_optionsIDLoaded(false) {
+    loadOptionsID();
     if (loadData()) {
+        processOptionsData();
+    } else {
         qDebug() << "ConfigurationFile: Conf file is not loaded";
     }
-
-
-    //DBG
-    m_mediaFolders << new MediaFolder("/home/", MediaFolder::VIDEO, this);
-    m_mediaFolders << new MediaFolder("/media/sda1", MediaFolder::AUDIO, this);
-
-    //EndDBG
-
 }
 
 ConfigurationFile::~ConfigurationFile() {
+    qDeleteAll<QList<MediaFolder *>::iterator>(m_mediaFolders.begin(), m_mediaFolders.end());
+    m_mediaFolders.clear();
 }
 
 /**
  * Function copy predefined configuration file
+ *
+ * @return true if file is created and copied default structur other is returned false
  */
-bool ConfigurationFile::createFile(QString path) {
-    this->m_path = path;
-    QFile conf(path);
+bool ConfigurationFile::createFile() {
+
+    QFile conf(m_path);
     if (conf.exists()) {
         qDebug() << "Configuration: creatFile> File exists";
         return false;
@@ -68,7 +77,7 @@ bool ConfigurationFile::loadData() {
         QTextStream in(&conf);
         while (!in.atEnd()) {
             QString line  = in.readLine();
-            parseLine(line);
+            parseLineAndAddOption(line);
         }
         conf.close();
 
@@ -83,38 +92,18 @@ bool ConfigurationFile::loadData() {
  * load data again
  */
 bool ConfigurationFile::reload() {
-    return loadData();
+
+    m_optionsValue.clear();
+    qDeleteAll<QList<MediaFolder *>::iterator>(m_mediaFolders.begin(), m_mediaFolders.end());
+    m_mediaFolders.clear();
+
+    if (loadData()) {
+        processOptionsData();
+    }
+    return false;
 }
 
-/**
- * !!!!!!!!!!!!Copy from minidlna source options.c!!!!!!!!!!!!
- */
-static const struct {
-    enum upnpconfigoptions id;
-    const char * name;
-} optionids[] = {
-    { UPNPIFNAME, "network_interface" },
-    { UPNPLISTENING_IP, "listening_ip" },
-    { UPNPPORT, "port" },
-    { UPNPPRESENTATIONURL, "presentation_url" },
-    { UPNPNOTIFY_INTERVAL, "notify_interval" },
-    { UPNPSYSTEM_UPTIME, "system_uptime" },
-    { UPNPUUID, "uuid"},
-    { UPNPSERIAL, "serial"},
-    { UPNPMODEL_NAME, "model_name"},
-    { UPNPMODEL_NUMBER, "model_number"},
-    { UPNPFRIENDLYNAME, "friendly_name"},
-    { UPNPMEDIADIR, "media_dir"},
-    { UPNPALBUMART_NAMES, "album_art_names"},
-    { UPNPINOTIFY, "inotify" },
-    { UPNPDBDIR, "db_dir" },
-    { UPNPLOGDIR, "log_dir" },
-    { ENABLE_TIVO, "enable_tivo" },
-    { ENABLE_DLNA_STRICT, "strict_dlna" }
-};
-
-void ConfigurationFile::parseLine(QString line) {
-
+void ConfigurationFile::parseLineAndAddOption(QString line) {
     //Empty line
     if (line[0] == '\0') {
         return;
@@ -138,21 +127,163 @@ void ConfigurationFile::parseLine(QString line) {
         return;
     }
 
+    ConfigOptions option = INVALID;
+    if (!m_optionsIDLoaded) {
+        loadOptionsID();
+    }
 
+    QMap<ConfigOptions, QString>::const_iterator it;
+    for (it = m_optionsID.constBegin(); it  != m_optionsID.constEnd(); ++it) {
+        if (line.startsWith(it.value())) {
+            option = it.key();
+            break;
+        }
+    }
+    if (option == INVALID) {
+        return;
+    }
 
+    int positionOfValue = line.indexOf('=');
+    if (positionOfValue < 0) {
+        return;
+    }
+    ++positionOfValue;
+
+    //remove leading space before value
+    for (; positionOfValue < line.length(); ++positionOfValue) {
+        if (!line[positionOfValue].isSpace()) {
+            break;
+        }
+    }
+
+    if (positionOfValue == line.length()) {
+        return;
+    }
+
+    line.remove(0, positionOfValue);
+    m_optionsValue.insert(option, line);
 }
 
-QList<MediaFolder *>& ConfigurationFile::mediaFolders(){
+QList<MediaFolder *>& ConfigurationFile::mediaFolders() {
     return m_mediaFolders;
 }
 
-bool ConfigurationFile::saveMediaDirectoryModel(QStandardItemModel* model)
-{
-    qDebug() << "model saved";
-    //TODO save model
-    return false;
+bool ConfigurationFile::saveMediaDirectoryModel(QStandardItemModel* model) {
+    m_optionsValue.remove(UPNPMEDIADIR);
+    qDeleteAll<QList<MediaFolder *>::iterator>(m_mediaFolders.begin(), m_mediaFolders.end());
+    m_mediaFolders.clear();
+    if (model->rowCount() > 0) {
+
+        for (int row = 0; row < model->rowCount(); ++row) {
+            MediaFolder fld(model->item(row, 0)->data().toString(),
+                            * (MediaFolder::MediaType *) model->item(row, 1)->data().data());
+            m_optionsValue.insert(UPNPMEDIADIR, fld.line());
+        }
+    }
+    return saveOptions();
+}
+
+void ConfigurationFile::loadOptionsID() {
+
+    if (!m_optionsIDLoaded) {
+        m_optionsID.insert(UPNPIFNAME, "network_interface");
+        m_optionsID.insert(UPNPLISTENING_IP, "listening_ip");
+        m_optionsID.insert(UPNPPORT, "port");
+        m_optionsID.insert(UPNPPRESENTATIONURL, "presentation_url");
+        m_optionsID.insert(UPNPNOTIFY_INTERVAL, "notify_interval");
+        m_optionsID.insert(UPNPSYSTEM_UPTIME, "system_uptime");
+        m_optionsID.insert(UPNPUUID, "uuid");
+        m_optionsID.insert(UPNPSERIAL, "serial");
+        m_optionsID.insert(UPNPMODEL_NAME, "model_name");
+        m_optionsID.insert(UPNPMODEL_NUMBER, "model_number");
+        m_optionsID.insert(UPNPFRIENDLYNAME, "friendly_name");
+        m_optionsID.insert(UPNPMEDIADIR, "media_dir");
+        m_optionsID.insert(UPNPALBUMART_NAMES, "album_art_names");
+        m_optionsID.insert(UPNPINOTIFY, "inotify");
+        m_optionsID.insert(UPNPDBDIR, "db_dir");
+        m_optionsID.insert(UPNPLOGDIR, "log_dir");
+        m_optionsID.insert(ENABLE_TIVO, "enable_tivo");
+        m_optionsID.insert(ENABLE_DLNA_STRICT, "strict_dlna");
+        m_optionsIDLoaded = true;
+    }
+}
+
+void ConfigurationFile::processOptionsData() {
+    loadAndSetDirectory();
+
 }
 
 
+/**
+ * not clear m_mediaFolders!
+ */
+void ConfigurationFile::loadAndSetDirectory() {
+    QList<QString> directory = m_optionsValue.values(UPNPMEDIADIR);
+    QList<QString>::const_iterator it;
+    for (it = directory.constBegin(); it != directory.constEnd(); ++it) {
+        MediaFolder* mf = new MediaFolder(*it, -1, this);
+        m_mediaFolders.append(mf);
+    }
+}
 
+/**
+ * Save all options
+ */
+bool ConfigurationFile::saveOptions() {
+    QFileInfo info(m_path);
+    QDir dir = info.dir();
+    if (!dir.exists()) {
+        if (!dir.mkpath(m_path)) {
+            qDebug() << i18n("ConfigurationFile: Cannot create directory");
+            return false;
+        }
+    }
+
+    QFile confFile(m_path);
+    if (confFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&confFile);
+
+        QMultiHash<ConfigOptions, QString>::const_iterator it;
+        for (it = m_optionsValue.constBegin(); it != m_optionsValue.constEnd(); ++it) {
+            if (it.key() != INVALID) {
+                out << m_optionsID[it.key()] << "=" << it.value();
+                endl(out);
+            }
+
+        }
+    } else {
+        qDebug() << i18n("ConfigurationFile: Cannot open conf file: ") << m_path;
+        return false;
+    }
+    if (confFile.isOpen()) {
+        confFile.close();
+    }
+    reload();
+    return true;
+}
+
+
+QString ConfigurationFile::pathToDefaultLocalConfigFile() {
+    KStandardDirs stdir;
+    QString path = stdir.saveLocation("data") +
+                   "kminidlna/" +
+                   DEFAULT_LOCAL_CONF_FILE_NAME;
+    return path;
+}
+
+bool ConfigurationFile::isWritable() {
+    QFileInfo info(m_path);
+    return info.isWritable();
+}
+
+QStringList ConfigurationFile::albumArtNames() {
+    QStringList albumArtNamesList;
+    QString value = m_optionsValue.value(UPNPALBUMART_NAMES);
+    albumArtNamesList = value.split("/");
+    return albumArtNamesList;
+}
+
+void ConfigurationFile::saveAlbumArtNames(QStringList list) {
+
+}
 

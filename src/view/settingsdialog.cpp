@@ -72,6 +72,14 @@ void SettingsDialog::initGUI() {
     minidlnaPage->setIcon(KIcon("configure"));
     addPage(minidlnaPage);
 
+    m_mediaFolders = new SettingsMediaFolder(this);
+    connect(m_mediaFolders, SIGNAL(changed()),
+            this, SLOT(onChange()));
+    KPageWidgetItem* mediaFoldersPage = new KPageWidgetItem(m_mediaFolders, i18n("Media folders"));
+    mediaFoldersPage->setObjectName("mediafolder");
+    mediaFoldersPage->setIcon(KIcon("folder-video"));
+    addPage(mediaFoldersPage);
+    
     m_confFileSettings = new SettingsConfFile(this);
     connect(m_confFileSettings, SIGNAL(changed()),
             this, SLOT(onChange()));
@@ -85,7 +93,7 @@ void SettingsDialog::initGUI() {
             this, SLOT(onChange()));
     KPageWidgetItem* serverPage = new KPageWidgetItem(m_server, i18n("Server interface"));
     serverPage->setObjectName("server");
-    serverPage->setIcon(KIcon("applications-internet"));
+    serverPage->setIcon(KIcon("network-server"));
     addPage(serverPage);
 
     //Buttons clicked

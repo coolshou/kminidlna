@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settingsminidlna.h"
 #include "settingsserver.h"
 #include "settingsconffile.h"
+#include "settingsmediafolder.h"
 
 
 class SettingsDialog : public KPageDialog
@@ -39,6 +40,7 @@ private:
     SettingsGeneral* m_general;
     SettingsMiniDLNA* m_minidlna;
     SettingsConfFile* m_confFileSettings;
+    SettingsMediaFolder* m_mediaFolders;
     SettingsServer* m_server;
     KPushButton*  m_apply;
 bool m_wasNo

@@ -229,7 +229,6 @@ ConfigurationFile* MiniDLNAProcess::configFile() {
 
 void MiniDLNAProcess::loadConfigFile() {
     m_confFile = new ConfigurationFile(m_confFilePath, this);
-    emit configurationFileChanged();
     m_isConfigFileOptionsChanged = false;
 }
 

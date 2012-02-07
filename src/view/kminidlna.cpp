@@ -116,12 +116,6 @@ void KminiDLNA::createMenu()
             this, SLOT(showSettings()));
     mTool->addAction(aSetting);
 
-    KAction* aSetFolder = new KAction(KIcon("list-add"), i18n("Set folders"), mTool);
-//     aSetFolder->setEnabled(false);
-    connect(aSetFolder, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
-            this, SLOT(setFolders()));
-    mTool->addAction(aSetFolder);
-
     m_actionStartStopRESTServer = new KAction(KIcon("applications-internet"), i18n("Start HTTP REST server"), mTool);
     connect(m_actionStartStopRESTServer, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)),
             this, SLOT(onActionStartStopServer()));
@@ -214,13 +208,6 @@ void KminiDLNA::onRESTServerRun(bool run)
     } else {
         m_actionStartStopRESTServer->setText(i18n("Start HTTP REST server"));
     }
-}
-
-void KminiDLNA::setFolders()
-{
-    MediaFoldersDialog* dlg = new MediaFoldersDialog(this);
-    dlg->exec();
-    delete dlg;
 }
 
 

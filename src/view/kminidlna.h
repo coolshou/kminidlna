@@ -69,7 +69,6 @@ public slots:
     void quitKminiDLNA();
     void onActionStartStopServer();
     void onRESTServerRun(bool);
-    void setFolders();
 };
 
 #endif // KminiDLNA_H

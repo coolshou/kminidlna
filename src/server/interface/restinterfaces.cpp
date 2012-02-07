@@ -32,15 +32,15 @@ RESTInterfaces::~RESTInterfaces()
 
 void RESTInterfaces::addResource(RESTresource* res)
 {
-    if (!m_resources.contains(res->addres())) {
-        m_resources[res->addres()] = res;
+    if (!m_resources.contains(res->address())) {
+        m_resources[res->address()] = res;
     }
 }
 
 bool RESTInterfaces::removeResource(RESTresource* res)
 {
-    if (m_resources.contains(res->addres())) {
-        if (m_resources.remove(res->addres()) > 0) {
+    if (m_resources.contains(res->address())) {
+        if (m_resources.remove(res->address()) > 0) {
             return true;
         }
 

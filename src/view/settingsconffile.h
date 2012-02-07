@@ -26,6 +26,7 @@
 #include <QStringListModel>
 #include <QToolButton>
 #include "../core/configurationfile.h"
+#include "mediafoldersdialog.h"
 
 
 class SettingsConfFile : public AbstractSettings {
@@ -47,6 +48,7 @@ class SettingsConfFile : public AbstractSettings {
         QToolButton* m_remove;
         QStringList m_albumArtNamesList;
 	ConfigurationFile* m_actualConfFile;
+	MediaFoldersDialog* m_mediaFoldersWidget;
     public slots:
         void onAddButtonClicked();
         void onRemoveButtonClicked();

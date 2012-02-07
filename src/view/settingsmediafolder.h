@@ -17,30 +17,24 @@
 */
 
 
-#ifndef RESTRESOURCE_H
-#define RESTRESOURCE_H
-#include <QString>
-#include <QDomDocument>
-#include <QXmlSchema>
-#include <QXmlSchemaValidator>
+#ifndef SETTINGSMEDIAFOLDER_H
+#define SETTINGSMEDIAFOLDER_H
 
-class RESTresource: public QObject
-{
-    Q_OBJECT
-public:
-    explicit RESTresource(QString address, QObject* parent =0);
-    RESTresource(const RESTresource& other);
-    virtual ~RESTresource();
-    bool operator== (const RESTresource& other);
-    virtual QString address();
-    virtual void setAddress(QString address);
-    virtual QDomDocument* resource() = 0;
-    virtual bool setResource(QDomDocument* resource) = 0;
-    virtual bool isValidResource(QDomDocument* resource);
-protected:
-    QDomDocument* m_document;
-    QString m_address;
-    QXmlSchema m_schema;
+#include "abstractsettings.h"
+#include "mediafoldersdialog.h"
+
+
+class SettingsMediaFolder : public AbstractSettings {
+
+    public:
+        virtual void loadSettings();
+        virtual void setDefaults();
+        SettingsMediaFolder(QWidget* parent = 0, Qt::WindowFlags f = 0);
+        virtual ~SettingsMediaFolder();
+        virtual void applySettings();
+    private:
+        void initGUI();
+	MediaFoldersDialog* m_mediaFoldersWidget;
 };
 
-#endif // RESTRESOURCE_H
+#endif // SETTINGSMEDIAFOLDER_H

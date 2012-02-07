@@ -33,7 +33,7 @@
 #include <QToolButton>
 
 
-class MediaFoldersDialog : public KDialog {
+class MediaFoldersDialog : public QWidget {
         Q_OBJECT
     public:
         explicit MediaFoldersDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
@@ -53,12 +53,16 @@ class MediaFoldersDialog : public KDialog {
         QList<MediaFolder *> m_createdMediaFolders;
         QWidget* m_controllWidget;
         QLabel* m_lblInfo;
-	QString m_pathToConfig;
+        QString m_pathToConfig;
+        ConfigurationFile* m_actualConfFile;
     public slots:
         void onAddButtonClicked();
         void onRemoveButtonClicked();
         void onEditButtonClicked();
-        void onOKClicked();
+        void onApplyClicked();
+        void reload();
+    signals:
+        void modelChanged();
 
 };
 

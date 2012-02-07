@@ -1,6 +1,6 @@
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES}  )
 
-set( VIEW_SRCS settingsconffile.cpp foldereditdialog.cpp mediafoldersdialog.cpp settingsserver.cpp
+set( VIEW_SRCS settingsmediafolder.cpp settingsconffile.cpp foldereditdialog.cpp mediafoldersdialog.cpp settingsserver.cpp
 	  abstractsettings.cpp
 	  kminidlna.cpp
 	  mainwidget.cpp

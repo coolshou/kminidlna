@@ -94,8 +94,7 @@ void SettingsConfFile::initGUI() {
             this, SLOT(onRemoveButtonClicked()));
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(someChanged()));
-
-    albumArtNamesGroupLayout->addWidget(m_albumArtNamesControllWidget);
+    albumArtNamesGroupLayout->addWidget(m_albumArtNamesControllWidget);    
 }
 
 void SettingsConfFile::loadModel() {

@@ -30,29 +30,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settingsmediafolder.h"
 
 
-class SettingsDialog : public KPageDialog
-{
-    Q_OBJECT
-public:
-    explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-    virtual ~SettingsDialog();
-private:
-    SettingsGeneral* m_general;
-    SettingsMiniDLNA* m_minidlna;
-    SettingsConfFile* m_confFileSettings;
-    SettingsMediaFolder* m_mediaFolders;
-    SettingsServer* m_server;
-    KPushButton*  m_apply;
-bool m_wasNo
-;
+class SettingsDialog : public KPageDialog {
+        Q_OBJECT
+    public:
+        explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
+        virtual ~SettingsDialog();
+    private:
+        SettingsGeneral* m_general;
+        SettingsMiniDLNA* m_minidlna;
+        SettingsConfFile* m_confFileSettings;
+        SettingsMediaFolder* m_mediaFolders;
+        SettingsServer* m_server;
+        KPushButton*  m_apply;
+        bool m_wasNo;
 
-    void initGUI();
-private slots:
-    void onApply();
-    void onDefault();
-public slots:
-    void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
-    void onChange();
+        void initGUI();
+    private slots:
+        void onApply();
+        void onDefault();
+    public slots:
+        void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
+        void onChange();
+    signals:
+	void settingsChanged();
 };
 
 #endif // SETTINGSDIALOG_H

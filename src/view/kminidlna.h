@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
 #include "settingsdialog.h"
-#include "mediafoldersdialog.h"
 
 #include <KMainWindow>
 #include <KSystemTrayIcon>
@@ -52,8 +51,7 @@ private:
     KHelpMenu *aboutMenu;
     KMenu *mTool;
     KMenu *mAbout;
-    MiniDLNAProcess
- *dlnaProcess;
+    MiniDLNAProcess *dlnaProcess;
     KAction* m_actionStartStopRESTServer;
     MainWidget *mw;
     KAction* trayStopStart;
@@ -69,6 +67,7 @@ public slots:
     void quitKminiDLNA();
     void onActionStartStopServer();
     void onRESTServerRun(bool);
+    void onSettingsChanged();
 };
 
 #endif // KminiDLNA_H

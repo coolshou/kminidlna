@@ -38,6 +38,7 @@ void SettingsDialog::onApply() {
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
     if (tmp->isChanged()) {
         tmp->applySettings();
+        emit settingsChanged();
     }
     m_apply->setEnabled(false);
 }
@@ -79,7 +80,7 @@ void SettingsDialog::initGUI() {
     mediaFoldersPage->setObjectName("mediafolder");
     mediaFoldersPage->setIcon(KIcon("folder-video"));
     addPage(mediaFoldersPage);
-    
+
     m_confFileSettings = new SettingsConfFile(this);
     connect(m_confFileSettings, SIGNAL(changed()),
             this, SLOT(onChange()));
@@ -111,7 +112,7 @@ void SettingsDialog::initGUI() {
 
 void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before) {
     if (m_wasNo) {
-	m_wasNo = false;
+        m_wasNo = false;
         return;
     }
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(before->widget());

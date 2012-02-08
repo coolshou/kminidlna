@@ -41,7 +41,7 @@ void SettingsMediaFolder::setDefaults() {
 
 void SettingsMediaFolder::applySettings() {
     AbstractSettings::applySettings();
-    m_mediaFoldersWidget->onApplyClicked();
+    m_mediaFoldersWidget->saveModel();
 }
 
 void SettingsMediaFolder::initGUI() {
@@ -51,7 +51,7 @@ void SettingsMediaFolder::initGUI() {
     central->addWidget(mediaFolderGroup);
 
     QVBoxLayout* mediaFolderGroupLayout = new QVBoxLayout(mediaFolderGroup);
-    m_mediaFoldersWidget = new MediaFoldersDialog(mediaFolderGroup);
+    m_mediaFoldersWidget = new MediaFoldersWidget(mediaFolderGroup);
     mediaFolderGroupLayout->addWidget(m_mediaFoldersWidget);
     connect(m_mediaFoldersWidget, SIGNAL(modelChanged()),
             this, SLOT(someChanged()));

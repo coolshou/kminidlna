@@ -21,7 +21,7 @@
 #define SETTINGSMEDIAFOLDER_H
 
 #include "abstractsettings.h"
-#include "mediafoldersdialog.h"
+#include "mediafolderswidget.h"
 
 
 class SettingsMediaFolder : public AbstractSettings {
@@ -34,7 +34,7 @@ class SettingsMediaFolder : public AbstractSettings {
         virtual void applySettings();
     private:
         void initGUI();
-	MediaFoldersDialog* m_mediaFoldersWidget;
+	MediaFoldersWidget* m_mediaFoldersWidget;
 };
 
 #endif // SETTINGSMEDIAFOLDER_H

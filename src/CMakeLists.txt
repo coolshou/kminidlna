@@ -1,6 +1,6 @@
 # cmake_minimum_required(VERSION 2.6)
 include_directories(${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
-set(VERSION "0.19 alpha")
+set(VERSION "0.2 beta")
 
 configure_file(kminidlna_version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/kminidlna_version.h )
 

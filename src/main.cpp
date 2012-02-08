@@ -61,15 +61,17 @@ int main(int argc, char** argv)
     app.setWindowIcon(QIcon(":/images/ikona.png"));
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    KminiDLNA *mainWindow = 0;
     if (args->isSet("gui")) {//isSet without --no!
         qDebug() << "Main: GUI start";
-        KminiDLNA *mainWindow = new KminiDLNA();
+        mainWindow = new KminiDLNA();
         mainWindow->show();
     }
 
-    KConfigGroup config = KGlobal::config()->group("server");
+    
     if (args->isSet("restserver")) {
         RESTServer *server = RESTServer::getInstance();
+	KConfigGroup config = KGlobal::config()->group("server");
         if (config.readEntry("run_server_on_start", false)) {
             server->startServer();
             qDebug() << "Main: HTTP Server start on port " << server->port();

@@ -32,7 +32,6 @@ public:
     virtual ~RESTMiniDLNA();
     virtual QDomDocument* resource();
     virtual bool setResource(QDomDocument* resource);
-    virtual bool isValidResource(QDomDocument* resource);
     
 private:
   QDomText m_stateText;

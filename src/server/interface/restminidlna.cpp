@@ -18,10 +18,10 @@
 
 
 #include "restminidlna.h"
+#include <QXmlSchema>
 #include <QDebug>
 
-RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(address, process)
-{
+RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(address, process) {
     //XML
     QByteArray xmlskeleton = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
                              "<minidlna><state>notrunning</state></minidlna>";
@@ -30,44 +30,36 @@ RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(addr
         m_stateText =  m_document->documentElement().firstChildElement("state").firstChild().toText();
     }
     //End XML
-    if (process !=0) {
-        connect(process, SIGNAL(minidlnaStatus ( QProcess::ProcessState)), this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
+
+    loadSchema(":/schema/state.xsd");
+
+    if (process != 0) {
+        connect(process, SIGNAL(minidlnaStatus(QProcess::ProcessState)), this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
     }
 }
 
-RESTMiniDLNA::~RESTMiniDLNA()
-{
+RESTMiniDLNA::~RESTMiniDLNA() {
 
 }
 
-bool RESTMiniDLNA::isValidResource(QDomDocument* resource)
-{
-    //TODO
-    return true;
-}
-
-QDomDocument* RESTMiniDLNA::resource()
-{
+QDomDocument* RESTMiniDLNA::resource() {
     return m_document;
 }
 
-bool RESTMiniDLNA::setResource(QDomDocument* resource)
-{
-    //TODO
-    //DBG
-    QDomText state = resource->documentElement().firstChildElement("state").firstChild().toText();
-    if (!state.isNull()) {
+bool RESTMiniDLNA::setResource(QDomDocument* resource) {
+    if (isValidResource(resource)) {
+        QDomText state = resource->documentElement().firstChildElement("state").firstChild().toText();
         if (state.data() == "running") {
             MiniDLNAProcess::getInstance()->minidlnaStart();
-            return true;
+        } else if (state.data() == "notrunning") {
+            MiniDLNAProcess::getInstance()->minidlnaKill();
         }
+        return true;
     }
     return false;
-    //End DBG
 }
 
-void RESTMiniDLNA::onMiniDLNAState(QProcess::ProcessState state)
-{
+void RESTMiniDLNA::onMiniDLNAState(QProcess::ProcessState state) {
     switch (state) {
     case QProcess::Starting:
         m_stateText.setData("starting");

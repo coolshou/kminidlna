@@ -24,23 +24,28 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 
-class RESTresource: public QObject
-{
-    Q_OBJECT
-public:
-    explicit RESTresource(QString address, QObject* parent =0);
-    RESTresource(const RESTresource& other);
-    virtual ~RESTresource();
-    bool operator== (const RESTresource& other);
-    virtual QString address();
-    virtual void setAddress(QString address);
-    virtual QDomDocument* resource() = 0;
-    virtual bool setResource(QDomDocument* resource) = 0;
-    virtual bool isValidResource(QDomDocument* resource);
-protected:
-    QDomDocument* m_document;
-    QString m_address;
-    QXmlSchema m_schema;
+class RESTresource: public QObject {
+        Q_OBJECT
+    public:
+        explicit RESTresource(QString address, QObject* parent = 0);
+        RESTresource(const RESTresource& other);
+        virtual ~RESTresource();
+        bool operator== (const RESTresource& other);
+        virtual QString address();
+        virtual void setAddress(QString address);
+        virtual QDomDocument* resource() = 0;
+        virtual bool setResource(QDomDocument* resource) = 0;
+        virtual bool isValidResource(QDomDocument* resource);
+        virtual bool isXmlSchemaSetted();
+        virtual QXmlSchema* schema();
+        virtual bool loadSchema(QString path);
+	
+    protected:
+        QDomDocument* m_document;
+        QString m_address;
+        QXmlSchema* m_schema;
+	bool m_schemaLoaded;
+
 };
 
 #endif // RESTRESOURCE_H

@@ -29,6 +29,7 @@
 #include <KDialog>
 #include <QLineEdit>
 #include <QLabel>
+#include <QInputDialog>
 
 SettingsConfFile::SettingsConfFile(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f), m_albumArtNamesModel(0), m_actualConfFile(0) {
     initGUI();
@@ -39,6 +40,9 @@ SettingsConfFile::SettingsConfFile(QWidget* parent, Qt::WindowFlags f): Abstract
 
 SettingsConfFile::~SettingsConfFile() {
 
+    if (m_albumArtNamesModel != 0) {
+        delete m_albumArtNamesModel;
+    }
 }
 
 
@@ -94,7 +98,7 @@ void SettingsConfFile::initGUI() {
             this, SLOT(onRemoveButtonClicked()));
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(someChanged()));
-    albumArtNamesGroupLayout->addWidget(m_albumArtNamesControllWidget);    
+    albumArtNamesGroupLayout->addWidget(m_albumArtNamesControllWidget);
 }
 
 void SettingsConfFile::loadModel() {
@@ -122,24 +126,16 @@ void SettingsConfFile::loadModel() {
 }
 
 void SettingsConfFile::onAddButtonClicked() {
-    KDialog* dlg = new KDialog(this);
-    dlg->setCaption(i18n("Add new album art name"));
-    dlg->setButtons(KDialog::Ok | KDialog::Cancel);
-    QHBoxLayout* mainlayout = new QHBoxLayout(dlg->mainWidget());
-
-    QLabel* lbl = new QLabel(i18n("<b>New album art name:</b>"), dlg->mainWidget());
-    mainlayout->addWidget(lbl);
-
-    QLineEdit* albumArtName = new QLineEdit(i18n("Type new name"), dlg->mainWidget());
-    mainlayout->addWidget(albumArtName);
-
-    if (dlg->exec() == QDialog::Accepted) {
+    bool ok;
+    QString text = QInputDialog::getText(this, i18n("Add new album art name"),
+                                         i18n("New album art name:"), QLineEdit::Normal,
+                                         i18n("albumartname.jpg"), &ok);
+    if (ok && !text.isEmpty()) {
         int lastItemIdx = m_albumArtNamesModel->rowCount();
         m_albumArtNamesModel->insertRow(lastItemIdx);
-        m_albumArtNamesModel->setData(m_albumArtNamesModel->index(lastItemIdx), albumArtName->text());
+        m_albumArtNamesModel->setData(m_albumArtNamesModel->index(lastItemIdx), text);
         someChanged();
     }
-    delete dlg;
 }
 
 void SettingsConfFile::onRemoveButtonClicked() {

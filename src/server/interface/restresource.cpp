@@ -18,8 +18,10 @@
 
 
 #include "restresource.h"
+#include <QFile>
 
-RESTresource::RESTresource(QString address, QObject* parent): QObject(parent), m_document(0), m_address(address) {
+RESTresource::RESTresource(QString address, QObject* parent)
+        : QObject(parent), m_document(0), m_address(address), m_schema(0) , m_schemaLoaded(false) {
 
 }
 
@@ -38,15 +40,12 @@ void RESTresource::setAddress(QString address) {
 }
 
 bool RESTresource::isValidResource(QDomDocument* resource) {
-//     if (!m_schema.isValid()) {
-//         return false;
-//     }
-//
-//     QXmlSchemaValidator validator(m_schema);
+    if (m_schema == 0 || !m_schema->isValid()) {
+        return false;
+    }
 
-//     if(validator.val
-    //FIXME
-    return true;
+    QXmlSchemaValidator validator(*m_schema);
+    return validator.validate(resource->toByteArray());
 }
 
 bool RESTresource::operator==(const RESTresource& other) {
@@ -55,6 +54,37 @@ bool RESTresource::operator==(const RESTresource& other) {
     }
     return false;
 }
+
+bool RESTresource::loadSchema(QString path) {
+    if (m_schema != 0) {
+        delete m_schema;
+    }
+    m_schema = new QXmlSchema();
+    QFile file(path);
+    m_schemaLoaded = false;
+    if (file.open(QIODevice::ReadOnly)) {
+        m_schemaLoaded = m_schema->load(&file);
+    }
+
+    if (file.isOpen()) {
+        file.close();
+    }
+
+    if (!m_schemaLoaded) {
+        delete m_schema;
+    }
+
+    return m_schemaLoaded;
+}
+
+bool RESTresource::isXmlSchemaSetted() {
+    return m_schemaLoaded;
+}
+
+QXmlSchema* RESTresource::schema() {
+    return m_schema;
+}
+
 
 
 

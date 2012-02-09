@@ -1,6 +1,11 @@
- <!DOCTYPE RCC><RCC version="1.0">
+ <!DOCTYPE RCC>
+ <RCC version="1.0">
  <qresource prefix="images">
      <file alias="ikona.png">resource/kminidlna.png</file>
      <file alias="run.png">resource/icon_play.png</file>
+ </qresource>
+ 
+ <qresource prefix="schema">
+    <file alias="state.xsd">resource/minidlna_state_schema.xsd</file>
  </qresource>
  </RCC>

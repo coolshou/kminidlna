@@ -62,6 +62,9 @@ bool ConfigurationFile::createFile() {
     }
 
     //TODO copy predefined file
+    conf.open(QIODevice::WriteOnly);
+    conf.write("#Created by KMiniDLNA\n");
+    conf.close();
     return true;
 }
 

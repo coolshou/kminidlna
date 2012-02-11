@@ -68,6 +68,7 @@ private:
     void loadConfig();
 
     ServerRequest* receiveRequestHeader(QTcpSocket* socket);
+    static const int MAXHEADERLINES = 40;
 signals:
   void run(bool state);
 };

@@ -31,7 +31,7 @@ ServerRequest::ServerRequest(const ServerRequest& other)
 
 ServerRequest::~ServerRequest()
 {
-
+    qDeleteAll<QHash <QString, QStringList* >::iterator>(m_header.begin(), m_header.end());
 }
 
 /**

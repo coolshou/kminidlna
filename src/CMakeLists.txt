@@ -8,7 +8,7 @@ configure_file(kminidlna_version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/kminidlna_v
 add_subdirectory(view)
 add_subdirectory(server)
 add_subdirectory(core)
-
+add_subdirectory(tests)
 
 set(kminidlna_SRCS main.cpp)
 set(kminidlna_RCCS resource.qrc)

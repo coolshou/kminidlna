@@ -16,7 +16,7 @@
 
 // bool RESTServer::m_runing = false;
 
-RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(Server::DEFAULT_PORT), m_runing(false) 
+RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(Server::DEFAULT_PORT), m_runing(false)
 {
     m_certPath = "cert/server.crt";
     QFile fkey("cert/server.key");
@@ -62,8 +62,8 @@ void RESTServer::startServer()
 {
     if (!m_runing) {
         m_runing = listen(QHostAddress::Any, m_port);
-	qDebug() << "RESTServer: starting server";
-	emit run(m_runing);
+        qDebug() << "RESTServer: starting server";
+        emit run(m_runing);
     }
 }
 
@@ -75,9 +75,9 @@ void RESTServer::stopServer()
 {
     if (m_runing) {
         close();
-	qDebug() << "RESTServer: stoping serve";
+        qDebug() << "RESTServer: stoping serve";
         m_runing = false;
-	emit run(m_runing);
+        emit run(m_runing);
     }
 }
 
@@ -91,6 +91,7 @@ void RESTServer::stopServer()
 void RESTServer::incomingConnection(int socketDescriptor) {
     nextPendingConnection();
     QSslSocket* socket = new QSslSocket(this);
+    
 
     //DBG
 //     qDebug() << "RESTServer: Connection incoming "<< socketDescriptor;
@@ -157,9 +158,9 @@ void RESTServer::receiveData()
                             "\r\n";
             socket->write(ok);
             socket->waitForBytesWritten();
-            socket->waitForReadyRead();
+//             socket->waitForReadyRead();
         }
-
+	socket->waitForBytesWritten();
         socket->close();
         delete req;
     }
@@ -190,14 +191,16 @@ ServerRequest* RESTServer::receiveRequestHeader(QTcpSocket* socket)
     if (socket->canReadLine()) {
         bool isSet = req->setFirstLine(socket->readLine());//set first line
         if (isSet) {
-            while (socket->canReadLine()) {
+            for (int numLine =0 ;numLine< MAXHEADERLINES; ++numLine) {
+                if (socket->canReadLine()) {
+                    QByteArray tmp = socket->readLine();
 
-                QByteArray tmp = socket->readLine();
-
-                if (!req->insertRawHeaderLine(tmp)) {
+                    if (!req->insertRawHeaderLine(tmp)) {
+                        break;
+                    }
+                } else {
                     break;
                 }
-
             }
         }
     }
@@ -316,7 +319,7 @@ void RESTServer::loadResource()
     //Version.xml part
     BasicRESTResource* res = new BasicRESTResource("/version.xml", this);
 
-    QByteArray versionxml = "<kminidlna><version>0.1</version></kminidlna>";
+    QByteArray versionxml = "<kminidlna><version>0.2</version></kminidlna>";
 
     if (res->setXML(versionxml)) {
         addResource(res);

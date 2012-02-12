@@ -16,7 +16,12 @@
 
 // bool RESTServer::m_runing = false;
 
-RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(Server::DEFAULT_PORT), m_runing(false)
+QByteArray RESTServer::login = QByteArray();
+QByteArray RESTServer::password = QByteArray();
+const int RESTServer::MAX_NUMBER_OF_PORT = 65000;
+const int RESTServer::DEFAULT_PORT = 8080;
+
+RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(DEFAULT_PORT), m_runing(false)
 {
     m_certPath = "cert/server.crt";
     QFile fkey("cert/server.key");
@@ -45,13 +50,12 @@ void RESTServer::loadConfig()
     m_notFoundFileHtmlPath = "404.html";
 
     KConfigGroup config = KGlobal::config()->group("server");
-    setPort(config.readEntry("port", Server::DEFAULT_PORT));
+    setPort(config.readEntry("port", DEFAULT_PORT));
 
-    QString username = config.readEntry("username", Server::DEFAULT_PASSWORD);
-    QString decodedpassword = Server::DEFAULT_PASSWORD;
-    QByteArray pass = QByteArray::fromBase64(config.readEntry("password", decodedpassword.toUtf8().toBase64()));
-    username.append(":").append(pass);
-    m_loginpass = username.toUtf8().toBase64();
+    RESTServer::login = config.readEntry("username", QByteArray());
+    RESTServer::password = config.readEntry("password", QByteArray());
+
+//     m_loginpass = username.toUtf8().toBase64();
 }
 
 /**
@@ -91,7 +95,7 @@ void RESTServer::stopServer()
 void RESTServer::incomingConnection(int socketDescriptor) {
     nextPendingConnection();
     QSslSocket* socket = new QSslSocket(this);
-    
+
 
     //DBG
 //     qDebug() << "RESTServer: Connection incoming "<< socketDescriptor;
@@ -137,7 +141,7 @@ void RESTServer::receiveData()
     if (socket->canReadLine()) {
         ServerRequest* req = receiveRequestHeader(socket);
 
-        if (req->isAuthorized(m_loginpass)) {
+        if (req->isAuthorized()) {
             switch (req->method()) {
             case ServerRequest::GET:
                 processGETAndSendReply(socket, req);
@@ -160,7 +164,7 @@ void RESTServer::receiveData()
             socket->waitForBytesWritten();
 //             socket->waitForReadyRead();
         }
-	socket->waitForBytesWritten();
+        socket->waitForBytesWritten();
         socket->close();
         delete req;
     }

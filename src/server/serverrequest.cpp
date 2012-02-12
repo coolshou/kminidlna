@@ -19,6 +19,8 @@
 
 #include "serverrequest.h"
 #include <QDebug>
+#include <QCryptographicHash>
+#include "restserver.h"
 
 ServerRequest::ServerRequest(): m_method(ServerRequest::NONE)
 {
@@ -70,18 +72,26 @@ bool ServerRequest::parseFirstLine()
 
 /**
  *
- *@param authBase64 authorization encrypted base64
+ * TODO make better authorization 
  */
-bool ServerRequest::isAuthorized(const QByteArray& authBase64)
+bool ServerRequest::isAuthorized()
 {
+    if (RESTServer::login.isEmpty() || RESTServer::password.isEmpty()) {
+        return false;
+    }
     if (!m_header.isEmpty()) {
         if (m_header.contains("Authorization")) {
             QStringList* auth = m_header.value("Authorization");//get line with authorization
-	    
+
             if (auth->length() > 2) {
                 if (auth->at(1) == "Basic") {
-                    if (auth->at(2).compare(authBase64,Qt::CaseInsensitive) == 0) {
-                        return true;
+                    QList<QByteArray> loginPass = QByteArray::fromBase64(auth->at(2).toUtf8()).split(':');
+                    if (loginPass.count() == 2) {
+                        if (loginPass[0].toLower() == RESTServer::login.toLower()
+                                && RESTServer::password == QCryptographicHash::hash(loginPass[1], QCryptographicHash::Md5)) {
+			    //TODO save password for quick authorization
+                            return true;
+                        }
                     }
                 }
 
@@ -93,8 +103,8 @@ bool ServerRequest::isAuthorized(const QByteArray& authBase64)
 
 bool ServerRequest::insertRawHeaderLine(QString line)
 {
-    if(line == "\r\n"){
-      return false;
+    if (line == "\r\n") {
+        return false;
     }
     QStringList* ln = new QStringList(line.split(QRegExp("[ \r\n][ \r\n]*")));
     if (!ln->isEmpty()) {
@@ -115,12 +125,20 @@ bool ServerRequest::setFirstLine(QString firstLine)
  */
 QString ServerRequest::path() const
 {
-    if(m_firstLine.length()>2){
-      return m_firstLine[1];
+    if (m_firstLine.length()>2) {
+        return m_firstLine[1];
     }
     return "";
 }
 
+bool ServerRequest::arePassesEquel(const QByteArray& plainPass, const QByteArray& hashPass)
+{
+    QByteArray hashed = QCryptographicHash::hash(plainPass, QCryptographicHash::Md5);
+    if (hashed == hashPass) {
+        return true;
+    }
+    return false;
+}
 
 
 

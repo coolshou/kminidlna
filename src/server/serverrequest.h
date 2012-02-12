@@ -31,57 +31,58 @@
  */
 class ServerRequest {
 
-    public:
-        ServerRequest();
-        ServerRequest(const ServerRequest& other);
-        virtual ~ServerRequest();
-	
-	bool isAuthorized(const QByteArray& authBase64);
-        bool insertRawHeaderLine(QString line);
-        QString path() const;
-        const QStringList* headerLine(const QString& key) const;
-        bool setFirstLine(QString firstLine);
+public:
+    ServerRequest();
+    ServerRequest(const ServerRequest& other);
+    virtual ~ServerRequest();
 
-        /**
-         * enum with HTTP method
-         */
-        enum RequestMethod {
+    bool isAuthorized();
+    bool insertRawHeaderLine(QString line);
+    QString path() const;
+    const QStringList* headerLine(const QString& key) const;
+    bool setFirstLine(QString firstLine);
+    static bool arePassesEquel(const QByteArray& plainPass, const QByteArray& hashPass);
 
-            GET = 0,
-            PUT,
-            POST,
-            NONE = 10
-        };
-	
-	/**
-	* inline part
-	*/
+    /**
+     * enum with HTTP method
+     */
+    enum RequestMethod {
 
-        inline RequestMethod method() const {
-            return m_method;
-        };
+        GET = 0,
+        PUT,
+        POST,
+        NONE = 10
+    };
 
-        inline void setMethod(RequestMethod method) {
-            m_method = method;
-        };
+    /**
+    * inline part
+    */
 
-        inline bool hasHeaderLine(const QString& key) const {
-            return m_header.contains(key);
-        };
+    inline RequestMethod method() const {
+        return m_method;
+    };
 
-        inline const QByteArray* content() const {
-            return &m_content;
-        };
-        inline void setContent(QByteArray content) {
-            m_content = content;
-        };
-	
-    private:
-        QStringList m_firstLine;
-        RequestMethod m_method;
-        QHash<QString, QStringList*> m_header;
-        QByteArray m_content;
-        bool parseFirstLine();
+    inline void setMethod(RequestMethod method) {
+        m_method = method;
+    };
+
+    inline bool hasHeaderLine(const QString& key) const {
+        return m_header.contains(key);
+    };
+
+    inline const QByteArray* content() const {
+        return &m_content;
+    };
+    inline void setContent(QByteArray content) {
+        m_content = content;
+    };
+
+private:
+    QStringList m_firstLine;
+    RequestMethod m_method;
+    QHash<QString, QStringList*> m_header;
+    QByteArray m_content;
+    bool parseFirstLine();
 
 
 };

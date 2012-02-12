@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QList>
+#include <QByteArray>
 #include "serverrequest.h"
 #include "interface/restinterfaces.h"
 #include "interface/basicrestresource.h"
@@ -28,6 +29,13 @@ public:
     static RESTServer* getInstance();
     void startServer();
     void stopServer();
+
+    //STATIC
+    static QByteArray password;
+    static QByteArray login;
+    static const int MAX_NUMBER_OF_PORT;
+    static const int DEFAULT_PORT;
+
     inline bool isRuning() {
         return m_runing;
     };
@@ -38,7 +46,7 @@ public:
     inline void setPort(int port) {
         m_port = port;
     };
-    
+
 public slots:
     void errorsSSL(QList<QSslError>);
 
@@ -70,14 +78,8 @@ private:
     ServerRequest* receiveRequestHeader(QTcpSocket* socket);
     static const int MAXHEADERLINES = 40;
 signals:
-  void run(bool state);
+    void run(bool state);
 };
-
-namespace Server {
-static const int MAX_NUMBER_OF_PORT = 65000;
-static const int DEFAULT_PORT = 8080;
-static const QString DEFAULT_PASSWORD = "kminidlna";
-}
 
 
 #endif // RESTServer_H

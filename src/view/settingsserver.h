@@ -30,6 +30,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLineEdit>
+#include <QByteArray>
 #include "abstractsettings.h"
 
 class SettingsServer : public AbstractSettings
@@ -45,10 +46,13 @@ private:
     void initGUI();
     QSpinBox* m_port;
     QLineEdit* m_username;
-    QLineEdit* m_password;
+    QByteArray m_passwordHashed;
     QPushButton* m_btnControll;
     QCheckBox* m_onStartRun;
+    QPushButton* m_btnPassword;
 
+public slots:
+    void onPasswordClicked(bool clicked);
 };
 
 

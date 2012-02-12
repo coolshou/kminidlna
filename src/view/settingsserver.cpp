@@ -24,6 +24,9 @@
 #include <KConfig>
 #include <QDebug>
 #include "../server/restserver.h"
+#include <KPasswordDialog>
+#include <knewpassworddialog.h>
+#include <QMessageBox>
 
 SettingsServer::SettingsServer(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f)
 {
@@ -51,8 +54,8 @@ void SettingsServer::initGUI()
 
     m_port = new QSpinBox(group);
     m_port->setMinimum(1);
-    m_port->setMaximum(Server::MAX_NUMBER_OF_PORT);
-    m_port->setValue(Server::DEFAULT_PORT);
+    m_port->setMaximum(RESTServer::MAX_NUMBER_OF_PORT);
+    m_port->setValue(RESTServer::DEFAULT_PORT);
     connect(m_port, SIGNAL(valueChanged(int)),
             this, SLOT(someChanged()));
     llPort->addWidget(m_port);
@@ -79,14 +82,11 @@ void SettingsServer::initGUI()
     llUsername->addWidget(m_username);
     llLogin->addLayout(llUsername);
     //Password
-    QHBoxLayout* llPassword = new QHBoxLayout();
-    llPassword->addWidget(new QLabel(i18n("Password:"), groupLogin));
-    m_password = new QLineEdit(groupLogin);
-    m_password->setEchoMode(QLineEdit::Password);
-    connect(m_password, SIGNAL(textChanged(QString)),
-            this, SLOT(someChanged()));
-    llPassword->addWidget(m_password);
-    llLogin->addLayout(llPassword);
+    m_btnPassword = new QPushButton(i18n("Change password"), this);
+    connect(m_btnPassword, SIGNAL(clicked(bool)),
+            this, SLOT(onPasswordClicked(bool)));
+    llLogin->addWidget(m_btnPassword);
+
 
     //SPACER
     llLogin->addSpacerItem(new QSpacerItem(40, 200));
@@ -99,16 +99,16 @@ void SettingsServer::applySettings()
     config.writeEntry ( "port", m_port->value() );
     config.writeEntry("run_server_on_start", m_onStartRun->isChecked());
     config.writeEntry("username", m_username->text());
-    config.writeEntry("password", m_password->text().toUtf8().toBase64());
+    config.writeEntry("password", m_passwordHashed);
     config.sync();
 }
 
 void SettingsServer::setDefaults()
 {
-    m_port->setValue(Server::DEFAULT_PORT);
+    m_port->setValue(RESTServer::DEFAULT_PORT);
     m_onStartRun->setChecked(false);
-    m_username->setText(Server::DEFAULT_PASSWORD);
-    m_password->setText(Server::DEFAULT_PASSWORD);
+    m_username->setText(QByteArray());
+    m_passwordHashed.clear();
 }
 
 void SettingsServer::loadSettings()
@@ -116,11 +116,39 @@ void SettingsServer::loadSettings()
     KConfigGroup config = KGlobal::config()->group("server");
     m_port->setValue(config.readEntry("port", 8080));
     m_onStartRun->setChecked(config.readEntry("run_server_on_start", false));
-    m_username->setText(config.readEntry("username", Server::DEFAULT_PASSWORD));
-    QString decodedpassword = Server::DEFAULT_PASSWORD;
-    m_password->setText(QByteArray::fromBase64(config.readEntry("password", decodedpassword.toUtf8().toBase64())));
+    m_username->setText(config.readEntry("username", QByteArray()));
+    m_passwordHashed = config.readEntry("password", QByteArray());
     m_changed = false;
 }
 
+
+void SettingsServer::onPasswordClicked(bool clicked)
+{
+//     if (clicked) {
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Information);
+    if (!m_passwordHashed.isEmpty()) {
+        KPasswordDialog dlg(this);
+        dlg.setPrompt(i18n("Enter actual password"));
+        if (dlg.exec()) {
+            if (!ServerRequest::arePassesEquel(dlg.password().toLower().toUtf8(), m_passwordHashed)) {
+                msgBox.setText("Password is incorect!");
+                msgBox.exec();
+                return;
+            }
+        } else {
+            return;
+        }
+    }
+
+    KNewPasswordDialog dlgNew(this);
+    dlgNew.setPrompt( i18n( "Enter a password" ) );
+    if (dlgNew.exec()) {
+        m_passwordHashed = QCryptographicHash::hash(dlgNew.password().toLower().toUtf8(), QCryptographicHash::Md5);
+        someChanged();
+        msgBox.setText("Password was changed.");
+        msgBox.exec();
+    }
+}
 
 

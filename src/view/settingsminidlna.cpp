@@ -183,13 +183,13 @@ void SettingsMiniDLNA::applySettings() {
 
 void SettingsMiniDLNA::loadSettings() {
     KConfigGroup config = KGlobal::config()->group("minidlna");
-    m_minidlnaPath->setText(config.readEntry("minidlnapath", MiniDLNA::MINIDLNA_PATH));
-    m_pidFilePath->setText(config.readEntry("pidpath", MiniDLNA::PIDFILE_PATH));
+    m_minidlnaPath->setText(config.readEntry("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH));
+    m_pidFilePath->setText(config.readEntry("pidpath", MiniDLNAProcess::PIDFILE_PATH));
     m_loadFile->setChecked(config.readEntry("scanfile", false));
     ConfigurationFile::ConfFile conf = ConfigurationFile::ConfFile(config.readEntry("use_conf_file", -1));
     setUsedConfFile(conf);
-    m_confFilePath->setText(config.readEntry("conf_file_path", MiniDLNA::GLOBALCONFFILE_PATH));
-    m_port->setValue(config.readEntry("minidlna_port", MiniDLNA::DEFAULTPORT));
+    m_confFilePath->setText(config.readEntry("conf_file_path", MiniDLNAProcess::GLOBALCONFFILE_PATH));
+    m_port->setValue(config.readEntry("minidlna_port", MiniDLNAProcess::DEFAULTPORT));
     m_changed = false;
 }
 
@@ -209,11 +209,11 @@ void SettingsMiniDLNA::onPidBrowsePath() {
 }
 
 void SettingsMiniDLNA::setDefaults() {
-    m_minidlnaPath->setText(MiniDLNA::MINIDLNA_PATH);
-    m_pidFilePath->setText(MiniDLNA::PIDFILE_PATH);
+    m_minidlnaPath->setText(MiniDLNAProcess::MINIDLNA_PATH);
+    m_pidFilePath->setText(MiniDLNAProcess::PIDFILE_PATH);
     m_loadFile->setChecked(true);
     m_radioGlobalConfPath->setChecked(true);
-    m_confFilePath->setText(MiniDLNA::GLOBALCONFFILE_PATH);
+    m_confFilePath->setText(MiniDLNAProcess::GLOBALCONFFILE_PATH);
 }
 
 void SettingsMiniDLNA::onBrowseConfFile() {

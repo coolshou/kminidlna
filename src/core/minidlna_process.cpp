@@ -34,7 +34,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "../server/interface/restminidlna.h"
 #include <QDir>
 
-
+const QString MiniDLNAProcess::MINIDLNA_PATH = "/usr/sbin/minidlna";
+const QString MiniDLNAProcess::PIDFILE_PATH = "/tmp/";
+const QString MiniDLNAProcess::GLOBALCONFFILE_PATH = "/etc/minidlna.conf";
+const int MiniDLNAProcess::DEFAULTPORT = 8200;
 
 MiniDLNAProcess::MiniDLNAProcess(): RESTInterfaces() {
     m_confFile = 0;
@@ -133,11 +136,11 @@ void MiniDLNAProcess::loadSettings() {
     KConfigGroup config = KGlobal::config()->group("minidlna");
 
     //set minidlna path
-    QString minidlnapath = config.readEntry("minidlnapath", MiniDLNA::MINIDLNA_PATH);
+    QString minidlnapath = config.readEntry("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH);
     if (QFile::exists(minidlnapath)) {
         minidlnas = minidlnapath;
     } else {
-        QFileInfo def(MiniDLNA::MINIDLNA_PATH);
+        QFileInfo def(MiniDLNAProcess::MINIDLNA_PATH);
         if (def.exists() && def.isExecutable()) {
             minidlnas = def.absoluteFilePath();
         } else {
@@ -146,12 +149,12 @@ void MiniDLNAProcess::loadSettings() {
     }
 
     //Set pid path
-    QString pidpath = config.readEntry("pidpath", MiniDLNA::PIDFILE_PATH);
+    QString pidpath = config.readEntry("pidpath", MiniDLNAProcess::PIDFILE_PATH);
     QFileInfo pid(pidpath);
     if (pid.isDir() && pid.isWritable()) {
         pathPidFile = pidpath;
     } else {
-        QFileInfo def(MiniDLNA::PIDFILE_PATH);
+        QFileInfo def(MiniDLNAProcess::PIDFILE_PATH);
         if (def.isDir() && def.isWritable()) {
 //             qDebug()<< "setted default pid directory: "<< def.absolutePath();
         } else {
@@ -161,7 +164,7 @@ void MiniDLNAProcess::loadSettings() {
 
     m_fullRescanFile = config.readEntry("scanfile", true);
 
-    m_port = config.readEntry("minidlna_port", MiniDLNA::DEFAULTPORT);
+    m_port = config.readEntry("minidlna_port", MiniDLNAProcess::DEFAULTPORT);
 
     //Set configuration file
     m_usedConfFile = ConfigurationFile::ConfFile(config.readEntry("use_conf_file", -1));
@@ -184,7 +187,7 @@ void MiniDLNAProcess::loadSettings() {
         qDebug() << "minidlna config file in " << m_confFilePath << " was not found using global config file";
     case ConfigurationFile::GLOBAL:
         m_usedConfFile = ConfigurationFile::GLOBAL;
-        m_confFilePath = MiniDLNA::GLOBALCONFFILE_PATH;
+        m_confFilePath = MiniDLNAProcess::GLOBALCONFFILE_PATH;
     }
 
     setArg();
@@ -199,7 +202,7 @@ void MiniDLNAProcess::setArg() {
     if (m_usedConfFile != ConfigurationFile::GLOBAL) {
         arg << "-f" << m_confFilePath;
     }
-    if (m_port != MiniDLNA::DEFAULTPORT) {
+    if (m_port != MiniDLNAProcess::DEFAULTPORT) {
         arg << "-p" << QString(m_port);
     }
 }

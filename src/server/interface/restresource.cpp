@@ -21,7 +21,8 @@
 #include <QFile>
 
 RESTresource::RESTresource(QString address, QObject* parent)
-        : QObject(parent), m_document(0), m_address(address), m_schema(0) , m_schemaLoaded(false) {
+        : QObject(parent), m_document(0), m_address(address), m_schema(0), m_schemaLoaded(false), m_PUT(false), m_GET(true)
+	{
 
 }
 
@@ -84,6 +85,59 @@ bool RESTresource::isXmlSchemaSetted() {
 QXmlSchema* RESTresource::schema() {
     return m_schema;
 }
+
+//HTTP Method part
+/**
+ * @return false (not implemented http method)
+ */
+bool RESTresource::hasDELETEMethod()
+{
+    return false;
+}
+
+/**
+ * @return false (not implemented http method)
+ */
+bool RESTresource::hasPOSTMethod()
+{
+    return false;
+}
+
+/**
+ * @return true if has http method other false. Default is true.
+ */
+bool RESTresource::hasGETMethod()
+{
+    return m_GET;
+}
+
+/**
+ * @return true if has http method other false. Default is false.
+ */
+bool RESTresource::hasPUTMethod()
+{
+    return m_PUT;
+}
+
+/**
+ * default is true
+ */
+void RESTresource::setGETMethod(bool get)
+{
+    m_GET = get;
+}
+
+/**
+ * default is false
+ */
+void RESTresource::setPUTMethod(bool put)
+{
+    m_PUT = put;
+}
+
+
+
+
 
 
 

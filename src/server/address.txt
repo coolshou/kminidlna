@@ -1,0 +1,21 @@
+################ used REST address  #########################
+
+### /version.xml
+Description: Version of kminidlna in /server/restserver.cpp
+Class: BasicRESTResource
+Method: GET
+XML:
+  <kminidlna>
+    <version>0.2</version> <!-- version of KMiniDLNA -->
+  </kminidlna>
+
+
+### /minidlna-state.xml
+Description: 
+Class: RESTMiniDLNA
+Method: GET, PUT
+XML: <minidlna>
+	<state>notrunning</state> <!-- state can be notrunning - for stop minidlna; running - start minidlna -->
+      </minidlna>
+
+### /mediafolders.xml

@@ -22,6 +22,7 @@
 #include <QDebug>
 
 RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(address, process) {
+    setPUTMethod(true);
     //XML
     QByteArray xmlskeleton = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
                              "<minidlna><state>notrunning</state></minidlna>";

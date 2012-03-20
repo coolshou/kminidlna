@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "../server/restserver.h"
 #include "../server/interface/restminidlna.h"
 #include <QDir>
+#include "../server/interface/restmediafolder.h"
 
 const QString MiniDLNAProcess::MINIDLNA_PATH = "/usr/sbin/minidlna";
 const QString MiniDLNAProcess::PIDFILE_PATH = "/tmp/";
@@ -209,6 +210,7 @@ void MiniDLNAProcess::setArg() {
 
 void MiniDLNAProcess::loadResource() {
     addResource(new RESTMiniDLNA(this));
+    addResource(new RESTMediaFolder(this));
 }
 
 /**

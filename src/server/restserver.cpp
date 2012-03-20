@@ -219,7 +219,7 @@ void RESTServer::processPUTAndSendReply(QTcpSocket* socket, ServerRequest* req)
     QList<RESTInterfaces* >::const_iterator it;
     for (it = m_intefaces.begin(); it != m_intefaces.end(); ++it) {
         if ((*it)->hasResourceOnAddress(address)) {//items are pointers
-            qDebug() << "RESTServer::processPUTAndSendReply: " << (*it)->adresses();
+//             qDebug() << "RESTServer::processPUTAndSendReply: " << (*it)->adresses();
             interface = *it;
             break;
         }
@@ -230,6 +230,9 @@ void RESTServer::processPUTAndSendReply(QTcpSocket* socket, ServerRequest* req)
     }
     //TODO check if file is xml
     RESTresource* res = interface->resourceOnAddress(address);
+    if (!res->hasPUTMethod()) {
+        sendNoContent(socket); //FIXME send right code
+    }
     req->setContent(socket->readAll());
     qDebug() << *(req->content());
     QDomDocument* doc = new QDomDocument();
@@ -257,7 +260,7 @@ void RESTServer::processGETAndSendReply(QTcpSocket* socket, const ServerRequest*
     QList<RESTInterfaces* >::const_iterator it;
     for (it = m_intefaces.begin(); it != m_intefaces.end(); ++it) {
         if ((*it)->hasResourceOnAddress(address)) {//items are pointers
-            qDebug() << "RESTServer::processGETAndSendReply: " << (*it)->adresses();
+//             qDebug() << "RESTServer::processGETAndSendReply: " << (*it)->adresses();
             interface = *it;
             break;
         }
@@ -268,12 +271,19 @@ void RESTServer::processGETAndSendReply(QTcpSocket* socket, const ServerRequest*
         return;
     }
 
+    RESTresource* res = interface->resourceOnAddress(address);
+    
+    if (!res->hasGETMethod()) {
+        send404NotFound(socket);
+        return;
+    }
+
     if (socket->isWritable()) {
         QByteArray ok = "HTTP/1.1 200 Ok\r\n"
                         "Content-Type: text/xml; charset=\"utf-8\"\r\n"
                         "\r\n";
         socket->write(ok);
-        RESTresource* res = interface->resourceOnAddress(address);
+
         socket->write(res->resource()->toByteArray());
         socket->waitForBytesWritten();
     }

@@ -21,6 +21,10 @@
 #define BASICRESTRESOURCE_H
 #include "restresource.h"
 
+
+/**
+ * Used in /server/restserver.cpp /version.xml
+ */
 class BasicRESTResource : public RESTresource
 {
 

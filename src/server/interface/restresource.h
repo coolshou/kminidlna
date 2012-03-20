@@ -39,12 +39,22 @@ class RESTresource: public QObject {
         virtual bool isXmlSchemaSetted();
         virtual QXmlSchema* schema();
         virtual bool loadSchema(QString path);
+	//Method
+	virtual bool hasPUTMethod();
+	virtual bool hasGETMethod();
+	virtual void setPUTMethod(bool put);
+	virtual void setGETMethod(bool get);
+	
+	virtual bool hasDELETEMethod();
+	virtual bool hasPOSTMethod();
 	
     protected:
         QDomDocument* m_document;
         QString m_address;
         QXmlSchema* m_schema;
 	bool m_schemaLoaded;
+	bool m_PUT;
+	bool m_GET;
 
 };
 

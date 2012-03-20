@@ -56,7 +56,7 @@ QStringList RESTInterfaces::adresses()
 
 bool RESTInterfaces::hasResourceOnAddress(QString address)
 {
-  qDebug() << "RESTInterfaces::hasResourceOnAddress:" << address;
+//   qDebug() << "RESTInterfaces::hasResourceOnAddress:" << address;
     int count = m_resources.contains(address);
     if (count == 1) {
         return true;

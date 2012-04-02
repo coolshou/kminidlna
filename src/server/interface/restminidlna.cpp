@@ -40,7 +40,7 @@ RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(addr
 }
 
 RESTMiniDLNA::~RESTMiniDLNA() {
-
+  delete m_document;
 }
 
 QDomDocument* RESTMiniDLNA::resource() {

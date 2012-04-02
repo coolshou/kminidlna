@@ -66,6 +66,7 @@ void RESTServer::startServer()
 {
     if (!m_runing) {
         m_runing = listen(QHostAddress::Any, m_port);
+	qDebug() << errorString();
         qDebug() << "RESTServer: starting server";
         emit run(m_runing);
     }

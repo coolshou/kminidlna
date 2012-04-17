@@ -27,7 +27,7 @@
  */
 class BasicRESTResource : public RESTresource
 {
-
+  Q_OBJECT
 public:
     BasicRESTResource(QString address, QObject* parent= 0);
     virtual ~BasicRESTResource();

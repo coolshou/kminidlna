@@ -21,14 +21,16 @@
 #include <QFile>
 
 RESTresource::RESTresource(QString address, QObject* parent)
-        : QObject(parent), m_document(0), m_address(address), m_schema(0), m_schemaLoaded(false), m_PUT(false), m_GET(true)
-	{
+    : QObject(parent), m_document(0), m_address(address), m_schema(0), m_schemaLoaded(false), m_PUT(false), m_GET(true) {
 
 }
 
 RESTresource::~RESTresource() {
-    if (m_document != 0) {
+    if(m_document != 0) {
         delete m_document;
+    }
+    if(m_schema != 0) {
+        delete m_schema;
     }
 }
 
@@ -41,7 +43,7 @@ void RESTresource::setAddress(QString address) {
 }
 
 bool RESTresource::isValidResource(QDomDocument* resource) {
-    if (m_schema == 0 || !m_schema->isValid()) {
+    if(m_schema == 0 || !m_schema->isValid()) {
         return false;
     }
 
@@ -50,29 +52,30 @@ bool RESTresource::isValidResource(QDomDocument* resource) {
 }
 
 bool RESTresource::operator==(const RESTresource& other) {
-    if (other.m_address == m_address && other.m_document == m_document) {
+    if(other.m_address == m_address && other.m_document == m_document) {
         return true;
     }
     return false;
 }
 
 bool RESTresource::loadSchema(QString path) {
-    if (m_schema != 0) {
+    if(m_schema != 0) {
         delete m_schema;
     }
     m_schema = new QXmlSchema();
     QFile file(path);
     m_schemaLoaded = false;
-    if (file.open(QIODevice::ReadOnly)) {
+    if(file.open(QIODevice::ReadOnly)) {
         m_schemaLoaded = m_schema->load(&file);
     }
 
-    if (file.isOpen()) {
+    if(file.isOpen()) {
         file.close();
     }
 
-    if (!m_schemaLoaded) {
+    if(!m_schemaLoaded) {
         delete m_schema;
+        m_schema = 0;
     }
 
     return m_schemaLoaded;
@@ -90,48 +93,42 @@ QXmlSchema* RESTresource::schema() {
 /**
  * @return false (not implemented http method)
  */
-bool RESTresource::hasDELETEMethod()
-{
+bool RESTresource::hasDELETEMethod() {
     return false;
 }
 
 /**
  * @return false (not implemented http method)
  */
-bool RESTresource::hasPOSTMethod()
-{
+bool RESTresource::hasPOSTMethod() {
     return false;
 }
 
 /**
  * @return true if has http method other false. Default is true.
  */
-bool RESTresource::hasGETMethod()
-{
+bool RESTresource::hasGETMethod() {
     return m_GET;
 }
 
 /**
  * @return true if has http method other false. Default is false.
  */
-bool RESTresource::hasPUTMethod()
-{
+bool RESTresource::hasPUTMethod() {
     return m_PUT;
 }
 
 /**
  * default is true
  */
-void RESTresource::setGETMethod(bool get)
-{
+void RESTresource::setGETMethod(bool get) {
     m_GET = get;
 }
 
 /**
  * default is false
  */
-void RESTresource::setPUTMethod(bool put)
-{
+void RESTresource::setPUTMethod(bool put) {
     m_PUT = put;
 }
 

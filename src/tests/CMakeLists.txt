@@ -1,11 +1,14 @@
+#Macro for unit testing
+MACRO(UNIT_TESTS)
+    FOREACH(_className ${ARGN})
+        set(_testName ${_className}test)
+        kde4_add_unit_test(${_testName} TESTNAME kminidlna-${_testName} ${_testName}.cpp)
+        target_link_libraries(${_testName} core core view server ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+    ENDFOREACH(_className)
+ENDMACRO(UNIT_TESTS)
 
-set(Tests configurationfiletest.cpp)
-set(Tests_HEADER configurationfiletest.h)
+#add name of cpp file without ending test.cpp
+unit_tests(configurationfile restconnection)
 
-qt4_wrap_cpp(Tests_HEADER_MOC ${Tests_HEADER})
 
-add_executable(tests ${Tests} ${Tests_HEADER_MOC})
 
-target_link_libraries(tests core core view server ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-
-add_test(NAME tests COMMAND tests)

@@ -33,57 +33,60 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * @patern singleton
  */
 class MiniDLNAProcess: public QObject, public RESTInterfaces {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    static MiniDLNAProcess* getInstance();
-    virtual ~MiniDLNAProcess();
-    void minidlnaStart();
-    void minidlnaKill();
-    bool minidlnaStatus();
-    void loadConfiguration();
-    ConfigurationFile* configFile();
-    void configFileChanged();
+    public:
+        static MiniDLNAProcess* getInstance();
 
-    //Static
-    static const QString MINIDLNA_PATH;
-    static const QString PIDFILE_PATH;
-    static const QString GLOBALCONFFILE_PATH;
-    static const int DEFAULTPORT;
+        void minidlnaStart();
+        void minidlnaKill();
+        bool minidlnaStatus();
+        void loadConfiguration();
+        ConfigurationFile* configFile();
+        void configFileChanged();
 
-protected:
-    MiniDLNAProcess();
+        //Static
+        static const QString MINIDLNA_PATH;
+        static const QString PIDFILE_PATH;
+        static const QString GLOBALCONFFILE_PATH;
+        static const int DEFAULTPORT;
 
-private:
-    void loadSettings();
-    void loadConfigFile();
-    QProcess* minidlna;
-    QString minidlnas;
-    QStringList arg;
-    QString pathPidFile;
-    PidThread* t_pid;
-    QString m_confFilePath;
+    protected:
+        MiniDLNAProcess();
+        MiniDLNAProcess(const MiniDLNAProcess &); // hide copy constructor
+        MiniDLNAProcess& operator=(const MiniDLNAProcess &); // hide assign op
+        virtual ~MiniDLNAProcess();
 
-    bool m_fullRescanFile;
-    int m_port;
-    ConfigurationFile::ConfFile m_usedConfFile;
-    void setArg();
-    void loadResource();
-    void createConfigFile(QString path);
-    bool m_isConfigFileOptionsChanged;
-    ConfigurationFile* m_confFile;
+    private:
+        void loadSettings();
+        void loadConfigFile();
+        QProcess* minidlna;
+        QString minidlnas;
+        QStringList arg;
+        QString pathPidFile;
+        PidThread* t_pid;
+        QString m_confFilePath;
 
-public slots:
-    void onPidFile(bool found);
+        bool m_fullRescanFile;
+        int m_port;
+        ConfigurationFile::ConfFile m_usedConfFile;
+        void setArg();
+        void loadResource();
+        void createConfigFile(QString path);
+        bool m_isConfigFileOptionsChanged;
+        ConfigurationFile* m_confFile;
 
-signals:
-    void minidlnaStatus(QProcess::ProcessState state);
-    void configurationFileChanged();
+    public slots:
+        void onPidFile(bool found);
+
+    signals:
+        void minidlnaStatus(QProcess::ProcessState state);
+        void configurationFileChanged();
 
 };
 
 // namespace MiniDLNA {
-// 
+//
 // }
 
 #endif // MINIDLNAPROCESS_H

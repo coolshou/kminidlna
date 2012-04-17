@@ -4,6 +4,8 @@ set(VERSION "0.2 beta")
 
 configure_file(kminidlna_version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/kminidlna_version.h )
 
+enable_testing() #enable testing
+
 # add_subdirectory(../po)
 add_subdirectory(view)
 add_subdirectory(server)

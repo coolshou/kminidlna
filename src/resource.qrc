@@ -7,5 +7,6 @@
  
  <qresource prefix="schema">
     <file alias="state.xsd">resource/minidlna_state_schema.xsd</file>
+    <file alias="version.xsd">resource/version.xsd</file>
  </qresource>
  </RCC>

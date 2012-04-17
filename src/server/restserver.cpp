@@ -117,7 +117,7 @@ void RESTServer::incomingConnection(int socketDescriptor) {
 
 void RESTServer::connectionClosed() {
     QSslSocket* socket = dynamic_cast<QSslSocket *>(sender());
-    qDebug() << "Closed: " << socket->socketDescriptor() ;
+    qDebug() << "Closed: " << socket->socketDescriptor() << " Reason: "<< socket->error() << socket->errorString() ;
     socket->deleteLater();
 }
 
@@ -200,5 +200,13 @@ void RESTServer::setCert(const QSslCertificate& cert) {
 
 void RESTServer::setSslKey(QSslKey* key) {
     m_key = QSharedPointer<QSslKey>(key);
+}
+
+/**
+ * plainPassword - password in plain not crypted mode
+ * set password. 
+ */
+void RESTServer::setPassword(const QString& plainPassword) {
+    RESTServer::password = QCryptographicHash::hash(plainPassword.toLower().toUtf8(), QCryptographicHash::Md5);
 }
 

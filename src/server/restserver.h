@@ -34,7 +34,14 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
         virtual RESTresource* resource(QString address);
 
         //STATIC
+	/**
+	 * password in md5 hash
+	 */
         static QByteArray password;
+	static void setPassword(const QString& plainPassword);
+	/**
+	 * login name
+	 */
         static QByteArray login;
         static const int MAX_NUMBER_OF_PORT;
         static const int DEFAULT_PORT;
@@ -51,7 +58,7 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
         };
 	void setCert(const QSslCertificate& cert);
 	void setSslKey(QSslKey* key);
-
+	
     public slots:
         void errorsSSL(QList<QSslError>);
 

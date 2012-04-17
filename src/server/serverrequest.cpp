@@ -67,6 +67,7 @@ bool ServerRequest::parseFirstLine() {
  * TODO make better authorization
  */
 bool ServerRequest::isAuthorized() {
+  
     if(RESTServer::login.isEmpty() || RESTServer::password.isEmpty()) {
         return false;
     }

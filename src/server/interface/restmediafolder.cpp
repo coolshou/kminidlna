@@ -22,15 +22,9 @@
 #include <QList>
 #include <QDebug>
 
-RESTMediaFolder::RESTMediaFolder(QObject* parent, QString address): RESTresource(address, parent)
+RESTMediaFolder::RESTMediaFolder(QObject* parent, QString address): RESTResource(address, parent)
 {
     m_document = new QDomDocument();
-}
-
-
-bool RESTMediaFolder::setResource(QDomDocument* resource)
-{
-    return false;
 }
 
 QDomDocument* RESTMediaFolder::resource()

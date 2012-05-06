@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KCmdLineArgs>
 #include <KConfigGroup>
 #include <QDebug>
+#include <KIcon>
 #include "kminidlna_version.h"
 #include "view/kminidlna.h"
 #include "server/restserver.h"
@@ -59,7 +60,6 @@ int main(int argc, char** argv)
 
     KApplication app;
     app.setWindowIcon(QIcon(":/images/ikona.png"));
-
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KminiDLNA *mainWindow = 0;
     if (args->isSet("gui")) {//isSet without --no!

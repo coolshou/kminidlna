@@ -33,11 +33,11 @@ public:
     virtual ~RESTInterfaces();
     virtual QStringList adresses();
     virtual bool hasResourceOnAddress(QString adress);
-    virtual void addResource(RESTresource* res);
-    virtual bool removeResource(RESTresource* res);
-    virtual RESTresource* resourceOnAddress(QString address);
+    virtual void addResource(RESTResource* res);
+    virtual bool removeResource(RESTResource* res);
+    virtual RESTResource* resourceOnAddress(QString address);
 protected:
-    QHash<QString, RESTresource* > m_resources;
+    QHash<QString, RESTResource* > m_resources;
 };
 
 #endif // RESTINTERFACES_H

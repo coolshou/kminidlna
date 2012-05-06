@@ -21,8 +21,9 @@
 #include <QXmlSchema>
 #include <QDebug>
 
-RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(address, process) {
-    setPUTMethod(true);
+
+RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTResource(address, process) {
+//     setPUTMethod(true);
     //XML
     QByteArray xmlskeleton = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
                              "<minidlna><state>notrunning</state></minidlna>";
@@ -32,7 +33,7 @@ RESTMiniDLNA::RESTMiniDLNA(QObject* process, QString address): RESTresource(addr
     }
     //End XML
 
-    loadSchema(":/schema/state.xsd");
+//     loadSchema(":/schema/state.xsd");
 
     if(process != 0) {
         connect(process, SIGNAL(minidlnaStatus(QProcess::ProcessState)), this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
@@ -49,18 +50,6 @@ QDomDocument* RESTMiniDLNA::resource() {
     return m_document;
 }
 
-bool RESTMiniDLNA::setResource(QDomDocument* resource) {
-    if(isValidResource(resource)) {
-        QDomText state = resource->documentElement().firstChildElement("state").firstChild().toText();
-        if(state.data() == "running") {
-            MiniDLNAProcess::getInstance()->minidlnaStart();
-        } else if(state.data() == "notrunning") {
-            MiniDLNAProcess::getInstance()->minidlnaKill();
-        }
-        return true;
-    }
-    return false;
-}
 
 void RESTMiniDLNA::onMiniDLNAState(QProcess::ProcessState state) {
     switch(state) {

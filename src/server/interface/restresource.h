@@ -24,37 +24,38 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 
-class RESTresource: public QObject {
+class RESTResource: public QObject {
         Q_OBJECT
     public:
-        explicit RESTresource(QString address, QObject* parent = 0);
-        RESTresource(const RESTresource& other);
-        virtual ~RESTresource();
-        bool operator== (const RESTresource& other);
+        explicit RESTResource(QString address, QObject* parent = 0);
+//         RESTResource(const RESTResource& other);
+        virtual ~RESTResource();
+        bool operator== (const RESTResource& other);
         virtual QString address();
         virtual void setAddress(QString address);
-        virtual QDomDocument* resource() = 0;
-        virtual bool setResource(QDomDocument* resource) = 0;
-        virtual bool isValidResource(QDomDocument* resource);
+        virtual QDomDocument* resource();
+        virtual bool setResource(const QDomDocument& resource);
+        virtual bool isValidResource(const QDomDocument& resource);
         virtual bool isXmlSchemaSetted();
         virtual QXmlSchema* schema();
         virtual bool loadSchema(QString path);
-	//Method
-	virtual bool hasPUTMethod();
-	virtual bool hasGETMethod();
-	virtual void setPUTMethod(bool put);
-	virtual void setGETMethod(bool get);
-	
-	virtual bool hasDELETEMethod();
-	virtual bool hasPOSTMethod();
-	
+        //Method
+        virtual bool hasPUTMethod();
+        virtual bool hasGETMethod();
+        virtual void setPUTMethod(bool put);
+        virtual void setGETMethod(bool get);
+
+        virtual bool hasDELETEMethod();
+        virtual bool hasPOSTMethod();
+
     protected:
+        virtual bool processResource(const QDomDocument& resource);
         QDomDocument* m_document;
         QString m_address;
         QXmlSchema* m_schema;
-	bool m_schemaLoaded;
-	bool m_PUT;
-	bool m_GET;
+        bool m_schemaLoaded;
+        bool m_PUT;
+        bool m_GET;
 
 };
 

@@ -17,25 +17,24 @@
 */
 
 
-#ifndef RESTMINIDLNA_H
-#define RESTMINIDLNA_H
+#ifndef CERTIFICATEGENERATORTEST_H
+#define CERTIFICATEGENERATORTEST_H
 
-#include "restresource.h"
-#include "../../core/minidlna_process.h"
-#include <QProcess>
+#include <qt4/QtCore/QObject>
+#include <QString>
 
-class RESTMiniDLNA : public RESTResource {
-        Q_OBJECT
-    public:
-        RESTMiniDLNA(QObject* process, QString address = "/minidlna-state.xml");
-        virtual ~RESTMiniDLNA();
-        virtual QDomDocument* resource();
 
+class CertificateGeneratorTest : public QObject {
+  Q_OBJECT
     private:
-        QDomText m_stateText;
+        static const QString SAVE_PATH;
     private slots:
-        void onMiniDLNAState(QProcess::ProcessState state);
 
+        void initTestCase(); // will be called before the first testfunction is executed.
+        void cleanupTestCase(); // will be called after the last testfunction was executed.
+        void init(); // will be called before each testfunction is executed.
+        void cleanup(); // will be called after every testfunction.
+        void generateValidCertificateAndPKey();
 };
 
-#endif // RESTMINIDLNA_H
+#endif // CERTIFICATEGENERATORTEST_H

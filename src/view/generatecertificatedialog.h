@@ -17,25 +17,26 @@
 */
 
 
-#ifndef RESTMINIDLNA_H
-#define RESTMINIDLNA_H
+#ifndef GENERATECERTIFICATEDIALOG_H
+#define GENERATECERTIFICATEDIALOG_H
 
-#include "restresource.h"
-#include "../../core/minidlna_process.h"
-#include <QProcess>
+#include <KDialog>
+#include <QLineEdit>
+#include <QString>
+// #include "../server/cert/certificategenerator.h"
 
-class RESTMiniDLNA : public RESTResource {
+
+class GenerateCertificateDialog : public KDialog {
         Q_OBJECT
+        void initGUI();
     public:
-        RESTMiniDLNA(QObject* process, QString address = "/minidlna-state.xml");
-        virtual ~RESTMiniDLNA();
-        virtual QDomDocument* resource();
-
+        GenerateCertificateDialog(QWidget* parent, Qt::WFlags flags = 0);
+        virtual ~GenerateCertificateDialog();
+	QString commonName();
+	QString country();
     private:
-        QDomText m_stateText;
-    private slots:
-        void onMiniDLNAState(QProcess::ProcessState state);
-
+	QLineEdit* m_txlCommonName;
+	QLineEdit* m_txlCountryName;
 };
 
-#endif // RESTMINIDLNA_H
+#endif // GENERATECERTIFICATEDIALOG_H

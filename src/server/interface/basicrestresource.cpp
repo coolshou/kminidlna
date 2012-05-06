@@ -19,7 +19,7 @@
 
 #include "basicrestresource.h"
 
-BasicRESTResource::BasicRESTResource(QString address, QObject* parent):RESTresource(address, parent)
+BasicRESTResource::BasicRESTResource(QString address, QObject* parent):RESTResource(address, parent)
 {
 
 }
@@ -29,19 +29,10 @@ BasicRESTResource::~BasicRESTResource()
 
 }
 
-bool BasicRESTResource::isValidResource(QDomDocument* resource)
-{
-    return false;
-}
 
 QDomDocument* BasicRESTResource::resource()
 {
     return m_document;
-}
-
-bool BasicRESTResource::setResource(QDomDocument* resource)
-{
-    return false;
 }
 
 /**

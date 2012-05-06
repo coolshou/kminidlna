@@ -24,6 +24,7 @@
 #include <QTextStream>
 #include <KStandardDirs>
 #include <KApplication>
+#include <KAboutData>
 #include <QDir>
 #include "minidlna_process.h"
 

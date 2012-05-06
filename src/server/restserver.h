@@ -31,17 +31,17 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
         static RESTServer* getInstance();
         virtual void startServer();
         virtual void stopServer();
-        virtual RESTresource* resource(QString address);
+        virtual RESTResource* resource(QString address);
 
         //STATIC
-	/**
-	 * password in md5 hash
-	 */
+        /**
+         * password in md5 hash
+         */
         static QByteArray password;
-	static void setPassword(const QString& plainPassword);
-	/**
-	 * login name
-	 */
+        static void setPassword(const QString& plainPassword);
+        /**
+         * login name
+         */
         static QByteArray login;
         static const int MAX_NUMBER_OF_PORT;
         static const int DEFAULT_PORT;
@@ -56,20 +56,21 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
         inline void setPort(int port) {
             m_port = port;
         };
-	void setCert(const QSslCertificate& cert);
-	void setSslKey(QSslKey* key);
-	
+        void setCert(const QSslCertificate& cert);
+        void setSslKey(QSslKey* key);
+        void loadConfig();
+
     public slots:
         void errorsSSL(QList<QSslError>);
 
     protected:
         RESTServer(QObject* parent = 0);
         void loadResource();
-	virtual ~RESTServer();
-	
-	RESTServer(const RESTServer &); // hide copy constructor
-	RESTServer& operator=(const RESTServer &); // hide assign op
-	
+        virtual ~RESTServer();
+
+        RESTServer(const RESTServer &); // hide copy constructor
+        RESTServer& operator=(const RESTServer &); // hide assign op
+
     protected slots:
         virtual void incomingConnection(int socketDescriptor);
         virtual void handshakeComplete();
@@ -77,7 +78,6 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
 
 
     private:
-        QString m_certPath;
         QSharedPointer<QSslKey> m_key;
         QSslCertificate m_cert;
         QString m_notFoundFileHtmlPath;
@@ -87,10 +87,15 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
 //     QByteArray m_loginpass;
         QList<RESTInterfaces*> m_intefaces;
         QReadWriteLock m_lock;
-        void loadConfig();
-
+        bool m_customCert;
+        QString m_pkeyPath;
+        QString m_certPath;
+        void loadCert(bool custom = true);
+        void loadCert(const QString& pkeyPath, const QString& certPath, bool generate = false);
+        bool m_validCertAndKey;
     signals:
         void run(bool state);
+        void notValidKeyCertificate();
 };
 
 

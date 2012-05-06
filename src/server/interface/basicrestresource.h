@@ -25,16 +25,13 @@
 /**
  * Used in /server/restserver.cpp /version.xml
  */
-class BasicRESTResource : public RESTresource
-{
-  Q_OBJECT
-public:
-    BasicRESTResource(QString address, QObject* parent= 0);
-    virtual ~BasicRESTResource();
-    bool setXML(QByteArray xml);
-    virtual QDomDocument* resource();
-    virtual bool setResource(QDomDocument* resource);
-    virtual bool isValidResource(QDomDocument* resource);
+class BasicRESTResource : public RESTResource {
+        Q_OBJECT
+    public:
+        BasicRESTResource(QString address, QObject* parent = 0);
+        virtual ~BasicRESTResource();
+        bool setXML(QByteArray xml);
+        virtual QDomDocument* resource();
 };
 
 #endif // BASICRESTRESOURCE_H

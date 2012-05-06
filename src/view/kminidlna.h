@@ -68,6 +68,7 @@ public slots:
     void onActionStartStopServer();
     void onRESTServerRun(bool);
     void onSettingsChanged();
+        void onNotValidCertificateKey();
 };
 
 #endif // KminiDLNA_H

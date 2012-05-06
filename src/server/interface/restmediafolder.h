@@ -25,12 +25,11 @@
 #include <QDomDocument>
 
 
-class RESTMediaFolder : public RESTresource
+class RESTMediaFolder : public RESTResource
 {
 
 public:
     explicit RESTMediaFolder(QObject* parent = 0, QString address = "/mediafolders.xml" );
-    virtual bool setResource(QDomDocument* resource);
     virtual QDomDocument* resource();
     virtual ~RESTMediaFolder();
 private:

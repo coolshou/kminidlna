@@ -41,6 +41,8 @@ KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
             this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
+    connect(RESTServer::getInstance(), SIGNAL(notValidKeyCertificate()),
+            SLOT(onNotValidCertificateKey()));
     loadSettings();
 }
 
@@ -80,9 +82,9 @@ void KminiDLNA::initSystemTray() {
 }
 
 void KminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
-    if (reason == QSystemTrayIcon::Trigger) {
-        if (isVisible() == true) {
-            if (canBeRestored(1)) {
+    if(reason == QSystemTrayIcon::Trigger) {
+        if(isVisible() == true) {
+            if(canBeRestored(1)) {
                 restore(1, false);
             }
         } else {
@@ -92,7 +94,7 @@ void KminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
 }
 
 void KminiDLNA::closeEvent(QCloseEvent* event) {
-    if (systemtray->isVisible() && m_closeToTray) {
+    if(systemtray->isVisible() && m_closeToTray) {
         hide();
         systemtray->showMessage(i18n("KminiDLNA"), i18n("KminiDLNA was minimalized."), QSystemTrayIcon::Information, 8000);
         event->ignore();
@@ -142,7 +144,7 @@ void KminiDLNA::showSettings() {
  * slot onBtnStopStart
  */
 void KminiDLNA::onBtnStopStart() {
-    if (dlnaProcess->minidlnaStatus()) {
+    if(dlnaProcess->minidlnaStatus()) {
         dlnaProcess->minidlnaKill();
     } else {
         dlnaProcess->minidlnaStart();
@@ -163,7 +165,7 @@ void KminiDLNA::loadSettings() {
  * Slot: If is minidlna status changed
  */
 void KminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
-    switch (state) {
+    switch(state) {
     case QProcess::Running:
         mw->setStopStart(true);
         systemtray->setIcon(QIcon(":/images/run.png"));
@@ -187,15 +189,16 @@ void KminiDLNA::quitKminiDLNA() {
 
 void KminiDLNA::onActionStartStopServer() {
     RESTServer* server = RESTServer::getInstance();
-    if (server->isRuning()) {
+    if(server->isRuning()) {
         server->stopServer();
     } else {
+	server->loadConfig();
         server->startServer();
     }
 }
 
 void KminiDLNA::onRESTServerRun(bool run) {
-    if (run) {
+    if(run) {
         m_actionStartStopRESTServer->setText(i18n("Stop HTTP REST server"));
     } else {
         m_actionStartStopRESTServer->setText(i18n("Start HTTP REST server"));
@@ -206,6 +209,13 @@ void KminiDLNA::onSettingsChanged() {
     loadSettings();
 }
 
+void KminiDLNA::onNotValidCertificateKey() {
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setWindowTitle("Cannot start REST server");
+    msgBox.setText("Certificate or private key is not valid.\nCheck configuration.");
+    msgBox.exec();
+}
 
 
 

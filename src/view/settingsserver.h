@@ -30,29 +30,38 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLineEdit>
+#include <QRadioButton>
 #include <QByteArray>
 #include "abstractsettings.h"
 
-class SettingsServer : public AbstractSettings
-{
-    Q_OBJECT
-public:
-    explicit SettingsServer(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~SettingsServer();
-    void applySettings();
-    void setDefaults();
-    void loadSettings();
-private:
-    void initGUI();
-    QSpinBox* m_port;
-    QLineEdit* m_username;
-    QByteArray m_passwordHashed;
-    QPushButton* m_btnControll;
-    QCheckBox* m_onStartRun;
-    QPushButton* m_btnPassword;
+class SettingsServer : public AbstractSettings {
+        Q_OBJECT
+    public:
+        explicit SettingsServer(QWidget* parent = 0, Qt::WindowFlags f = 0);
+        virtual ~SettingsServer();
+        void applySettings();
+        void setDefaults();
+        void loadSettings();
+    private:
+        void initGUI();
+        QSpinBox* m_port;
+        QLineEdit* m_username;
+        QByteArray m_passwordHashed;
+        QPushButton* m_btnControll;
+        QCheckBox* m_onStartRun;
+        QPushButton* m_btnPassword;
+        QRadioButton* m_rbtGenerated;
+        QRadioButton* m_rbtCustom;
+        QWidget* m_customCertificate;
+        QLineEdit* m_leCustomPKey;
+        QLineEdit* m_leCustomCertificate;
 
-public slots:
-    void onPasswordClicked(bool clicked);
+    public slots:
+        void onPasswordClicked(bool);
+        void onGenerateCertificateClicked(bool);
+        void certificateChanged(bool);
+        void onTbtPKeyClicked(bool);
+        void onTbtCertClicked(bool);
 };
 
 

@@ -19,13 +19,14 @@
 
 #include "restresource.h"
 #include <QFile>
+#include <QDebug>
 
-RESTresource::RESTresource(QString address, QObject* parent)
+RESTResource::RESTResource(QString address, QObject* parent)
     : QObject(parent), m_document(0), m_address(address), m_schema(0), m_schemaLoaded(false), m_PUT(false), m_GET(true) {
 
 }
 
-RESTresource::~RESTresource() {
+RESTResource::~RESTResource() {
     if(m_document != 0) {
         delete m_document;
     }
@@ -34,31 +35,64 @@ RESTresource::~RESTresource() {
     }
 }
 
-QString RESTresource::address() {
+QString RESTResource::address() {
     return m_address;
 }
 
-void RESTresource::setAddress(QString address) {
+void RESTResource::setAddress(QString address) {
     m_address = address;
 }
 
-bool RESTresource::isValidResource(QDomDocument* resource) {
+/**
+ * Reimplement this for action on get method
+ * @return null (0)
+ */
+QDomDocument* RESTResource::resource() {
+    return 0;
+}
+
+
+/**
+ * If resource is valid is call method processResource.
+ * You must implement processResource for action.
+ * This method is call if put request is recieved.
+ * @return true if it has PUT method, is setted XML Scheme and resource is valid
+ * 		else false
+ */
+bool RESTResource::setResource(const QDomDocument& resource) {
+    if(hasPUTMethod() && isValidResource(resource)) {
+        return processResource(resource);
+    }
+    return false;
+}
+
+/**
+  * Implement this method for action on PUT method.
+  * @return default is only false returned
+  */
+bool RESTResource::processResource(const QDomDocument&) {
+    return false;
+}
+
+
+
+bool RESTResource::isValidResource(const QDomDocument& resource) {
     if(m_schema == 0 || !m_schema->isValid()) {
         return false;
     }
 
     QXmlSchemaValidator validator(*m_schema);
-    return validator.validate(resource->toByteArray());
+    return validator.validate(resource.toByteArray());
 }
 
-bool RESTresource::operator==(const RESTresource& other) {
+bool RESTResource::operator==(const RESTResource& other) {
     if(other.m_address == m_address && other.m_document == m_document) {
         return true;
     }
     return false;
 }
 
-bool RESTresource::loadSchema(QString path) {
+bool RESTResource::loadSchema(QString path) {
     if(m_schema != 0) {
         delete m_schema;
     }
@@ -72,7 +106,6 @@ bool RESTresource::loadSchema(QString path) {
     if(file.isOpen()) {
         file.close();
     }
-
     if(!m_schemaLoaded) {
         delete m_schema;
         m_schema = 0;
@@ -81,11 +114,11 @@ bool RESTresource::loadSchema(QString path) {
     return m_schemaLoaded;
 }
 
-bool RESTresource::isXmlSchemaSetted() {
+bool RESTResource::isXmlSchemaSetted() {
     return m_schemaLoaded;
 }
 
-QXmlSchema* RESTresource::schema() {
+QXmlSchema* RESTResource::schema() {
     return m_schema;
 }
 
@@ -93,42 +126,42 @@ QXmlSchema* RESTresource::schema() {
 /**
  * @return false (not implemented http method)
  */
-bool RESTresource::hasDELETEMethod() {
+bool RESTResource::hasDELETEMethod() {
     return false;
 }
 
 /**
  * @return false (not implemented http method)
  */
-bool RESTresource::hasPOSTMethod() {
+bool RESTResource::hasPOSTMethod() {
     return false;
 }
 
 /**
  * @return true if has http method other false. Default is true.
  */
-bool RESTresource::hasGETMethod() {
+bool RESTResource::hasGETMethod() {
     return m_GET;
 }
 
 /**
  * @return true if has http method other false. Default is false.
  */
-bool RESTresource::hasPUTMethod() {
+bool RESTResource::hasPUTMethod() {
     return m_PUT;
 }
 
 /**
  * default is true
  */
-void RESTresource::setGETMethod(bool get) {
+void RESTResource::setGETMethod(bool get) {
     m_GET = get;
 }
 
 /**
  * default is false
  */
-void RESTresource::setPUTMethod(bool put) {
+void RESTResource::setPUTMethod(bool put) {
     m_PUT = put;
 }
 

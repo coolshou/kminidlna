@@ -30,14 +30,14 @@ RESTInterfaces::~RESTInterfaces()
 }
 
 
-void RESTInterfaces::addResource(RESTresource* res)
+void RESTInterfaces::addResource(RESTResource* res)
 {
     if (!m_resources.contains(res->address())) {
         m_resources[res->address()] = res;
     }
 }
 
-bool RESTInterfaces::removeResource(RESTresource* res)
+bool RESTInterfaces::removeResource(RESTResource* res)
 {
     if (m_resources.contains(res->address())) {
         if (m_resources.remove(res->address()) > 0) {
@@ -67,7 +67,7 @@ bool RESTInterfaces::hasResourceOnAddress(QString address)
     return false;
 }
 
-RESTresource* RESTInterfaces::resourceOnAddress(QString address)
+RESTResource* RESTInterfaces::resourceOnAddress(QString address)
 {
     if (hasResourceOnAddress(address))
         return m_resources[address];

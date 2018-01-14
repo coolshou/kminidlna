@@ -21,7 +21,7 @@
 #define MEDIAFOLDER_H
 #include <QStandardItemModel>
 #include <QList>
-#include <KLocalizedString>
+//#include <KLocalizedString>
 
 
 class MediaFolder: public QObject {

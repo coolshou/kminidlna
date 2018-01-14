@@ -24,14 +24,17 @@
 #include <QToolButton>
 #include <QSpacerItem>
 #include <QDebug>
-#include <KFileDialog>
+#include <QFileDialog>
+//#include <KFileDialog>
 #include <QPointer>
-#include <KStandardDirs>
+#include <QStandardPaths>
+//#include <KStandardDirs>
 
-FolderEditDialog::FolderEditDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, flags)
+FolderEditDialog::FolderEditDialog(QWidget* parent, Qt::WindowFlags flags): QDialog(parent, flags)
 {
     initGUI();
-    setCaption(i18n("Add media directory"));
+    setWindowTitle(tr("Add media directory"));
+    //setCaption(tr("Add media directory"));
     QDir dir("/");
     dir.setPath("~/");
     qDebug() << dir.absolutePath();
@@ -39,9 +42,10 @@ FolderEditDialog::FolderEditDialog(QWidget* parent, Qt::WFlags flags): KDialog(p
 }
 
 
-FolderEditDialog::FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent, Qt::WFlags flags): KDialog(parent, flags) {
+FolderEditDialog::FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent, Qt::WindowFlags flags): QDialog(parent, flags) {
     initGUI();
-    setCaption(i18n("Edit media directory"));
+    setWindowTitle(tr("Edit media directory"));
+    //setCaption(tr("Edit media directory"));
     m_ledFolderPath->setText(mediaFolder.folder());
     setMediaType(mediaFolder.mediaType());
 }
@@ -51,18 +55,18 @@ FolderEditDialog::~FolderEditDialog() {
 
 
 void FolderEditDialog::initGUI() {
-    QVBoxLayout* verticalLayout = new QVBoxLayout(mainWidget());
+    QVBoxLayout* verticalLayout = new QVBoxLayout();
 
     QHBoxLayout* horizontalLayout = new QHBoxLayout();
-    QLabel* label = new QLabel(i18n("Folder Path:"), mainWidget());
+    QLabel* label = new QLabel(tr("Folder Path:"));
 
 
     horizontalLayout->addWidget(label);
 
-    m_ledFolderPath = new QLineEdit(mainWidget());
+    m_ledFolderPath = new QLineEdit();
     horizontalLayout->addWidget(m_ledFolderPath);
 
-    QToolButton* tlbFindFolder = new QToolButton(mainWidget());
+    QToolButton* tlbFindFolder = new QToolButton();
     tlbFindFolder->setText("...");
     connect(tlbFindFolder, SIGNAL(clicked(bool)),
             SLOT(onFindFolderClicked()));
@@ -72,18 +76,18 @@ void FolderEditDialog::initGUI() {
 
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout();
 
-    QLabel* label_2 = new QLabel(i18n("Media Type"), mainWidget());
+    QLabel* label_2 = new QLabel(tr("Media Type"));
 
     horizontalLayout_2->addWidget(label_2);
 
-    m_cbxMediaType = new QComboBox(mainWidget());
+    m_cbxMediaType = new QComboBox();
 
     m_cbxMediaType->clear();
     m_cbxMediaType->insertItems(0, QStringList()
-                                << i18n("None")
-                                << i18n("Video")
-                                << i18n("Audio")
-                                << i18n("Images")
+                                << tr("None")
+                                << tr("Video")
+                                << tr("Audio")
+                                << tr("Images")
                                );
     horizontalLayout_2->addWidget(m_cbxMediaType);
 
@@ -98,10 +102,13 @@ void FolderEditDialog::initGUI() {
 }
 
 void FolderEditDialog::onFindFolderClicked() {
-    QString path = KFileDialog::getExistingDirectory(KUrl(m_ledFolderPath->text()), this, i18n("Media Folder"));
+    //TODO getExistingDirectory
+    /*
+    QString path = QFileDialog::getExistingDirectory(this->parentWidget(), tr("Media Folder"), QUrl(m_ledFolderPath->text()),QFileDialog::ShowDirsOnly);
     if (!path.isEmpty()) {
         m_ledFolderPath->setText(path);
     }
+    */
 }
 
 void FolderEditDialog::setMediaType(MediaFolder::MediaType mediaType) {

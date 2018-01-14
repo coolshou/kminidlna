@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -20,10 +20,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "mainwidget.h"
-#include <KLocalizedString>
-#include "kminidlna.h"
+//#include <KLocalizedString>
+#include "qminidlna.h"
 #include <QDebug>
-#include <KIcon>
+//#include <QIcon>
 #include <QIcon>
 
 MainWidget::MainWidget(QWidget *parent):QWidget(parent)
@@ -41,17 +41,20 @@ void MainWidget::initGUI()
 {
     mainlayout = new QVBoxLayout();
     setLayout(mainlayout);
+    /*TODO
     kled = new KLed(Qt::gray, KLed::Off, KLed::Sunken, KLed::Circular);
     kled->setMaximumSize(20,20);
-    btnStopStart = new QPushButton(KIcon("media-playback-start"), i18n("Start"));
+    */
+    btnStopStart = new QPushButton(QIcon("media-playback-start"), tr("Start"));
+
     QHBoxLayout *layoutRun = new QHBoxLayout();
 //     layoutRun->addWidget(new QPixmap (QIcon(":/images/ikona.png")));
     QLabel* lbla = new QLabel("Test",this);
     lbla->setPixmap(QPixmap(":/images/ikona.png"));
     layoutRun->addWidget(lbla);
     
-    layoutRun->addWidget(new QLabel(i18n("minidlna run:")));
-    layoutRun->addWidget(kled);
+    layoutRun->addWidget(new QLabel(tr("minidlna run:")));
+    //layoutRun->addWidget(kled);
     mainlayout->addLayout(layoutRun);;
     
     mainlayout->addSpacerItem(new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Expanding));
@@ -72,24 +75,26 @@ void MainWidget::setStopStart(bool ss)
     if(!btnStopStart->isEnabled()){
 	btnStopStart->setEnabled(true);
     }
+    /*TODO
     if (ss) {
         kled->setColor(Qt::green);
         kled->setState(KLed::On);
-        btnStopStart->setText(i18n("Stop"));
-	btnStopStart->setIcon(KIcon("media-playback-stop"));
+        btnStopStart->setText(tr("Stop"));
+	btnStopStart->setIcon(QIcon("media-playback-stop"));
     } else {
         kled->setColor(Qt::gray);
         kled->setState(KLed::Off);
-        btnStopStart->setText(i18n("Start"));
-	btnStopStart->setIcon(KIcon("media-playback-start"));
+        btnStopStart->setText(tr("Start"));
+	btnStopStart->setIcon(QIcon("media-playback-start"));
     }
+    */
 }
 
 void MainWidget::setRunning()
 {
-    btnStopStart->setText(i18n("Starting ..."));
+    btnStopStart->setText(tr("Starting ..."));
     btnStopStart->setEnabled(false);
-    btnStopStart->setIcon(KIcon("media-record"));
+    btnStopStart->setIcon(QIcon("media-record"));
 }
 
 

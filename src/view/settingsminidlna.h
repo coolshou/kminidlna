@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 

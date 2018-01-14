@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+QminiDLNA
+http://gitorious.org/QminiDLNA/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -18,25 +18,30 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "kminidlna.h"
+#include "qminidlna.h"
 
 #include "mainwidget.h"
 #include "mediafolderswidget.h"
 
 #include <QLabel>
-#include <KDE/KLocalizedString>
+//#include <KDE/KLocalizedString>
 #include <QLayout>
 #include <QDebug>
-#include <KHelpMenu>
-#include <KMenu>
-#include <KApplication>
-#include <KAboutData>
-#include <KCmdLineArgs>
-#include <KAction>
-#include <KStandardAction>
-#include <KConfigDialog>
+#include <QtConfig>
 
-KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f) {
+
+//#include <KHelpMenu>
+//#include <QMenu>
+//#include <KApplication>
+#include <QApplication>
+//#include <KAboutData>
+//#include <KCmdLineArgs>
+//#include <KStandardAction>
+#include <QAction>
+#include <QSettings>
+//#include <KConfigDialog>
+
+QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f): QMainWindow(parent, f) {
     dlnaProcess = MiniDLNAProcess::getInstance();
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
@@ -46,11 +51,11 @@ KminiDLNA::KminiDLNA(QWidget* parent, Qt::WindowFlags f): KMainWindow(parent, f)
     loadSettings();
 }
 
-KminiDLNA::~KminiDLNA() {
+QminiDLNA::~QminiDLNA() {
 
 }
 
-void KminiDLNA::initGUI() {
+void QminiDLNA::initGUI() {
     mw = new MainWidget(this);
     setCentralWidget(mw);
     createMenu();
@@ -58,62 +63,64 @@ void KminiDLNA::initGUI() {
     connect(mw, SIGNAL(pressedBtnStopStart()),
             this, SLOT(onBtnStopStart()));
 }
-void KminiDLNA::initSystemTray() {
-    systemtray = new KSystemTrayIcon(QIcon(":/images/ikona.png"), this);
+void QminiDLNA::initSystemTray() {
+    systemtray = new QSystemTrayIcon(QIcon(":/images/qminidlna.png"), this);
 
     //add MENU
-    KMenu* trayMenu = new KMenu("KminiDLNA", this);
-    trayMenu->addTitle(QIcon(":/images/ikona.png"), KGlobal::mainComponent().aboutData()->programName());
+    QMenu* trayMenu = new QMenu("QminiDLNA", this);
+    //trayMenu->setTitle(QGlobal::mainComponent().aboutData()->programName());
 
-    trayStopStart = new KAction(KIcon("media-playback-start"), i18n("Start minidlna"), trayMenu);
+    trayStopStart = new QAction(QIcon("media-playback-start"), tr("Start minidlna"), trayMenu);
     connect(trayStopStart, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
             this, SLOT(onBtnStopStart()));
     trayMenu->addAction(trayStopStart);
 
     trayMenu->addSeparator();
-    trayMenu->addAction(KStandardAction::quit(this, SLOT(quitKminiDLNA()), this));
+    //trayMenu->addAction(QStandardAction::quit(this, SLOT(quitQminiDLNA()), this));
     systemtray->setContextMenu(trayMenu);
 
     systemtray->show();
     connect(systemtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(systemTrayActived(QSystemTrayIcon::ActivationReason)));
     connect(systemtray, SIGNAL(quitSelected()),
-            this, SLOT(quitKminiDLNA()));
+            this, SLOT(quitQminiDLNA()));
 }
 
-void KminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
+void QminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
     if(reason == QSystemTrayIcon::Trigger) {
         if(isVisible() == true) {
+            /*
             if(canBeRestored(1)) {
                 restore(1, false);
             }
         } else {
             restore(1);
+            */
         }
     }
 }
 
-void KminiDLNA::closeEvent(QCloseEvent* event) {
+void QminiDLNA::closeEvent(QCloseEvent* event) {
     if(systemtray->isVisible() && m_closeToTray) {
         hide();
-        systemtray->showMessage(i18n("KminiDLNA"), i18n("KminiDLNA was minimalized."), QSystemTrayIcon::Information, 8000);
+        systemtray->showMessage(tr("QminiDLNA"), tr("QminiDLNA was minimalized."), QSystemTrayIcon::Information, 8000);
         event->ignore();
     } else {
-        KMainWindow::closeEvent(event);
+        QMainWindow::closeEvent(event);
     }
 }
 
-void KminiDLNA::createMenu() {
-    menu = new KMenuBar(this);
+void QminiDLNA::createMenu() {
+    menu = new QMenuBar(this);
     setMenuBar(menu);
-    mTool = new KMenu(i18n("Tools"), menu);
+    mTool = new QMenu(tr("Tools"), menu);
 
-    KAction *aSetting = new KAction(KIcon("configure"), i18n("Configure KminiDLNA"), mTool);
+    QAction *aSetting = new QAction(QIcon("configure"), tr("Configure QminiDLNA"), mTool);
     connect(aSetting, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
             this, SLOT(showSettings()));
     mTool->addAction(aSetting);
 
-    m_actionStartStopRESTServer = new KAction(KIcon("applications-internet"), i18n("Start HTTP REST server"), mTool);
+    m_actionStartStopRESTServer = new QAction(QIcon("applications-internet"), tr("Start HTTP REST server"), mTool);
     connect(m_actionStartStopRESTServer, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
             this, SLOT(onActionStartStopServer()));
     connect(RESTServer::getInstance(), SIGNAL(run(bool)),
@@ -122,15 +129,17 @@ void KminiDLNA::createMenu() {
 
     mTool->addSeparator();
 
-    mTool->addAction(KStandardAction::quit(this, SLOT(quitKminiDLNA()), this));
+    //mTool->addAction(KStandardAction::quit(this, SLOT(quitQminiDLNA()), this));
 
     menu->addMenu(mTool);
+    /*
     aboutMenu = new KHelpMenu(menu, KCmdLineArgs::aboutData());
     mAbout = aboutMenu->menu();
     menu->addMenu(aboutMenu->menu());
+    */
 }
 
-void KminiDLNA::showSettings() {
+void QminiDLNA::showSettings() {
     SettingsDialog *sdlg = new SettingsDialog(this);
     connect(sdlg, SIGNAL(settingsChanged()),
             this, SLOT(onSettingsChanged()));
@@ -143,7 +152,7 @@ void KminiDLNA::showSettings() {
 /**
  * slot onBtnStopStart
  */
-void KminiDLNA::onBtnStopStart() {
+void QminiDLNA::onBtnStopStart() {
     if(dlnaProcess->minidlnaStatus()) {
         dlnaProcess->minidlnaKill();
     } else {
@@ -154,9 +163,15 @@ void KminiDLNA::onBtnStopStart() {
 /**
  * Load and set settings
  */
-void KminiDLNA::loadSettings() {
+void QminiDLNA::loadSettings() {
+    QSettings config;
+    config.beginGroup("General");
+    m_closeToTray = config.value("closetotray", false).toBool();
+    /*
     KConfigGroup config = KGlobal::config()->group("General");
     m_closeToTray = config.readEntry("closetotray", false);
+    */
+    config.endGroup();
     systemtray->setVisible(m_closeToTray);
 
 }
@@ -164,13 +179,13 @@ void KminiDLNA::loadSettings() {
 /**
  * Slot: If is minidlna status changed
  */
-void KminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
+void QminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
     switch(state) {
     case QProcess::Running:
         mw->setStopStart(true);
         systemtray->setIcon(QIcon(":/images/run.png"));
-        trayStopStart->setIcon(KIcon("media-playback-stop"));
-        trayStopStart->setText(i18n("Stop"));
+        trayStopStart->setIcon(QIcon("media-playback-stop"));
+        trayStopStart->setText(tr("Stop"));
         break;
     case QProcess::Starting:
         mw->setRunning();
@@ -178,16 +193,16 @@ void KminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
     default:
         mw->setStopStart(false);
         systemtray->setIcon(QIcon(":/images/ikona.png"));
-        trayStopStart->setIcon(KIcon("media-playback-start"));
-        trayStopStart->setText(i18n("Start"));
+        trayStopStart->setIcon(QIcon("media-playback-start"));
+        trayStopStart->setText(tr("Start"));
     }
 }
-void KminiDLNA::quitKminiDLNA() {
+void QminiDLNA::quitQminiDLNA() {
     dlnaProcess->minidlnaKill();
-    kapp->quit();
+    qApp->quit();
 }
 
-void KminiDLNA::onActionStartStopServer() {
+void QminiDLNA::onActionStartStopServer() {
     RESTServer* server = RESTServer::getInstance();
     if(server->isRuning()) {
         server->stopServer();
@@ -197,19 +212,19 @@ void KminiDLNA::onActionStartStopServer() {
     }
 }
 
-void KminiDLNA::onRESTServerRun(bool run) {
+void QminiDLNA::onRESTServerRun(bool run) {
     if(run) {
-        m_actionStartStopRESTServer->setText(i18n("Stop HTTP REST server"));
+        m_actionStartStopRESTServer->setText(tr("Stop HTTP REST server"));
     } else {
-        m_actionStartStopRESTServer->setText(i18n("Start HTTP REST server"));
+        m_actionStartStopRESTServer->setText(tr("Start HTTP REST server"));
     }
 }
 
-void KminiDLNA::onSettingsChanged() {
+void QminiDLNA::onSettingsChanged() {
     loadSettings();
 }
 
-void KminiDLNA::onNotValidCertificateKey() {
+void QminiDLNA::onNotValidCertificateKey() {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Warning);
     msgBox.setWindowTitle("Cannot start REST server");

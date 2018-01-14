@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -20,12 +20,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "settingsdialog.h"
 #include "settingsgeneral.h"
-#include <KDE/KLocalizedString>
-#include <KPushButton>
+//#include <KDE/KLocalizedString>
+#include <QPushButton>
+//#include <KPushButton>
 #include <QDebug>
-#include <KMessageBox>
+#include <QMessageBox>
+//#include <KMessageBox>
 
-SettingsDialog::SettingsDialog(QWidget* parent, Qt::WFlags flags): KPageDialog(parent, flags), m_wasNo(false) {
+SettingsDialog::SettingsDialog(QWidget* parent, Qt::WindowFlags flags): QDialog(parent, flags), m_wasNo(false) {
     initGUI();
 }
 
@@ -34,69 +36,80 @@ SettingsDialog::~SettingsDialog() {
 }
 
 void SettingsDialog::onApply() {
+    /*
     KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
     if (tmp->isChanged()) {
         tmp->applySettings();
         emit settingsChanged();
     }
+    */
     m_apply->setEnabled(false);
 }
 
 void SettingsDialog::onDefault() {
+    /*
     KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w->widget());
     tmp->setDefaults();
+    */
 }
 
 void SettingsDialog::initGUI() {
     setWindowModality(Qt::WindowModal);
-    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply /*| KDialog::Default*/);
-    m_apply = button(KDialog::Apply);
+    /*
+    setButtons(QDialog::Ok | QDialog::Cancel | QDialog::Apply );
+    m_apply = button(QDialog::Apply);
     setFaceType(KPageDialog::List);
-    setWindowTitle(i18n("Configure KminiDLNA"));
+    */
+    setWindowTitle(tr("Configure qminidlna"));
     setMinimumSize(450, 250);
 
     m_general = new SettingsGeneral(this);
     connect(m_general, SIGNAL(changed()),
             this, SLOT(onChange()));
-    KPageWidgetItem* generalPage = new KPageWidgetItem(m_general, i18n("General"));
+    /*
+    KPageWidgetItem* generalPage = new KPageWidgetItem(m_general, tr("General"));
     generalPage->setObjectName("gen");
-    generalPage->setIcon(KIcon(":/images/ikona.png"));
+    generalPage->setIcon(QIcon(":/images/ikona.png"));
     addPage(generalPage);
-
+*/
     m_minidlna = new SettingsMiniDLNA(this);
     connect(m_minidlna, SIGNAL(changed()),
             this, SLOT(onChange()));
-    KPageWidgetItem* minidlnaPage = new KPageWidgetItem(m_minidlna, i18n("MiniDLNA"));
+    /*
+    KPageWidgetItem* minidlnaPage = new KPageWidgetItem(m_minidlna, tr("MiniDLNA"));
     minidlnaPage->setObjectName("MiniDLNA");
-    minidlnaPage->setIcon(KIcon("configure"));
+    minidlnaPage->setIcon(QIcon("configure"));
     addPage(minidlnaPage);
-
+*/
     m_mediaFolders = new SettingsMediaFolder(this);
     connect(m_mediaFolders, SIGNAL(changed()),
             this, SLOT(onChange()));
-    KPageWidgetItem* mediaFoldersPage = new KPageWidgetItem(m_mediaFolders, i18n("Media folders"));
+    /*
+    KPageWidgetItem* mediaFoldersPage = new KPageWidgetItem(m_mediaFolders, tr("Media folders"));
     mediaFoldersPage->setObjectName("mediafolder");
-    mediaFoldersPage->setIcon(KIcon("folder-video"));
+    mediaFoldersPage->setIcon(QIcon("folder-video"));
     addPage(mediaFoldersPage);
-
+*/
     m_confFileSettings = new SettingsConfFile(this);
     connect(m_confFileSettings, SIGNAL(changed()),
             this, SLOT(onChange()));
-    KPageWidgetItem* confFilePage = new KPageWidgetItem(m_confFileSettings, i18n("MiniDLNA configuration file"));
+  /*
+    KPageWidgetItem* confFilePage = new KPageWidgetItem(m_confFileSettings, tr("MiniDLNA configuration file"));
     confFilePage->setObjectName("conffile");
-    confFilePage->setIcon(KIcon("text-plain"));
+    confFilePage->setIcon(QIcon("text-plain"));
     addPage(confFilePage);
-
+*/
     m_server = new SettingsServer(this);
     connect(m_server, SIGNAL(changed()),
             this, SLOT(onChange()));
-    KPageWidgetItem* serverPage = new KPageWidgetItem(m_server, i18n("Server interface"));
+    /*
+    KPageWidgetItem* serverPage = new KPageWidgetItem(m_server, tr("Server interface"));
     serverPage->setObjectName("server");
-    serverPage->setIcon(KIcon("network-server"));
+    serverPage->setIcon(QIcon("network-server"));
     addPage(serverPage);
-
+*/
     //Buttons clicked
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(onApply()));
@@ -110,6 +123,7 @@ void SettingsDialog::initGUI() {
     m_apply->setEnabled(false);
 }
 
+/*
 void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before) {
     if (m_wasNo) {
         m_wasNo = false;
@@ -119,13 +133,13 @@ void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem
 
     if (tmp->isChanged()) {
         setCurrentPage(before);
-        int ret = KMessageBox::warningYesNoCancel(this, i18n("Settings was changed.\nDo you want apply changes?"), i18n("Setting was changed"));
+        int ret = QMessageBox::warningYesNoCancel(this, tr("Settings was changed.\nDo you want apply changes?"), tr("Setting was changed"));
         switch (ret) {
-        case KMessageBox::Yes:
+        case QMessageBox::Yes:
             onApply();
             setCurrentPage(current);
             break;
-        case KMessageBox::No:
+        case QMessageBox::No:
             tmp->loadSettings();
             m_apply->setEnabled(false);
             m_wasNo = true;
@@ -134,7 +148,7 @@ void SettingsDialog::curentPageChanged(KPageWidgetItem* current, KPageWidgetItem
         }
     }
 }
-
+*/
 void SettingsDialog::onChange() {
 //     if(!m_apply->isEnabled()){
     m_apply->setEnabled(true);

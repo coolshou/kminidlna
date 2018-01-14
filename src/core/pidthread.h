@@ -20,12 +20,14 @@
 #ifndef PIDTHREAD_H
 #define PIDTHREAD_H
 
+#include <QObject>
 #include <QThread>
 #include <QString>
 #include <QFile>
-#include <KMessageBox>
+#include <QMessageBox>
+//#include <KMessageBox>
 #include <QDebug>
-#include <KLocalizedString>
+//#include <KLocalizedString>
 
 class PidThread: public QThread
 {

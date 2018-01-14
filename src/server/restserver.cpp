@@ -1,21 +1,25 @@
 
-// #include "restserver.h"
+#include "restserver.h"
 #include <QString>
+
 #include <QSslError>
 #include <QFile>
 #include <QStringList>
 #include <QHash>
 #include <QFileInfo>
-#include <KConfigGroup>
-#include <KGlobal>
+//#include <KConfigGroup>
+//#include <KGlobal>
 #include "serverrequest.h"
 #include "restconnection.h"
 #include "certificategenerator.h"
 
 #include <QDomDocument>
 #include <sys/stat.h>
-#include <KConfig>
-#include <KStandardDirs>
+#include <qconfig.h>
+#include <QSettings>
+//#include <KConfig>
+#include <QStandardPaths>
+//#include <KStandardDirs>
 
 // bool RESTServer::m_runing = false;
 
@@ -43,7 +47,18 @@ RESTServer* RESTServer::getInstance() {
 
 void RESTServer::loadConfig() {
     m_notFoundFileHtmlPath = "404.html";
+    QSettings config;
+    config.beginGroup("server");
+    setPort(config.value("port", DEFAULT_PORT).toInt());
 
+    RESTServer::login = config.value("username", QByteArray()).toByteArray();
+    RESTServer::password = config.value("password", QByteArray()).toByteArray();
+
+    m_customCert = config.value("custom_cert", false).toBool();
+    m_certPath = config.value("cert_path", QString()).toString();
+    m_pkeyPath = config.value("pkey_path", QString()).toString();
+    config.endGroup();
+    /*
     KConfigGroup config = KGlobal::config()->group("server");
     setPort(config.readEntry("port", DEFAULT_PORT));
 
@@ -53,6 +68,7 @@ void RESTServer::loadConfig() {
     m_customCert = config.readEntry("custom_cert", false);
     m_certPath = config.readEntry("cert_path", QString());
     m_pkeyPath = config.readEntry("pkey_path", QString());
+    */
 }
 
 /**
@@ -136,10 +152,11 @@ void RESTServer::connectionClosed() {
 void RESTServer::handshakeComplete() {
     QSslSocket* socket = dynamic_cast<QSslSocket *>(sender());
     disconnect(socket, SIGNAL(disconnected()), this, SLOT(connectionClosed()));
-
+/* TODO: RESTConnection
     RESTConnection* connection = new RESTConnection(socket, this);
     connect(connection, SIGNAL(finished()), connection, SLOT(deleteLater()));
     connection->start();
+    */
 }
 
 
@@ -174,7 +191,7 @@ void RESTServer::loadResource() {
     //Version.xml part
     res = new BasicRESTResource("/version.xml", this);
 
-    QByteArray versionxml = "<kminidlna><version>0.9pre</version></kminidlna>";
+    QByteArray versionxml = "<qminidlna><version>0.9pre</version></qminidlna>";
 
     if(res->setXML(versionxml)) {
         addResource(res);
@@ -209,9 +226,10 @@ void RESTServer::loadCert(bool custom) {
     if(custom) {
         loadCert(m_pkeyPath, m_certPath);
     } else {
-        KStandardDirs dirs;
-        QString path =  dirs.saveLocation("data") + "kminidlna/";
-        loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME, true);
+        //TODO: CertificateGenerator
+        //KStandardDirs dirs;
+        //QString path =  dirs.saveLocation("data") + "qminidlna/";
+        //loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME, true);
     }
 }
 
@@ -237,11 +255,12 @@ void RESTServer::loadCert(const QString& pkeyPath, const QString& certPath, bool
         if(fcert.open(QIODevice::ReadOnly | QIODevice::Text)) {
             m_cert = QSslCertificate(&fcert);
             fcert.close();
+            /*
             if(!m_cert.isValid()) {
                 qDebug() << "RESTServer: certificate is not valid";
                 m_validCertAndKey = false;
                 return;
-            }
+            }*/
         } else {
             qDebug() << "RESTServer: cannot open certificate path: " << certPath;
             m_validCertAndKey = false;
@@ -249,13 +268,15 @@ void RESTServer::loadCert(const QString& pkeyPath, const QString& certPath, bool
         }
         m_validCertAndKey = true;
     } else if(generate) {
+        /*
         X509Value v;
-        v.commonName = (unsigned char*) "KMiniDLNA";
+        v.commonName = (unsigned char*) "qminidlna";
         v.countryName = (unsigned char*) "CZ";
         KStandardDirs dirs;
-        QString path = dirs.saveLocation("data") + "kminidlna/";
+        QString path = dirs.saveLocation("data") + "qminidlna/";
         CertificateGenerator::createCertificate(v, path);
         loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME);
+        */
     }
 }
 

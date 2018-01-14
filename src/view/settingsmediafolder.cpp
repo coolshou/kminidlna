@@ -47,7 +47,7 @@ void SettingsMediaFolder::applySettings() {
 void SettingsMediaFolder::initGUI() {
     QVBoxLayout* central = new QVBoxLayout(this);
 
-    QGroupBox* mediaFolderGroup = new QGroupBox(i18n("Media folders"), this);
+    QGroupBox* mediaFolderGroup = new QGroupBox(tr("Media folders"), this);
     central->addWidget(mediaFolderGroup);
 
     QVBoxLayout* mediaFolderGroupLayout = new QVBoxLayout(mediaFolderGroup);

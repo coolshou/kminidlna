@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -22,7 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <kpagedialog.h>
+//#include <kpagedialog.h>
+#include <QDialog>
 #include "settingsgeneral.h"
 #include "settingsminidlna.h"
 #include "settingsserver.h"
@@ -30,10 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settingsmediafolder.h"
 
 
-class SettingsDialog : public KPageDialog {
-        Q_OBJECT
+class SettingsDialog : public QDialog
+{
+Q_OBJECT
     public:
-        explicit SettingsDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
+        explicit SettingsDialog(QWidget* parent = 0, Qt::WindowFlags flags = 0);
         virtual ~SettingsDialog();
     private:
         SettingsGeneral* m_general;
@@ -41,7 +43,7 @@ class SettingsDialog : public KPageDialog {
         SettingsConfFile* m_confFileSettings;
         SettingsMediaFolder* m_mediaFolders;
         SettingsServer* m_server;
-        KPushButton*  m_apply;
+        QPushButton*  m_apply;
         bool m_wasNo;
 
         void initGUI();
@@ -49,7 +51,7 @@ class SettingsDialog : public KPageDialog {
         void onApply();
         void onDefault();
     public slots:
-        void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
+        //void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
         void onChange();
     signals:
 	void settingsChanged();

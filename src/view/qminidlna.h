@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+QminiDLNA
+http://gitorious.org/QminiDLNA/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -18,43 +18,48 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef KminiDLNA_H
-#define KminiDLNA_H
+#ifndef QminiDLNA_H
+#define QminiDLNA_H
 
 #include "mainwidget.h"
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
 #include "settingsdialog.h"
 
-#include <KMainWindow>
-#include <KSystemTrayIcon>
+#include <QMainWindow>
+//#include <KMainWindow>
+#include <QSystemTrayIcon>
+//#include <KSystemTrayIcon>
 #include <QCloseEvent>
-#include <KMenuBar>
-#include <KHelpMenu>
-#include <KMenu>
-#include <KAction>
+#include <QMenuBar>
+//#include <KMenuBar>
+#include <QMenu>
+//#include <KHelpMenu>
+//#include <KMenu>
+#include <QAction>
+//#include <KAction>
 
-class KminiDLNA : public KMainWindow
+class QminiDLNA : public QMainWindow
 {
 Q_OBJECT
 public:
-    explicit KminiDLNA(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~KminiDLNA();
+    explicit QminiDLNA(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~QminiDLNA();
 protected:
     void closeEvent(QCloseEvent *event);
 private:
     void initGUI();
-    KSystemTrayIcon *systemtray; 
+    QSystemTrayIcon *systemtray;
     void initSystemTray();
-    KMenuBar *menu;
+    QMenuBar *menu;
     void createMenu();
-    KHelpMenu *aboutMenu;
-    KMenu *mTool;
-    KMenu *mAbout;
+    //KHelpMenu *aboutMenu;
+    QMenu *mTool;
+    QMenu *mAbout;
     MiniDLNAProcess *dlnaProcess;
-    KAction* m_actionStartStopRESTServer;
+    QAction* m_actionStartStopRESTServer;
     MainWidget *mw;
-    KAction* trayStopStart;
+    QAction* trayStopStart;
     void loadSettings();
     bool m_closeToTray;
     
@@ -64,11 +69,11 @@ private slots:
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
     void onBtnStopStart();  
-    void quitKminiDLNA();
+    void quitQminiDLNA();
     void onActionStartStopServer();
     void onRESTServerRun(bool);
     void onSettingsChanged();
         void onNotValidCertificateKey();
 };
 
-#endif // KminiDLNA_H
+#endif // QminiDLNA_H

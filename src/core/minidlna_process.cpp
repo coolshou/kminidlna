@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -20,12 +20,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "minidlna_process.h"
 #include <QDebug>
-#include <KApplication>
+#include <QApplication>
+//#include <KApplication>
 #include <unistd.h>
-#include <KMessageBox>
-#include <KLocalizedString>
+#include <QMessageBox>
+//#include <KMessageBox>
+#include <QLocale>
+//#include <KLocalizedString>
 #include <QTextStream>
-#include <KConfigGroup>
+#include <QSettings>
+//#include <KConfigGroup>
 
 #include <sys/types.h>
 #include <signal.h>
@@ -120,7 +124,7 @@ bool MiniDLNAProcess::minidlnaStatus() {
 }
 
 /**
- * SLOT send status minidlna to KminiDLNA
+ * SLOT send status minidlna to qminidlna
  */
 void MiniDLNAProcess::onPidFile(bool found) {
     if (found) {
@@ -135,10 +139,12 @@ void MiniDLNAProcess::loadConfiguration() {
 }
 
 void MiniDLNAProcess::loadSettings() {
-    KConfigGroup config = KGlobal::config()->group("minidlna");
+    QSettings config;
+    config.beginGroup("minidlna");
+    //KConfigGroup config = KGlobal::config()->group("minidlna");
 
     //set minidlna path
-    QString minidlnapath = config.readEntry("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH);
+    QString minidlnapath = config.value("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH).toString();
     if (QFile::exists(minidlnapath)) {
         minidlnas = minidlnapath;
     } else {
@@ -146,12 +152,12 @@ void MiniDLNAProcess::loadSettings() {
         if (def.exists() && def.isExecutable()) {
             minidlnas = def.absoluteFilePath();
         } else {
-            qDebug() << i18n("MiniDLNA in ") << minidlnapath << i18n(" was not found");
+            qDebug() << tr("MiniDLNA in ") << minidlnapath << tr(" was not found");
         }
     }
 
     //Set pid path
-    QString pidpath = config.readEntry("pidpath", MiniDLNAProcess::PIDFILE_PATH);
+    QString pidpath = config.value("pidpath", MiniDLNAProcess::PIDFILE_PATH).toString();
     QFileInfo pid(pidpath);
     if (pid.isDir() && pid.isWritable()) {
         pathPidFile = pidpath;
@@ -164,14 +170,14 @@ void MiniDLNAProcess::loadSettings() {
         }
     }
 
-    m_fullRescanFile = config.readEntry("scanfile", true);
+    m_fullRescanFile = config.value("scanfile", true).toBool();
 
-    m_port = config.readEntry("minidlna_port", MiniDLNAProcess::DEFAULTPORT);
+    m_port = config.value("minidlna_port", MiniDLNAProcess::DEFAULTPORT).toInt();
 
     //Set configuration file
-    m_usedConfFile = ConfigurationFile::ConfFile(config.readEntry("use_conf_file", -1));
+    m_usedConfFile = ConfigurationFile::ConfFile(config.value("use_conf_file", -1).toInt());
 
-    QString confFilePath = config.readEntry("conf_file_path", ConfigurationFile::PATH_TO_DEFAULT_LOCAL_FILE);
+    QString confFilePath = config.value("conf_file_path", ConfigurationFile::PATH_TO_DEFAULT_LOCAL_FILE).toString();
 
     QFileInfo configFile;
     switch (m_usedConfFile) {
@@ -191,7 +197,7 @@ void MiniDLNAProcess::loadSettings() {
         m_usedConfFile = ConfigurationFile::GLOBAL;
         m_confFilePath = MiniDLNAProcess::GLOBALCONFFILE_PATH;
     }
-
+    config.endGroup();
     setArg();
 }
 
@@ -212,7 +218,7 @@ void MiniDLNAProcess::setArg() {
 void MiniDLNAProcess::loadResource() {
     addResource(new RESTMiniDLNA(this));
     addResource(new RESTMediaFolder(this));
-    addResource(new RESTMiniDLNAPUT(this));
+    //addResource(new RESTMiniDLNAPUT(this));
 }
 
 /**

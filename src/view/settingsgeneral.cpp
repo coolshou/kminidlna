@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -22,10 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settingsgeneral.h"
 #include <QVBoxLayout>
 #include <QLabel>
-#include <KLocalizedString>
-#include <KGlobal>
-#include <KConfigGroup>
-#include <KConfig>
+//#include <KLocalizedString>
+//#include <KGlobal>
+//#include <KConfigGroup>
+//#include <KConfig>
+#include <QSettings>
 #include <QDebug>
 #include <QGroupBox>
 
@@ -51,21 +52,21 @@ SettingsGeneral::~SettingsGeneral() {
 void SettingsGeneral::initGUI() {
     QVBoxLayout *central = new QVBoxLayout(this);
 
-    QGroupBox *group = new QGroupBox(i18n("General"), this);
+    QGroupBox *group = new QGroupBox(tr("General"), this);
     QVBoxLayout *ll = new QVBoxLayout(group);
     central->addWidget(group);
 
-    m_closeToTray = new QCheckBox(i18n("Close to system tray"), group);
+    m_closeToTray = new QCheckBox(tr("Close to system tray"), group);
     connect(m_closeToTray, SIGNAL(stateChanged(int)),
             this, SLOT(someChanged()));
     ll->addWidget(m_closeToTray);
 
-    m_runOnStart = new QCheckBox(i18n("Run on start"), group);
+    m_runOnStart = new QCheckBox(tr("Run on start"), group);
     connect(m_runOnStart, SIGNAL(stateChanged(int)),
             this, SLOT(someChanged()));
     ll->addWidget(m_runOnStart);
 
-    m_remRun = new QCheckBox(i18n("Remember running"), group);
+    m_remRun = new QCheckBox(tr("Remember running"), group);
     connect(m_remRun, SIGNAL(stateChanged(int)),
             this, SLOT(someChanged()));
     m_remRun->setEnabled(false);
@@ -84,12 +85,20 @@ void SettingsGeneral::initGUI() {
  * 	rememberrun (false)
  */
 void SettingsGeneral::applySettings() {
-
+    QSettings config;
+    config.beginGroup("General");
+    config.setValue("closetotray", m_closeToTray->isChecked());
+    config.setValue("runonstart", m_runOnStart->isChecked());
+    config.setValue("rememberrun", m_remRun->isChecked());
+    config.sync();
+    config.endGroup();
+    /*
     KConfigGroup config = KGlobal::config()->group("General");
     config.writeEntry("closetotray", m_closeToTray->isChecked());
     config.writeEntry("runonstart", m_runOnStart->isChecked());
     config.writeEntry("rememberrun", m_remRun->isChecked());
     config.sync();
+    */
     AbstractSettings::applySettings();
 }
 
@@ -103,11 +112,18 @@ void SettingsGeneral::applySettings() {
  * 	rememberrun (false)
  */
 void SettingsGeneral::loadSettings() {
-
+    QSettings config;
+    config.beginGroup("General");
+    m_closeToTray->setChecked(config.value("closetotray", false).toBool());
+    m_runOnStart->setChecked(config.value("runonstart", false).toBool());
+    m_remRun->setChecked(config.value("rememberrun", false).toBool());
+    config.endGroup();
+    /*
     KConfigGroup config = KGlobal::config()->group("General");
     m_closeToTray->setChecked(config.readEntry("closetotray", false));
     m_runOnStart->setChecked(config.readEntry("runonstart", false));
     m_remRun->setChecked(config.readEntry("rememberrun", false));
+    */
     m_changed = false;
 }
 

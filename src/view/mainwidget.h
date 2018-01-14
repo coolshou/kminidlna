@@ -1,6 +1,6 @@
 /*
-KminiDLNA
-http://gitorious.org/kminidlna/pages/Home
+qminidlna
+http://gitorious.org/qminidlna/pages/Home
 
 Copyright (C) 2011 Saljack <saljacky a gmail dot com>
 
@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define MAINWIDGET_H
 
 #include <QWidget>
-#include <KLed>
+//#include <KLed>
 #include <QLabel>
 #include <QProcess>
 #include <QVBoxLayout>
@@ -43,7 +43,7 @@ private:
     void initGUI();
     QVBoxLayout *mainlayout;
     QLabel *lbl;
-    KLed *kled;
+    //KLed *kled;
     QPushButton *btnStopStart;
     QString minidlnas;
     QStringList argsm;

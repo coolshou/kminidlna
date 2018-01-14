@@ -29,7 +29,8 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTableView>
-#include <KDialog>
+#include <QDialog>
+//#include <KDialog>
 #include <QToolButton>
 
 

@@ -23,14 +23,15 @@
 #include <QString>
 #include <QStringList>
 #include <QByteArray>
-
+#include <QObject>
 
 
 /**
  * request incoming from client
  */
-class ServerRequest : public QObject {
-        Q_OBJECT
+class ServerRequest : public QObject
+{
+Q_OBJECT
     public:
         ServerRequest(QObject* parent = 0);
         virtual ~ServerRequest();

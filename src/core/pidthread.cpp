@@ -34,7 +34,7 @@ void PidThread::run()
             emit foundPidFile ( false );
             return;
         }
-        qDebug() << "KminiDLNA: minidlna starting " << i++;
+        qDebug() << "qminidlna: minidlna starting " << i++;
         sleep ( 1 );
 
     }
@@ -42,13 +42,14 @@ void PidThread::run()
     QFile pidfile ( pathPidFile );
     if ( !pidfile.open ( QIODevice::ReadOnly ) )
     {
-        KMessageBox::information ( 0,i18n ( "Error" ), pidfile.errorString() );
+        //KMessageBox::information ( 0,tr ( "Error" ), pidfile.errorString() );
+        QMessageBox::information ( 0,tr ( "Error" ), pidfile.errorString() );
     }
 
     QTextStream stream ( &pidfile );
     pid = stream.readLine().toInt();
     pidfile.close();
-    qDebug() << "KminiDLNA: minidlna pid is: " << pid;
+    qDebug() << "qminidlna: minidlna pid is: " << pid;
 }
 
 void PidThread::setPathPidFile ( const QString& path )

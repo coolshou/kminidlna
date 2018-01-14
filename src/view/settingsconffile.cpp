@@ -22,11 +22,11 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>
-#include <KLocalizedString>
+//#include <KLocalizedString>
 #include "../core/minidlna_process.h"
 #include "../core/configurationfile.h"
 #include <QSpacerItem>
-#include <KDialog>
+//#include <KDialog>
 #include <QLineEdit>
 #include <QLabel>
 #include <QInputDialog>
@@ -69,7 +69,7 @@ void SettingsConfFile::setDefaults() {
 void SettingsConfFile::initGUI() {
     QVBoxLayout* central = new QVBoxLayout(this);
 
-    QGroupBox* albumArtNamesGroup = new QGroupBox(i18n("Album art filenames"), this);
+    QGroupBox* albumArtNamesGroup = new QGroupBox(tr("Album art filenames"), this);
     central->addWidget(albumArtNamesGroup);
 
     QVBoxLayout* albumArtNamesGroupLayout = new QVBoxLayout(albumArtNamesGroup);
@@ -84,7 +84,7 @@ void SettingsConfFile::initGUI() {
     controllWidgetLayout->addSpacerItem(new QSpacerItem(80, 10, QSizePolicy::Expanding));
 
     m_add = new QToolButton(m_albumArtNamesControllWidget);
-    m_add->setIcon(KIcon("list-add"));
+    m_add->setIcon(QIcon("list-add"));
     controllWidgetLayout->addWidget(m_add);
     connect(m_add, SIGNAL(clicked(bool)),
             this, SLOT(onAddButtonClicked()));
@@ -92,7 +92,7 @@ void SettingsConfFile::initGUI() {
 
 
     m_remove = new QToolButton(m_albumArtNamesControllWidget);
-    m_remove->setIcon(KIcon("list-remove"));
+    m_remove->setIcon(QIcon("list-remove"));
     controllWidgetLayout->addWidget(m_remove);
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(onRemoveButtonClicked()));
@@ -127,9 +127,9 @@ void SettingsConfFile::loadModel() {
 
 void SettingsConfFile::onAddButtonClicked() {
     bool ok;
-    QString text = QInputDialog::getText(this, i18n("Add new album art name"),
-                                         i18n("New album art name:"), QLineEdit::Normal,
-                                         i18n("albumartname.jpg"), &ok);
+    QString text = QInputDialog::getText(this, tr("Add new album art name"),
+                                         tr("New album art name:"), QLineEdit::Normal,
+                                         tr("albumartname.jpg"), &ok);
     if (ok && !text.isEmpty()) {
         int lastItemIdx = m_albumArtNamesModel->rowCount();
         m_albumArtNamesModel->insertRow(lastItemIdx);

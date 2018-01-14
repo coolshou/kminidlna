@@ -1,0 +1,10 @@
+[Desktop Entry]
+Categories=Application;AudioVideo;
+Comment=Frontend for MiniDLNA
+Exec=qminidlna
+Name=QMiniDLNA
+GenericName=DLNA
+Icon=qminidlna.png
+StartupNotify=true
+Terminal=false
+Type=Application

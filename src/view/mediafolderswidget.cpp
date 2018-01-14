@@ -22,7 +22,7 @@
 #include <QSizePolicy>
 #include <QAbstractItemView>
 #include <QHeaderView>
-#include <KLocalizedString>
+//#include <KLocalizedString>
 #include "../core/minidlna_process.h"
 #include "foldereditdialog.h"
 #include <QPushButton>
@@ -39,7 +39,7 @@ MediaFoldersWidget::~MediaFoldersWidget() {
 }
 
 void MediaFoldersWidget::initGUI() {
-//     setCaption(i18n("Media Folders"));
+//     setCaption(tr("Media Folders"));
     QVBoxLayout* mainlayout = new QVBoxLayout(this);
 
     m_lblInfo = new QLabel(this);
@@ -50,7 +50,7 @@ void MediaFoldersWidget::initGUI() {
     m_tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     m_tableView->resizeRowsToContents();
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_tableView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    //m_tableView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_tableView->verticalHeader()->setVisible(false);
 
     mainlayout->addWidget(m_tableView);
@@ -58,20 +58,20 @@ void MediaFoldersWidget::initGUI() {
     m_controllWidget = new QWidget(this);
     QHBoxLayout* controllLayout = new QHBoxLayout(m_controllWidget);
 
-    QPushButton* btnEdit = new QPushButton(i18n("Edit"), m_controllWidget);
+    QPushButton* btnEdit = new QPushButton(tr("Edit"), m_controllWidget);
     connect(btnEdit, SIGNAL(clicked(bool)),
             this, SLOT(onEditButtonClicked()));
 
     controllLayout->addSpacerItem(new QSpacerItem(80, 10, QSizePolicy::Expanding));
 
     m_add = new QToolButton(m_controllWidget);
-    m_add->setIcon(KIcon("list-add"));
+    m_add->setIcon(QIcon("list-add"));
     controllLayout->addWidget(m_add);
     connect(m_add, SIGNAL(clicked(bool)),
             this, SLOT(onAddButtonClicked()));
 
     m_remove = new QToolButton(m_controllWidget);
-    m_remove->setIcon(KIcon("list-remove"));
+    m_remove->setIcon(QIcon("list-remove"));
     controllLayout->addWidget(m_remove);
     connect(m_remove, SIGNAL(clicked(bool)),
             this, SLOT(onRemoveButtonClicked()));
@@ -82,7 +82,7 @@ void MediaFoldersWidget::initGUI() {
 void MediaFoldersWidget::loadModel() {
     m_model->clear();
     QStringList headerLabels;
-    headerLabels << i18n("Folder") << i18n("Media type");
+    headerLabels << tr("Folder") << tr("Media type");
     m_model->setHorizontalHeaderLabels(headerLabels);
     m_tableView->setModel(m_model);
 
@@ -159,10 +159,10 @@ void MediaFoldersWidget::setFileIsNotWritable(bool writable) {
 
     m_controllWidget->setEnabled(writable);
     if (!writable) {
-        m_lblInfo->setText("<b>" + i18n("Config file: ") + "</b>" + m_pathToConfig +
-                           " <br/><b>" + i18n("Configuration file is not writable!") + "</b");
+        m_lblInfo->setText("<b>" + tr("Config file: ") + "</b>" + m_pathToConfig +
+                           " <br/><b>" + tr("Configuration file is not writable!") + "</b");
     } else {
-        m_lblInfo->setText("<b>" + i18n("Config file: ") + "</b>" + m_pathToConfig);
+        m_lblInfo->setText("<b>" + tr("Config file: ") + "</b>" + m_pathToConfig);
     }
 }
 

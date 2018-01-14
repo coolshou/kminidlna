@@ -1,13 +1,12 @@
- <!DOCTYPE RCC>
- <RCC version="1.0">
- <qresource prefix="images">
-     <file alias="ikona.png">resource/kminidlna.png</file>
-     <file alias="run.png">resource/icon_play.png</file>
- </qresource>
- 
- <qresource prefix="schema">
-    <file alias="state.xsd">resource/minidlna_state.xsd</file>
-    <file alias="set_state.xsd">resource/minidlna_set_state.xsd</file>
-    <file alias="version.xsd">resource/version.xsd</file>
- </qresource>
- </RCC>
+<RCC>
+    <qresource prefix="/images">
+        <file alias="ikona.png">resource/kminidlna.png</file>
+        <file alias="run.png">resource/icon_play.png</file>
+        <file>resource/qminidlna.png</file>
+    </qresource>
+    <qresource prefix="/schema">
+        <file alias="state.xsd">resource/minidlna_state.xsd</file>
+        <file alias="set_state.xsd">resource/minidlna_set_state.xsd</file>
+        <file alias="version.xsd">resource/version.xsd</file>
+    </qresource>
+</RCC>

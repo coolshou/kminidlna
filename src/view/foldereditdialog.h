@@ -20,17 +20,19 @@
 #ifndef FOLDEREDITDIALOG_H
 #define FOLDEREDITDIALOG_H
 
-#include <kdialog.h>
+#include <Qt>
+#include <QDialog>
+//#include <kdialog.h>
 #include <QLineEdit>
 #include <QComboBox>
 #include "../core/model/mediafolder.h"
 
 
-class FolderEditDialog : public KDialog {
+class FolderEditDialog : public QDialog {
     Q_OBJECT
 public:
-    explicit FolderEditDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
-    FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent = 0, Qt::WFlags flags = 0);
+    explicit FolderEditDialog(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    FolderEditDialog(const MediaFolder& mediaFolder, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     virtual ~FolderEditDialog();
     MediaFolder* mediaFolder();
 private:

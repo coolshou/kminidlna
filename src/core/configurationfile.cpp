@@ -22,9 +22,11 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
-#include <KStandardDirs>
-#include <KApplication>
-#include <KAboutData>
+#include <QStandardPaths>
+//#include <KStandardDirs>
+#include <QApplication>
+//#include <KApplication>
+//#include <KAboutData>
 #include <QDir>
 #include "minidlna_process.h"
 
@@ -64,7 +66,7 @@ bool ConfigurationFile::createFile() {
 
     //TODO copy predefined file
     conf.open(QIODevice::WriteOnly);
-    conf.write("#Created by KMiniDLNA\n");
+    conf.write("#Created by qminidlna\n");
     conf.close();
     return true;
 }
@@ -238,7 +240,7 @@ bool ConfigurationFile::saveOptions() {
     QDir dir = info.dir();
     if (!dir.exists()) {
         if (!dir.mkpath(m_path)) {
-            qDebug() << i18n("ConfigurationFile: Cannot create directory");
+            qDebug() << tr("ConfigurationFile: Cannot create directory");
             return false;
         }
     }
@@ -256,7 +258,7 @@ bool ConfigurationFile::saveOptions() {
 
         }
     } else {
-        qDebug() << i18n("ConfigurationFile: Cannot open conf file: ") << m_path;
+        qDebug() << tr("ConfigurationFile: Cannot open conf file: ") << m_path;
         return false;
     }
     if (confFile.isOpen()) {
@@ -268,9 +270,11 @@ bool ConfigurationFile::saveOptions() {
 
 
 QString ConfigurationFile::pathToDefaultLocalConfigFile() {
-    KStandardDirs stdir;
-    QString path = stdir.saveLocation("data") +
-                   "kminidlna/" +
+    QString stdir= QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    //KStandardDirs stdir;
+    //QString path = stdir.saveLocation("data") +
+    QString path = stdir +
+                   "qminidlna/" +
                    DEFAULT_LOCAL_CONF_FILE_NAME;
     return path;
 }

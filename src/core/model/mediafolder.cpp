@@ -36,7 +36,7 @@ MediaFolder::MediaFolder(QObject* parent)
 MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent)
         : QObject(parent), m_lineNumber(lineNumber), m_valid(false)
 {
-    switch (line[0].toAscii()) {
+    switch (line[0].toLatin1()) {
     case 'V':
     case 'v':
         m_mediaType = VIDEO;
@@ -138,16 +138,16 @@ QString MediaFolder::mediaTypeToString() {
     QString ret;
     switch (m_mediaType) {
     case VIDEO:
-        ret = i18n("Video");
+        ret = tr("Video");
         break;
     case AUDIO:
-        ret = i18n("Audio");
+        ret = tr("Audio");
         break;
     case IMAGES:
-        ret = i18n("Images");
+        ret = tr("Images");
         break;
     default:
-        ret = i18n("");
+        ret = tr("");
     }
     return ret;
 }

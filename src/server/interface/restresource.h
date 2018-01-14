@@ -20,11 +20,13 @@
 #ifndef RESTRESOURCE_H
 #define RESTRESOURCE_H
 #include <QString>
+#include <QObject>
 #include <QDomDocument>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 
-class RESTResource: public QObject {
+class RESTResource: public QObject
+{
         Q_OBJECT
     public:
         explicit RESTResource(QString address, QObject* parent = 0);

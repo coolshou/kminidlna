@@ -20,17 +20,19 @@
 #ifndef GENERATECERTIFICATEDIALOG_H
 #define GENERATECERTIFICATEDIALOG_H
 
-#include <KDialog>
+//#include <KDialog>
+#include <QDialog>
 #include <QLineEdit>
 #include <QString>
 // #include "../server/cert/certificategenerator.h"
 
 
-class GenerateCertificateDialog : public KDialog {
-        Q_OBJECT
-        void initGUI();
+class GenerateCertificateDialog : public QDialog
+{
+Q_OBJECT
+    void initGUI();
     public:
-        GenerateCertificateDialog(QWidget* parent, Qt::WFlags flags = 0);
+        GenerateCertificateDialog(QWidget* parent, Qt::WindowFlags flags = 0);
         virtual ~GenerateCertificateDialog();
 	QString commonName();
 	QString country();

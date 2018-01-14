@@ -21,7 +21,7 @@
 #define SETTINGSSERVER_H
 
 #include <QWidget>
-#include <KPageWidgetItem>
+//#include <KPageWidgetItem>
 #include <QSpinBox>
 #include <QLabel>
 #include <QPushButton>

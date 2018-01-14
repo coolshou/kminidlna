@@ -1,10 +1,10 @@
 [Desktop Entry]
 Categories=Application;AudioVideo;
-Comment=Frontend for MiniDLNA
-Exec=kminidlna
-Name=KMiniDLNA
+Comment=Qt Frontend for minidlna
+Exec=qminidlna
+Name=qminidlna
 GenericName=DLNA
-Icon=kminidlna.png
+Icon=qminidlna.png
 StartupNotify=true
 Terminal=false
 Type=Application

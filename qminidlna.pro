@@ -88,3 +88,6 @@ FORMS +=
 
 RESOURCES += \
     src/resource.qrc
+
+DISTFILES += \
+    src/qminidlna.desktop

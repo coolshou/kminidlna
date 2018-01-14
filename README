@@ -1,3 +1,8 @@
+QMiniDLNA is application server for MiniDLNA. All sources are under GPL license. 
+  TODO: 
+  remove all KDE dependence
+  
+original:
 KMiniDLNA is application server for MiniDLNA. All sources are under GPL license. 
 Web: 
 Author: Saljack ( saljacky (at) gmail (dot) com )

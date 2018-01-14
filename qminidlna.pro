@@ -90,4 +90,5 @@ RESOURCES += \
     src/resource.qrc
 
 DISTFILES += \
-    src/qminidlna.desktop
+    src/qminidlna.desktop \
+    src/resource/qminidlna.png

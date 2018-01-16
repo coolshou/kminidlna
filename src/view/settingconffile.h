@@ -32,11 +32,11 @@ public:
 private:
     void initGUI();
     void loadModel();
-    QStringList m_albumArtNamesList;
+    QStringListModel* m_albumArtNamesModel;
     ConfigurationFile* m_actualConfFile;
     Ui::SettingConfFile *ui;
     QListView* m_albumArtNamesView;
-    QStringListModel* m_albumArtNamesModel;
+    QStringList m_albumArtNamesList;
     QWidget* m_albumArtNamesControllWidget;
     QToolButton* m_add;
     QToolButton* m_remove;

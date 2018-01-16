@@ -95,7 +95,8 @@ FORMS += \
     src/view/settingminidlna.ui \
     src/view/settingmediafolder.ui \
     src/view/settingconffile.ui \
-    src/view/settingserver.ui
+    src/view/settingserver.ui \
+    src/view/mediafolderswidget.ui
 
 RESOURCES += \
     src/resource.qrc \

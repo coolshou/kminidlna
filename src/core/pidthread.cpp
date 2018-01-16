@@ -23,6 +23,10 @@ PidThread::PidThread ( QObject* parent ) : QThread ( parent ), pid ( -1 )
 {
 }
 
+PidThread::~PidThread() {
+    deleteLater();
+}
+
 void PidThread::run()
 {
 

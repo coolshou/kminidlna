@@ -2,6 +2,8 @@
 #include "ui_settingminidlna.h"
 
 #include <QSettings>
+#include <QFileDialog>
+
 #include "../core/minidlna_process.h"
 
 SettingMiniDLNA::SettingMiniDLNA(QWidget *parent, Qt::WindowFlags f) :
@@ -77,16 +79,6 @@ void SettingMiniDLNA::applySettings() {
     config.setValue("use_conf_file", QVariant(usedConfFile()));
     config.setValue("conf_file_path", m_confFilePath->text());
     config.setValue("minidlna_port", m_port->value());
-
-    /*
-    KConfigGroup config = KGlobal::config()->group("minidlna");
-    config.writeEntry("minidlnapath", m_minidlnaPath->text());
-    config.writeEntry("pidpath", m_pidFilePath->text());
-    config.writeEntry("scanfile", m_loadFile->isChecked());
-    config.writeEntry("use_conf_file", QVariant(usedConfFile()));
-    config.writeEntry("conf_file_path", m_confFilePath->text());
-    config.writeEntry("minidlna_port", m_port->value());
-    */
     config.sync();
     config.endGroup();
     if (m_fileOptionsChanged) {
@@ -105,37 +97,23 @@ void SettingMiniDLNA::loadSettings() {
     setUsedConfFile(conf);
     m_confFilePath->setText(config.value("conf_file_path", MiniDLNAProcess::GLOBALCONFFILE_PATH).toString());
     m_port->setValue(config.value("minidlna_port", MiniDLNAProcess::DEFAULTPORT).toInt());
-    /*
-    KConfigGroup config = KGlobal::config()->group("minidlna");
-    m_minidlnaPath->setText(config.readEntry("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH));
-    m_pidFilePath->setText(config.readEntry("pidpath", MiniDLNAProcess::PIDFILE_PATH));
-    m_loadFile->setChecked(config.readEntry("scanfile", false));
-    ConfigurationFile::ConfFile conf = ConfigurationFile::ConfFile(config.readEntry("use_conf_file", -1));
-    setUsedConfFile(conf);
-    m_confFilePath->setText(config.readEntry("conf_file_path", MiniDLNAProcess::GLOBALCONFFILE_PATH));
-    m_port->setValue(config.readEntry("minidlna_port", MiniDLNAProcess::DEFAULTPORT));
-    */
     m_changed = false;
 }
 
 void SettingMiniDLNA::onBrowsePath() {
-    /*TODO
-    QUrl url = QFileDialog.getOpenFileUrl(QUrl(m_minidlnaPath->text()), "minidlna", this, tr("minidlna path"));
-    //KUrl url = KFileDialog::getOpenUrl(KUrl(m_minidlnaPath->text()), "minidlna", this, tr("minidlna path"));
+    QUrl url = QFileDialog::getOpenFileUrl(this, tr("minidlna path"), QUrl(m_minidlnaPath->text()), "All (*.*)");
     if (!url.isEmpty()) {
         m_minidlnaPath->setText(url.path());
     }
-    */
+
 }
 
 void SettingMiniDLNA::onPidBrowsePath() {
-    /*TODO
-//     KUrl url = KFileDialog::getExistingDirectory(KUrl ( m_pidFilePath->text() ), this, tr("Pid file directory"));
-    QString path = QFileDialog::getExistingDirectory(QUrl(m_pidFilePath->text()), this, tr("Pid file directory") + "/");
+    QString path = QFileDialog::getExistingDirectory(this, tr("Pid file directory"), QUrl(m_pidFilePath->text()).toString());
     if (!path.isEmpty()) {
         m_pidFilePath->setText(path);
     }
-    */
+
 }
 
 void SettingMiniDLNA::setDefaults() {
@@ -147,12 +125,10 @@ void SettingMiniDLNA::setDefaults() {
 }
 
 void SettingMiniDLNA::onBrowseConfFile() {
-    /*TODO
-    QString path = QFileDialog::getOpenFileName(QUrl(m_confFilePath->text()), "", this, tr("Configuration file") + "/");
+    QString path = QFileDialog::getOpenFileName(this, tr("Configuration file"), QUrl(m_confFilePath->text()).toString(), "All (*.*)");
     if (!path.isEmpty()) {
         m_confFilePath->setText(path);
     }
-    */
 }
 
 void SettingMiniDLNA::onToogledUserConfPath(bool toogled) {

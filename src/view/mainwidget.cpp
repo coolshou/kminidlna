@@ -43,25 +43,18 @@ void MainWidget::initGUI()
     setLayout(mainlayout);
     qled = new QLed(this);
     qled->setOffColor(QLed::ledColor::Grey);
-    qled->setOnColor(QLed::ledColor::Red);
+    qled->setOnColor(QLed::ledColor::Green);
     qled->setShape(QLed::ledShape::Rounded);
     qled->setMaximumSize(20,20);
-    //qled->show();
-    /*TODO
-    kled = new KLed(Qt::gray, KLed::Off, KLed::Sunken, KLed::Circular);
-    kled->setMaximumSize(20,20);
-    */
     btnStopStart = new QPushButton(QIcon("media-playback-start"), tr("Start"));
 
     QHBoxLayout *layoutRun = new QHBoxLayout();
-    //layoutRun->addWidget(new QPixmap(QIcon(":/images/qminidlna.png")));
     QLabel* lbla = new QLabel("Test",this);
     lbla->setPixmap(QPixmap(":/images/qminidlna.png"));
     layoutRun->addWidget(lbla);
     
     layoutRun->addWidget(new QLabel(tr("minidlna run:")));
     layoutRun->addWidget(qled);
-    //layoutRun->addWidget(kled);
     mainlayout->addLayout(layoutRun);;
     
     mainlayout->addSpacerItem(new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Expanding));
@@ -80,21 +73,21 @@ void MainWidget::onBtnPressed()
 void MainWidget::setStopStart(bool ss)
 {
     if(!btnStopStart->isEnabled()){
-	btnStopStart->setEnabled(true);
+        btnStopStart->setEnabled(true);
     }
-    /*TODO
     if (ss) {
-        kled->setColor(Qt::green);
-        kled->setState(KLed::On);
+        qled->setValue(true);
+        //kled->setColor(Qt::green);
+        //kled->setState(KLed::On);
         btnStopStart->setText(tr("Stop"));
-	btnStopStart->setIcon(QIcon("media-playback-stop"));
+        btnStopStart->setIcon(QIcon("media-playback-stop"));
     } else {
-        kled->setColor(Qt::gray);
-        kled->setState(KLed::Off);
+        qled->setValue(false);
+        //kled->setColor(Qt::gray);
+        //kled->setState(KLed::Off);
         btnStopStart->setText(tr("Start"));
-	btnStopStart->setIcon(QIcon("media-playback-start"));
+        btnStopStart->setIcon(QIcon("media-playback-start"));
     }
-    */
 }
 
 void MainWidget::setRunning()

@@ -18,6 +18,8 @@
 
 
 #include "mediafolderswidget.h"
+#include "ui_mediafolderswidget.h"
+
 #include <QTableWidgetItem>
 #include <QSizePolicy>
 #include <QAbstractItemView>
@@ -28,7 +30,12 @@
 #include <QPushButton>
 
 
-MediaFoldersWidget::MediaFoldersWidget(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f), m_actualConfFile(0) {
+MediaFoldersWidget::MediaFoldersWidget(QWidget* parent, Qt::WindowFlags f):
+    QWidget(parent, f),
+    m_actualConfFile(0),
+    ui(new Ui::MediaFoldersWidget)
+{
+    ui->setupUi(this);
     m_model = new QStandardItemModel(0, 2, this);
     initGUI();
     loadModel();
@@ -39,44 +46,25 @@ MediaFoldersWidget::~MediaFoldersWidget() {
 }
 
 void MediaFoldersWidget::initGUI() {
-//     setCaption(tr("Media Folders"));
-    QVBoxLayout* mainlayout = new QVBoxLayout(this);
+    setWindowTitle(tr("Media Folders"));
+    m_lblInfo = ui->m_lblInfo;
 
-    m_lblInfo = new QLabel(this);
-    mainlayout->addWidget(m_lblInfo);
-
-    m_tableView = new QTableView(this);
-    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_tableView = ui->m_tableView;
     m_tableView->resizeRowsToContents();
-    m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    m_tableView->verticalHeader()->setVisible(false);
 
-    mainlayout->addWidget(m_tableView);
     //Controll part
-    m_controllWidget = new QWidget(this);
-    QHBoxLayout* controllLayout = new QHBoxLayout(m_controllWidget);
+    m_controllWidget = ui->m_controllWidget;
 
-    QPushButton* btnEdit = new QPushButton(tr("Edit"), m_controllWidget);
-    connect(btnEdit, SIGNAL(clicked(bool)),
-            this, SLOT(onEditButtonClicked()));
+    QPushButton* btnEdit = ui->btnEdit;
+    connect(btnEdit, SIGNAL(clicked(bool)), this, SLOT(onEditButtonClicked()));
 
-    controllLayout->addSpacerItem(new QSpacerItem(80, 10, QSizePolicy::Expanding));
+    m_add = ui->m_add;
+    connect(m_add, SIGNAL(clicked(bool)), this, SLOT(onAddButtonClicked()));
 
-    m_add = new QToolButton(m_controllWidget);
-    m_add->setIcon(QIcon("list-add"));
-    controllLayout->addWidget(m_add);
-    connect(m_add, SIGNAL(clicked(bool)),
-            this, SLOT(onAddButtonClicked()));
-
-    m_remove = new QToolButton(m_controllWidget);
-    m_remove->setIcon(QIcon("list-remove"));
-    controllLayout->addWidget(m_remove);
-    connect(m_remove, SIGNAL(clicked(bool)),
-            this, SLOT(onRemoveButtonClicked()));
-
-    mainlayout->addWidget(m_controllWidget);
+    m_remove = ui->m_remove;
+    connect(m_remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveButtonClicked()));
 }
 
 void MediaFoldersWidget::loadModel() {

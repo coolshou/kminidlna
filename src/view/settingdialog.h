@@ -41,12 +41,9 @@ private:
 
 
     void initGUI();
-    /*
+signals:
+    void settingsChanged();
 
-
-
-
-*/
 };
 
 #endif // SETTINGDIALOG_H

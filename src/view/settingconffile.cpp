@@ -47,9 +47,9 @@ void SettingConfFile::setDefaults() {
 }
 
 void SettingConfFile::initGUI() {
-
+    m_add = ui->m_add;
     connect(m_add, SIGNAL(clicked(bool)), this, SLOT(onAddButtonClicked()));
-
+    m_remove = ui->m_remove;
     connect(m_remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveButtonClicked()));
     connect(m_remove, SIGNAL(clicked(bool)), this, SLOT(someChanged()));
 
@@ -63,10 +63,11 @@ void SettingConfFile::loadModel() {
         delete m_albumArtNamesModel;
     }
     m_albumArtNamesModel = new QStringListModel(m_albumArtNamesList);
-
-
     connect(m_albumArtNamesModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
             this, SLOT(someChanged()));
+
+    m_albumArtNamesControllWidget = ui->m_albumArtNamesControllWidget;
+    m_albumArtNamesView = ui->m_albumArtNamesView;
     m_albumArtNamesView->setModel(m_albumArtNamesModel);
     if (m_actualConfFile->isWritable()) {
         m_albumArtNamesControllWidget->setEnabled(true);

@@ -80,16 +80,6 @@ void SettingServer::applySettings() {
     config.setValue("custom_cert", m_rbtCustom->isChecked());
     config.setValue("pkey_path", m_leCustomPKey->text());
     config.setValue("cert_path", m_leCustomCertificate->text());
-    /*
-    KConfigGroup config = KGlobal::config()->group("server");
-    config.writeEntry("port", m_port->value());
-    config.writeEntry("run_server_on_start", m_onStartRun->isChecked());
-    config.writeEntry("username", m_username->text());
-    config.writeEntry("password", m_passwordHashed);
-    config.writeEntry("custom_cert", m_rbtCustom->isChecked());
-    config.writeEntry("pkey_path", m_leCustomPKey->text());
-    config.writeEntry("cert_path", m_leCustomCertificate->text());
-    */
     config.sync();
     config.endGroup();
 }
@@ -110,14 +100,6 @@ void SettingServer::loadSettings() {
     m_passwordHashed = config.value("password", QByteArray()).toByteArray();
     bool custom = config.value("custom_cert", false).toBool();
 
-    /*
-    KConfigGroup config = KGlobal::config()->group("server");
-    m_port->setValue(config.readEntry("port", 8080));
-    m_onStartRun->setChecked(config.readEntry("run_server_on_start", false));
-    m_username->setText(config.readEntry("username", QByteArray()));
-    m_passwordHashed = config.readEntry("password", QByteArray());
-    bool custom = config.readEntry("custom_cert", false);
-    */
     if(custom){
       m_customCertificate->setEnabled(true);
       m_rbtCustom->setChecked(true);
@@ -125,10 +107,7 @@ void SettingServer::loadSettings() {
     m_leCustomPKey->setText(config.value("pkey_path", QString()).toString());
     m_leCustomCertificate->setText(config.value("cert_path", QString()).toString());
     config.endGroup();
-/*
-    m_leCustomPKey->setText(config.readEntry("pkey_path", QString()));
-    m_leCustomCertificate->setText(config.readEntry("cert_path", QString()));
-    */
+
     m_changed = false;
 }
 
@@ -175,19 +154,17 @@ void SettingServer::certificateChanged(bool) {
 }
 
 void SettingServer::onTbtPKeyClicked(bool) {
-    /*TODO
-    QString path = KFileDialog::getOpenFileName(KUrl(m_leCustomPKey->text()), "", this, tr("Private key file") + "/");
+    QString path = QFileDialog::getOpenFileName(this,tr("Private key file"),QUrl(m_leCustomPKey->text()).toString(),"All (*.*)");
     if(!path.isEmpty()) {
         m_leCustomPKey->setText(path);
-    }*/
+    }
 }
 
 void SettingServer::onTbtCertClicked(bool) {
-    /*TODO
-    QString path = KFileDialog::getOpenFileName(KUrl(m_leCustomCertificate->text()), "", this, tr("Certificate X509 file") + "/");
+    QString path = QFileDialog::getOpenFileName(this,tr("Certificate X509 file"),QUrl(m_leCustomCertificate->text()).toString(),"All (*.*)");
     if(!path.isEmpty()) {
         m_leCustomCertificate->setText(path);
-    }*/
+    }
 }
 
 
@@ -199,8 +176,6 @@ void SettingServer::onGenerateCertificateClicked(bool) {
         value.countryName = (unsigned char*) dlg->country().toLatin1().data();
         QString dirs = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
         CertificateGenerator::CreatedCertificteError err = CertificateGenerator::createCertificate(value, dirs + "/qminidlna/");
-        //KStandardDirs dirs;
-        //CertificateGenerator::CreatedCertificteError err = CertificateGenerator::createCertificate(value, dirs.saveLocation("data") + "qminidlna/");
         QMessageBox msgBox;
 
         switch(err) {

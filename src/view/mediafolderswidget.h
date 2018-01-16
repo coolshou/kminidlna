@@ -33,6 +33,9 @@
 //#include <KDialog>
 #include <QToolButton>
 
+namespace Ui {
+class MediaFoldersWidget;
+}
 
 class MediaFoldersWidget : public QWidget {
         Q_OBJECT
@@ -45,6 +48,8 @@ class MediaFoldersWidget : public QWidget {
         void setFileIsNotWritable(bool writable);
     private:
         void initGUI();
+        ConfigurationFile* m_actualConfFile;
+        Ui::MediaFoldersWidget *ui;
         QStandardItemModel* m_model;
         QTableView* m_tableView;
         ConfigurationFile* m_configFile;
@@ -55,7 +60,7 @@ class MediaFoldersWidget : public QWidget {
         QWidget* m_controllWidget;
         QLabel* m_lblInfo;
         QString m_pathToConfig;
-        ConfigurationFile* m_actualConfFile;
+
     public slots:
         void onAddButtonClicked();
         void onRemoveButtonClicked();

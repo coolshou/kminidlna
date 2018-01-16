@@ -34,6 +34,7 @@ class PidThread: public QThread
     Q_OBJECT;
 public:
     explicit PidThread ( QObject* parent = 0 );
+    virtual ~PidThread();
     virtual void run();
     void setPathPidFile ( const QString& path );
     int getPid() const;

@@ -49,6 +49,7 @@ QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f): QMainWindow(parent, f)
     connect(RESTServer::getInstance(), SIGNAL(notValidKeyCertificate()),
             SLOT(onNotValidCertificateKey()));
     loadSettings();
+    initSystemTray();
 }
 
 QminiDLNA::~QminiDLNA() {
@@ -139,8 +140,7 @@ void QminiDLNA::showSettings() {
     SettingDialog *sdlg = new SettingDialog(this);
 
     //SettingsDialog *sdlg = new SettingsDialog(this);
-    connect(sdlg, SIGNAL(settingsChanged()),
-            this, SLOT(onSettingsChanged()));
+    connect(sdlg, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
     sdlg->exec();
     disconnect(sdlg);
     delete sdlg;

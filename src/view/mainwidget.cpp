@@ -41,6 +41,12 @@ void MainWidget::initGUI()
 {
     mainlayout = new QVBoxLayout();
     setLayout(mainlayout);
+    qled = new QLed(this);
+    qled->setOffColor(QLed::ledColor::Grey);
+    qled->setOnColor(QLed::ledColor::Red);
+    qled->setShape(QLed::ledShape::Rounded);
+    qled->setMaximumSize(20,20);
+    //qled->show();
     /*TODO
     kled = new KLed(Qt::gray, KLed::Off, KLed::Sunken, KLed::Circular);
     kled->setMaximumSize(20,20);
@@ -48,12 +54,13 @@ void MainWidget::initGUI()
     btnStopStart = new QPushButton(QIcon("media-playback-start"), tr("Start"));
 
     QHBoxLayout *layoutRun = new QHBoxLayout();
-//     layoutRun->addWidget(new QPixmap (QIcon(":/images/ikona.png")));
+    //layoutRun->addWidget(new QPixmap(QIcon(":/images/qminidlna.png")));
     QLabel* lbla = new QLabel("Test",this);
-    lbla->setPixmap(QPixmap(":/images/ikona.png"));
+    lbla->setPixmap(QPixmap(":/images/qminidlna.png"));
     layoutRun->addWidget(lbla);
     
     layoutRun->addWidget(new QLabel(tr("minidlna run:")));
+    layoutRun->addWidget(qled);
     //layoutRun->addWidget(kled);
     mainlayout->addLayout(layoutRun);;
     

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingMiniDLNA</class>
+ <widget class="QWidget" name="SettingMiniDLNA">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>678</width>
+    <height>426</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupmini">
+     <property name="title">
+      <string>MiniDLNA</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>MiniDLNA path:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="m_minidlnaPath"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="m_browsePath">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-open"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_2" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Path to pid file:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="m_pidFilePath"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="m_pidbrowsePath">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-open"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>MiniDLNA configuration</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QRadioButton" name="m_radioDefaultConfPath">
+           <property name="text">
+            <string>Use default local MiniDLNA configuration file</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="m_radioUserConfPath">
+           <property name="text">
+            <string>Use user defined MiniDLNA configuration file</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="m_radioGlobalConfPath">
+           <property name="text">
+            <string>Use global MiniDLNA configuration file (/etc/minidlna.conf)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_3" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Path to conf file:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="m_confFilePath">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="m_browseConfFile">
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset theme="document-open"/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="m_loadFile">
+           <property name="text">
+            <string>Full rescan on start MiniDLNA</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_4" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Port for HTTP traffic MiniDLNA (default 8200)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="m_port">
+              <property name="minimum">
+               <number>8200</number>
+              </property>
+              <property name="maximum">
+               <number>65000</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

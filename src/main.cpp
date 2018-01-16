@@ -57,7 +57,7 @@ int main(int argc, char** argv)
                          KAboutData::License_GPL_V2);
 
     aboutData.addAuthor(ki18n("Tomáš Poledný"), ki18n("Author"), QByteArray("saljacky@gmail.com"));
-    aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/ikona.png")));
+    aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/qminidlna.png")));
     aboutData.setBugAddress("Author email");
 
     loadCommandLine(argc, argv, &aboutData);

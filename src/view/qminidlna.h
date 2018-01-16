@@ -24,20 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mainwidget.h"
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
-#include "settingsdialog.h"
+#include "settingdialog.h"
 
 #include <QMainWindow>
-//#include <KMainWindow>
 #include <QSystemTrayIcon>
-//#include <KSystemTrayIcon>
 #include <QCloseEvent>
 #include <QMenuBar>
-//#include <KMenuBar>
 #include <QMenu>
-//#include <KHelpMenu>
-//#include <KMenu>
 #include <QAction>
-//#include <KAction>
 
 class QminiDLNA : public QMainWindow
 {

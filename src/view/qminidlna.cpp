@@ -71,8 +71,7 @@ void QminiDLNA::initSystemTray() {
     //trayMenu->setTitle(QGlobal::mainComponent().aboutData()->programName());
 
     trayStopStart = new QAction(QIcon("media-playback-start"), tr("Start minidlna"), trayMenu);
-    connect(trayStopStart, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
-            this, SLOT(onBtnStopStart()));
+    connect(trayStopStart, SIGNAL(triggered(bool)), this, SLOT(onBtnStopStart()));
     trayMenu->addAction(trayStopStart);
 
     trayMenu->addSeparator();
@@ -82,8 +81,7 @@ void QminiDLNA::initSystemTray() {
     systemtray->show();
     connect(systemtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(systemTrayActived(QSystemTrayIcon::ActivationReason)));
-    connect(systemtray, SIGNAL(quitSelected()),
-            this, SLOT(quitQminiDLNA()));
+    //connect(systemtray, SIGNAL(quitSelected()), this, SLOT(quitQminiDLNA()));
 }
 
 void QminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
@@ -116,13 +114,11 @@ void QminiDLNA::createMenu() {
     mTool = new QMenu(tr("Tools"), menu);
 
     QAction *aSetting = new QAction(QIcon("configure"), tr("Configure QminiDLNA"), mTool);
-    connect(aSetting, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
-            this, SLOT(showSettings()));
+    connect(aSetting, SIGNAL(triggered(bool)), this, SLOT(showSettings()));
     mTool->addAction(aSetting);
 
     m_actionStartStopRESTServer = new QAction(QIcon("applications-internet"), tr("Start HTTP REST server"), mTool);
-    connect(m_actionStartStopRESTServer, SIGNAL(triggered(Qt::MouseButtons, Qt::KeyboardModifiers)),
-            this, SLOT(onActionStartStopServer()));
+    connect(m_actionStartStopRESTServer, SIGNAL(triggered(bool)), this, SLOT(onActionStartStopServer()));
     connect(RESTServer::getInstance(), SIGNAL(run(bool)),
             this, SLOT(onRESTServerRun(bool)));
     mTool->addAction(m_actionStartStopRESTServer);
@@ -140,7 +136,9 @@ void QminiDLNA::createMenu() {
 }
 
 void QminiDLNA::showSettings() {
-    SettingsDialog *sdlg = new SettingsDialog(this);
+    SettingDialog *sdlg = new SettingDialog(this);
+
+    //SettingsDialog *sdlg = new SettingsDialog(this);
     connect(sdlg, SIGNAL(settingsChanged()),
             this, SLOT(onSettingsChanged()));
     sdlg->exec();
@@ -192,7 +190,7 @@ void QminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
         break;
     default:
         mw->setStopStart(false);
-        systemtray->setIcon(QIcon(":/images/ikona.png"));
+        systemtray->setIcon(QIcon(":/images/qminidlna.png"));
         trayStopStart->setIcon(QIcon("media-playback-start"));
         trayStopStart->setText(tr("Start"));
     }

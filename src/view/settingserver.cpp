@@ -1,153 +1,75 @@
-/*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2012  TomÃ¡Å¡ PolednÃ½ <email>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#include "settingsserver.h"
+#include "settingserver.h"
+#include "ui_settingserver.h"
 #include "generatecertificatedialog.h"
-
-//#include <KLocalizedString>
-//#include <KGlobal>
-//#include <KConfigGroup>
-//#include <KConfig>
-#include <QSettings>
-#include <QDebug>
 #include "../server/restserver.h"
 #include "../server/certificategenerator.h"
-//#include <KPasswordDialog>
-#include <QMessageBox>
-//#include <KMessageBox>
-#include <QStandardPaths>
-//#include <KStandardDirs>
-//#include <knewpassworddialog.h>
-#include <QMessageBox>
-#include <QToolButton>
-#include <QFileDialog>
-//#include <KFileDialog>
 
-SettingsServer::SettingsServer(QWidget* parent, Qt::WindowFlags f): AbstractSettings(parent, f) {
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QSettings>
+
+SettingServer::SettingServer(QWidget *parent, Qt::WindowFlags f ) :
+    AbstractSettings(parent, f),
+    ui(new Ui::SettingServer)
+{
+    ui->setupUi(this);
     initGUI();
     loadSettings();
 }
 
-SettingsServer::~SettingsServer() {
-
+SettingServer::~SettingServer()
+{
+    delete ui;
 }
-
-void SettingsServer::initGUI() {
-    QVBoxLayout *central = new QVBoxLayout(this);
-
-    QGroupBox *group = new QGroupBox(tr("Server interface"), this);
-    QVBoxLayout *llGeneral = new QVBoxLayout(group);
-    central->addWidget(group);
-//     group->setLayout(llGeneral);
-
+void SettingServer::initGUI()
+{
     //PORT
-    QHBoxLayout* llPort = new QHBoxLayout();
-    llPort->addWidget(new QLabel(tr("Port:"), group));
-
-    m_port = new QSpinBox(group);
+    m_port = ui->m_port;
     m_port->setMinimum(1);
     m_port->setMaximum(RESTServer::MAX_NUMBER_OF_PORT);
     m_port->setValue(RESTServer::DEFAULT_PORT);
-    connect(m_port, SIGNAL(valueChanged(int)),
-            this, SLOT(someChanged()));
-    llPort->addWidget(m_port);
+    connect(m_port, SIGNAL(valueChanged(int)), this, SLOT(someChanged()));
 
-    llGeneral->addLayout(llPort);
-
-    m_onStartRun = new QCheckBox(tr("Run on start"), group);
-    connect(m_onStartRun, SIGNAL(stateChanged(int)),
-            this, SLOT(someChanged()));
-    llGeneral->addWidget(m_onStartRun);
+    m_onStartRun = ui->m_onStartRun;
+    connect(m_onStartRun, SIGNAL(stateChanged(int)), this, SLOT(someChanged()));
 
     //LOGIN GROUP
-    QGroupBox* groupLogin = new QGroupBox(tr("Login"), this);
-    QVBoxLayout* llLogin = new QVBoxLayout(groupLogin);
-    groupLogin->setLayout(llLogin);
-    central->addWidget(groupLogin);
-
     //Username
-    QHBoxLayout* llUsername = new QHBoxLayout();
-    llUsername->addWidget(new QLabel(tr("Username:"), groupLogin));
-    m_username = new QLineEdit(groupLogin);
-    connect(m_username, SIGNAL(textChanged(QString)),
-            this, SLOT(someChanged()));
-    llUsername->addWidget(m_username);
-    llLogin->addLayout(llUsername);
+    m_username = ui->m_username;
+    connect(m_username, SIGNAL(textChanged(QString)), this, SLOT(someChanged()));
     //Password
-    m_btnPassword = new QPushButton(tr("Change password"), this);
-    connect(m_btnPassword, SIGNAL(clicked(bool)),
-            this, SLOT(onPasswordClicked(bool)));
-    llLogin->addWidget(m_btnPassword);
+    m_btnPassword = ui->m_btnPassword;
+    connect(m_btnPassword, SIGNAL(clicked(bool)), this, SLOT(onPasswordClicked(bool)));
 
     //Certificate
-    QGroupBox* groupCertificate = new QGroupBox(tr("SSL Certificate"), this);
-    QVBoxLayout* llCertificate = new QVBoxLayout();
-
-    m_rbtGenerated = new QRadioButton(tr("Use default generated certificate"), this);
+    m_rbtGenerated = ui->m_rbtGenerated;
     m_rbtGenerated->setChecked(true);
-    connect(m_rbtGenerated, SIGNAL(toggled(bool)),
-            SLOT(certificateChanged(bool)));
-    llCertificate->addWidget(m_rbtGenerated);
+    connect(m_rbtGenerated, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
 
-    m_rbtCustom = new QRadioButton(tr("Use custom certificate"), this);
+    m_rbtCustom = ui->m_rbtCustom;
     connect(m_rbtCustom, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
-    llCertificate->addWidget(m_rbtCustom);
 
-    m_customCertificate = new QWidget(this);
+    m_customCertificate =  ui->m_customCertificate;
     m_customCertificate->setEnabled(false);
-    QGridLayout* glCustomCert = new QGridLayout(m_customCertificate);
-    llCertificate->addWidget(m_customCertificate);
 
-    glCustomCert->addWidget(new QLabel("Private key path:", m_customCertificate), 0, 0);
-    m_leCustomPKey = new QLineEdit(m_customCertificate);
-    connect(m_leCustomPKey, SIGNAL(textChanged(QString)),
-            SLOT(someChanged()));
-    glCustomCert->addWidget(m_leCustomPKey, 0, 1);
-    QToolButton* tbtPKey =  new QToolButton(m_customCertificate);
-    tbtPKey->setIcon(QIcon("document-open"));
-    connect(tbtPKey, SIGNAL(clicked(bool)),
-            SLOT(onTbtPKeyClicked(bool)));
-    glCustomCert->addWidget(tbtPKey, 0, 2);
+    m_leCustomPKey = ui->m_leCustomPKey;
+    connect(m_leCustomPKey, SIGNAL(textChanged(QString)), SLOT(someChanged()));
 
-    glCustomCert->addWidget(new QLabel("Certificate path:", m_customCertificate), 1, 0);
-    m_leCustomCertificate = new QLineEdit(m_customCertificate);
-    connect(m_leCustomCertificate, SIGNAL(textChanged(QString)),
-            SLOT(someChanged()));
-    glCustomCert->addWidget(m_leCustomCertificate, 1, 1);
-    QToolButton* tbtCert =  new QToolButton(m_customCertificate);
-    tbtCert->setIcon(QIcon("document-open"));
-    connect(tbtCert, SIGNAL(clicked(bool)),
-            SLOT(onTbtCertClicked(bool)));
-    glCustomCert->addWidget(tbtCert, 1, 2);
+    QToolButton* tbtPKey =  ui->tbtPKey;
+    connect(tbtPKey, SIGNAL(clicked(bool)),  SLOT(onTbtPKeyClicked(bool)));
 
-    groupCertificate->setLayout(llCertificate);
-    central->addWidget(groupCertificate);
+    m_leCustomCertificate = ui->m_leCustomCertificate;
+    connect(m_leCustomCertificate, SIGNAL(textChanged(QString)), SLOT(someChanged()));
 
+    QToolButton* tbtCert =  ui->tbtCert;
+    connect(tbtCert, SIGNAL(clicked(bool)), SLOT(onTbtCertClicked(bool)));
 
-    QPushButton* btnGenerateCertificate = new QPushButton(tr("Generate certificate"), groupCertificate);
-    connect(btnGenerateCertificate, SIGNAL(clicked(bool)), SLOT(onGenerateCertificateClicked(bool)));
-    llCertificate->addWidget(btnGenerateCertificate);
+    connect(ui->btnGenerateCertificate, SIGNAL(clicked(bool)), SLOT(onGenerateCertificateClicked(bool)));
 
-    //SPACER
-    llCertificate->addSpacerItem(new QSpacerItem(40, 200));
 }
 
-void SettingsServer::applySettings() {
+void SettingServer::applySettings() {
     AbstractSettings::applySettings();
     QSettings config;
     config.beginGroup("server");
@@ -172,14 +94,14 @@ void SettingsServer::applySettings() {
     config.endGroup();
 }
 
-void SettingsServer::setDefaults() {
+void SettingServer::setDefaults() {
     m_port->setValue(RESTServer::DEFAULT_PORT);
     m_onStartRun->setChecked(false);
     m_username->setText(QByteArray());
     m_passwordHashed.clear();
 }
 
-void SettingsServer::loadSettings() {
+void SettingServer::loadSettings() {
     QSettings config;
     config.beginGroup("server");
     m_port->setValue(config.value("port", 8080).toInt());
@@ -211,7 +133,7 @@ void SettingsServer::loadSettings() {
 }
 
 
-void SettingsServer::onPasswordClicked(bool ) {
+void SettingServer::onPasswordClicked(bool ) {
 //     if (clicked) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -243,7 +165,7 @@ void SettingsServer::onPasswordClicked(bool ) {
     */
 }
 
-void SettingsServer::certificateChanged(bool) {
+void SettingServer::certificateChanged(bool) {
     if(m_rbtCustom->isChecked()) {
         m_customCertificate->setEnabled(true);
     } else {
@@ -252,7 +174,7 @@ void SettingsServer::certificateChanged(bool) {
     someChanged();
 }
 
-void SettingsServer::onTbtPKeyClicked(bool) {
+void SettingServer::onTbtPKeyClicked(bool) {
     /*TODO
     QString path = KFileDialog::getOpenFileName(KUrl(m_leCustomPKey->text()), "", this, tr("Private key file") + "/");
     if(!path.isEmpty()) {
@@ -260,7 +182,7 @@ void SettingsServer::onTbtPKeyClicked(bool) {
     }*/
 }
 
-void SettingsServer::onTbtCertClicked(bool) {
+void SettingServer::onTbtCertClicked(bool) {
     /*TODO
     QString path = KFileDialog::getOpenFileName(KUrl(m_leCustomCertificate->text()), "", this, tr("Certificate X509 file") + "/");
     if(!path.isEmpty()) {
@@ -269,7 +191,7 @@ void SettingsServer::onTbtCertClicked(bool) {
 }
 
 
-void SettingsServer::onGenerateCertificateClicked(bool) {
+void SettingServer::onGenerateCertificateClicked(bool) {
     GenerateCertificateDialog* dlg = new GenerateCertificateDialog(this);
     if(dlg->exec()) {
         X509Value value;
@@ -285,7 +207,7 @@ void SettingsServer::onGenerateCertificateClicked(bool) {
         case CertificateGenerator::NoError:
             msgBox.setIcon(QMessageBox::Information);
             msgBox.setText("Certificate was generated");
-	    someChanged();
+        someChanged();
             break;
         case CertificateGenerator::FileError:
             msgBox.setIcon(QMessageBox::Warning);
@@ -299,4 +221,3 @@ void SettingsServer::onGenerateCertificateClicked(bool) {
         msgBox.exec();
     }
 }
-

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QWidget>
 //#include <KLed>
+#include "../libs/qled/qled.h"
 #include <QLabel>
 #include <QProcess>
 #include <QVBoxLayout>
@@ -43,6 +44,7 @@ private:
     void initGUI();
     QVBoxLayout *mainlayout;
     QLabel *lbl;
+    QLed *qled;
     //KLed *kled;
     QPushButton *btnStopStart;
     QString minidlnas;

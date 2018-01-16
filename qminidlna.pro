@@ -6,12 +6,15 @@
 
 QT       += core gui
 QT       += network xml xmlpatterns
+QT += svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #PKGCONFIG += openssl
 
 LIBS += -L/usr/lib/ssl -lcrypto
 
+#LIBS += -L./lib/qled -L./lib/build-qledplugin-Qt_5_9_1_in_PATH_qt5-Debug -lqled
+#libqledplugin
 
 TARGET = qminidlna
 TEMPLATE = app
@@ -46,16 +49,17 @@ SOURCES += \
     src/view/generatecertificatedialog.cpp \
     src/view/mainwidget.cpp \
     src/view/mediafolderswidget.cpp \
-    src/view/settingsconffile.cpp \
-    src/view/settingsdialog.cpp \
-    src/view/settingsgeneral.cpp \
-    src/view/settingsmediafolder.cpp \
-    src/view/settingsminidlna.cpp \
-    src/view/settingsserver.cpp \
     src/main.cpp \
     src/view/qminidlna.cpp \
     src/server/restconnection.cpp \
-    src/server/certificategenerator.cpp
+    src/server/certificategenerator.cpp \
+    src/libs/qled/qled.cpp \
+    src/view/settingdialog.cpp \
+    src/view/settinggeneral.cpp \
+    src/view/settingminidlna.cpp \
+    src/view/settingmediafolder.cpp \
+    src/view/settingconffile.cpp \
+    src/view/settingserver.cpp
 
 HEADERS += \
     src/server/restserver.h \
@@ -74,20 +78,28 @@ HEADERS += \
     src/view/generatecertificatedialog.h \
     src/view/mainwidget.h \
     src/view/mediafolderswidget.h \
-    src/view/settingsconffile.h \
-    src/view/settingsdialog.h \
-    src/view/settingsgeneral.h \
-    src/view/settingsmediafolder.h \
-    src/view/settingsminidlna.h \
-    src/view/settingsserver.h \
     src/view/qminidlna.h \
     src/server/restconnection.h \
-    src/server/certificategenerator.h
+    src/server/certificategenerator.h \
+    src/libs/qled/qled.h \
+    src/view/settingdialog.h \
+    src/view/settinggeneral.h \
+    src/view/settingminidlna.h \
+    src/view/settingmediafolder.h \
+    src/view/settingconffile.h \
+    src/view/settingserver.h
 
-FORMS +=
+FORMS += \
+    src/view/settingdialog.ui \
+    src/view/settinggeneral.ui \
+    src/view/settingminidlna.ui \
+    src/view/settingmediafolder.ui \
+    src/view/settingconffile.ui \
+    src/view/settingserver.ui
 
 RESOURCES += \
-    src/resource.qrc
+    src/resource.qrc \
+    src/libs/qled/qled.qrc
 
 DISTFILES += \
     src/qminidlna.desktop \

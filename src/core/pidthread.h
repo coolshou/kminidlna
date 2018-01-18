@@ -32,7 +32,7 @@ Copyright (C) 2018 jimmy
 
 class PidThread: public QThread
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     explicit PidThread ( QObject* parent = 0 );
     virtual ~PidThread();

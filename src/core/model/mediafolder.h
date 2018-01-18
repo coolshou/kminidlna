@@ -29,9 +29,9 @@ class MediaFolder: public QObject {
   Q_OBJECT
     public:
         enum MediaType {NONE, VIDEO, AUDIO, IMAGES};
+        explicit MediaFolder(QObject* parent= 0);
         MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent= 0);
         MediaFolder(QString line, int lineNumber = -1, QObject* parent= 0);
-        explicit MediaFolder(QObject* parent= 0);
         MediaFolder(const MediaFolder& other);
 
         virtual ~MediaFolder();

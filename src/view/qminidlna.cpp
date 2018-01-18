@@ -19,29 +19,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "qminidlna.h"
+#include "ui_qminidlna.h"
 
 #include "mainwidget.h"
 #include "mediafolderswidget.h"
 
 #include <QLabel>
-//#include <KDE/KLocalizedString>
 #include <QLayout>
 #include <QDebug>
 #include <QtConfig>
-
-
-//#include <KHelpMenu>
 //#include <QMenu>
-//#include <KApplication>
 #include <QApplication>
-//#include <KAboutData>
-//#include <KCmdLineArgs>
-//#include <KStandardAction>
 #include <QAction>
 #include <QSettings>
-//#include <KConfigDialog>
 
-QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f): QMainWindow(parent, f) {
+QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f):
+    QMainWindow(parent, f),
+    ui(new Ui::QminiDLNA)
+{
+    ui->setupUi(this);
     dlnaProcess = MiniDLNAProcess::getInstance();
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
@@ -52,19 +48,22 @@ QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f): QMainWindow(parent, f)
     initSystemTray();
 }
 
-QminiDLNA::~QminiDLNA() {
+QminiDLNA::~QminiDLNA()
+{
 
 }
 
-void QminiDLNA::initGUI() {
+void QminiDLNA::initGUI()
+{
     mw = new MainWidget(this);
     setCentralWidget(mw);
+
     createMenu();
     initSystemTray();
-    connect(mw, SIGNAL(pressedBtnStopStart()),
-            this, SLOT(onBtnStopStart()));
+    connect(mw, SIGNAL(pressedBtnStopStart()), this, SLOT(onBtnStopStart()));
 }
-void QminiDLNA::initSystemTray() {
+void QminiDLNA::initSystemTray()
+{
     systemtray = new QSystemTrayIcon(QIcon(":/images/qminidlna.png"), this);
 
     //add MENU
@@ -76,7 +75,11 @@ void QminiDLNA::initSystemTray() {
     trayMenu->addAction(trayStopStart);
 
     trayMenu->addSeparator();
-    //trayMenu->addAction(QStandardAction::quit(this, SLOT(quitQminiDLNA()), this));
+
+    actQuit = new QAction(QIcon("quit"), tr("Quit"), trayMenu);
+    connect(actQuit, SIGNAL(triggered(bool)), this, SLOT(quitQminiDLNA()));
+    trayMenu->addAction(actQuit);
+
     systemtray->setContextMenu(trayMenu);
 
     systemtray->show();
@@ -110,30 +113,12 @@ void QminiDLNA::closeEvent(QCloseEvent* event) {
 }
 
 void QminiDLNA::createMenu() {
-    menu = new QMenuBar(this);
-    setMenuBar(menu);
-    mTool = new QMenu(tr("Tools"), menu);
-
-    QAction *aSetting = new QAction(QIcon("configure"), tr("Configure QminiDLNA"), mTool);
-    connect(aSetting, SIGNAL(triggered(bool)), this, SLOT(showSettings()));
-    mTool->addAction(aSetting);
-
-    m_actionStartStopRESTServer = new QAction(QIcon("applications-internet"), tr("Start HTTP REST server"), mTool);
-    connect(m_actionStartStopRESTServer, SIGNAL(triggered(bool)), this, SLOT(onActionStartStopServer()));
-    connect(RESTServer::getInstance(), SIGNAL(run(bool)),
-            this, SLOT(onRESTServerRun(bool)));
-    mTool->addAction(m_actionStartStopRESTServer);
-
-    mTool->addSeparator();
-
-    //mTool->addAction(KStandardAction::quit(this, SLOT(quitQminiDLNA()), this));
-
-    menu->addMenu(mTool);
-    /*
-    aboutMenu = new KHelpMenu(menu, KCmdLineArgs::aboutData());
-    mAbout = aboutMenu->menu();
-    menu->addMenu(aboutMenu->menu());
-    */
+    connect(ui->actionconfigure, SIGNAL(triggered(bool)), this, SLOT(showSettings()));
+    connect(ui->actionStart_HTTP_REST_server, SIGNAL(triggered(bool)), this, SLOT(onActionStartStopServer()));
+    connect(RESTServer::getInstance(), SIGNAL(run(bool)), this, SLOT(onRESTServerRun(bool)));
+    connect(ui->actionQuit, SIGNAL(triggered(bool)), this , SLOT(quitQminiDLNA()));
+    //TODO: about dialog
+    //connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
 }
 
 void QminiDLNA::showSettings() {

@@ -33,6 +33,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QAction>
 
+namespace Ui {
+class QminiDLNA;
+}
+
 class QminiDLNA : public QMainWindow
 {
 Q_OBJECT
@@ -43,6 +47,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 private:
     void initGUI();
+    Ui::QminiDLNA *ui;
     QSystemTrayIcon *systemtray;
     void initSystemTray();
     QMenuBar *menu;
@@ -54,6 +59,7 @@ private:
     QAction* m_actionStartStopRESTServer;
     MainWidget *mw;
     QAction* trayStopStart;
+    QAction* actQuit;
     void loadSettings();
     bool m_closeToTray;
     

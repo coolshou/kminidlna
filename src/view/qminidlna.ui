@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QminiDLNA</class>
+ <widget class="QMainWindow" name="QminiDLNA">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>689</width>
+    <height>378</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>689</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="mTool">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionconfigure"/>
+    <addaction name="actionStart_HTTP_REST_server"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="mTool"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionconfigure">
+   <property name="icon">
+    <iconset theme="configure"/>
+   </property>
+   <property name="text">
+    <string>Configure QminiDLNA</string>
+   </property>
+  </action>
+  <action name="actionStart_HTTP_REST_server">
+   <property name="icon">
+    <iconset theme="applications-internet"/>
+   </property>
+   <property name="text">
+    <string>Start HTTP REST server</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="icon">
+    <iconset theme="application-exit"/>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

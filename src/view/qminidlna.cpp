@@ -1,8 +1,8 @@
 /*
 QminiDLNA
-http://gitorious.org/QminiDLNA/pages/Home
+http://github.com/coolshou/qminidlna
 
-Copyright (C) 2011 Saljack <saljacky a gmail dot com>
+Copyright (C) 2018 jimmy
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,14 +21,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qminidlna.h"
 #include "ui_qminidlna.h"
 
-#include "mainwidget.h"
 #include "mediafolderswidget.h"
 
-#include <QLabel>
-#include <QLayout>
 #include <QDebug>
 #include <QtConfig>
-//#include <QMenu>
 #include <QApplication>
 #include <QAction>
 #include <QSettings>
@@ -55,12 +51,19 @@ QminiDLNA::~QminiDLNA()
 
 void QminiDLNA::initGUI()
 {
-    mw = new MainWidget(this);
-    setCentralWidget(mw);
+    //mw = new MainWidget(this);
+    //setCentralWidget(mw);
+    qled = new QLed(this);
+    qled->setOffColor(QLed::ledColor::Grey);
+    qled->setOnColor(QLed::ledColor::Green);
+    qled->setShape(QLed::ledShape::Rounded);
+    qled->setMaximumSize(20,20);
+    ui->layoutRun->addWidget(qled);
 
     createMenu();
     initSystemTray();
-    connect(mw, SIGNAL(pressedBtnStopStart()), this, SLOT(onBtnStopStart()));
+    connect(ui->btnStopStart, SIGNAL(toggled(bool)), this, SLOT(onBtnStopStart()));
+    //connect(mw, SIGNAL(pressedBtnStopStart()), this, SLOT(onBtnStopStart()));
 }
 void QminiDLNA::initSystemTray()
 {
@@ -165,16 +168,16 @@ void QminiDLNA::loadSettings() {
 void QminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
     switch(state) {
     case QProcess::Running:
-        mw->setStopStart(true);
+        setStopStart(true);
         systemtray->setIcon(QIcon(":/images/run.png"));
         trayStopStart->setIcon(QIcon("media-playback-stop"));
         trayStopStart->setText(tr("Stop"));
         break;
     case QProcess::Starting:
-        mw->setRunning();
+        setRunning();
         break;
     default:
-        mw->setStopStart(false);
+        setStopStart(false);
         systemtray->setIcon(QIcon(":/images/qminidlna.png"));
         trayStopStart->setIcon(QIcon("media-playback-start"));
         trayStopStart->setText(tr("Start"));
@@ -197,9 +200,11 @@ void QminiDLNA::onActionStartStopServer() {
 
 void QminiDLNA::onRESTServerRun(bool run) {
     if(run) {
-        m_actionStartStopRESTServer->setText(tr("Stop HTTP REST server"));
+        ui->actionStart_HTTP_REST_server->setText(tr("Stop HTTP REST server"));
+        //m_actionStartStopRESTServer->setText(tr("Stop HTTP REST server"));
     } else {
-        m_actionStartStopRESTServer->setText(tr("Start HTTP REST server"));
+        ui->actionStart_HTTP_REST_server->setText(tr("Start HTTP REST server"));
+        //m_actionStartStopRESTServer->setText(tr("Start HTTP REST server"));
     }
 }
 
@@ -215,5 +220,33 @@ void QminiDLNA::onNotValidCertificateKey() {
     msgBox.exec();
 }
 
+/**
+ * set QminiDLNA led and btn to stop or start
+ */
+void QminiDLNA::setStopStart(bool ss)
+{
+    if(!ui->btnStopStart->isEnabled()){
+        ui->btnStopStart->setEnabled(true);
+    }
+    if (ss) {
+        qled->setValue(true);
+        //kled->setColor(Qt::green);
+        //kled->setState(KLed::On);
+        ui->btnStopStart->setText(tr("Stop"));
+        ui->btnStopStart->setIcon(QIcon("media-playback-stop"));
+    } else {
+        qled->setValue(false);
+        //kled->setColor(Qt::gray);
+        //kled->setState(KLed::Off);
+        ui->btnStopStart->setText(tr("Start"));
+        ui->btnStopStart->setIcon(QIcon("media-playback-start"));
+    }
+}
 
+void QminiDLNA::setRunning()
+{
+    ui->btnStopStart->setText(tr("Starting ..."));
+    ui->btnStopStart->setEnabled(false);
+    ui->btnStopStart->setIcon(QIcon("media-record"));
+}
 

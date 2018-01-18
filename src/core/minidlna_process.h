@@ -1,8 +1,8 @@
 /*
 qminidlna
-http://gitorious.org/qminidlna/pages/Home
+http://github.com/coolshou/qminidlna
 
-Copyright (C) 2011 Saljack <saljacky a gmail dot com>
+Copyright (C) 2018 jimmy
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

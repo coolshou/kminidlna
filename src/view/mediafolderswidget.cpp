@@ -1,6 +1,7 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2012  TomÃ¡Å¡ PolednÃ½ <email>
+http://github.com/coolshou/qminidlna
+
+Copyright (C) 2018 jimmy
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,11 +61,11 @@ void MediaFoldersWidget::initGUI() {
     QPushButton* btnEdit = ui->btnEdit;
     connect(btnEdit, SIGNAL(clicked(bool)), this, SLOT(onEditButtonClicked()));
 
-    m_add = ui->m_add;
-    connect(m_add, SIGNAL(clicked(bool)), this, SLOT(onAddButtonClicked()));
+    //m_add = ui->m_add;
+    connect(ui->m_add, SIGNAL(clicked(bool)), this, SLOT(onAddButtonClicked()));
 
-    m_remove = ui->m_remove;
-    connect(m_remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveButtonClicked()));
+    //m_remove = ui->m_remove;
+    connect(ui->m_remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveButtonClicked()));
 }
 
 void MediaFoldersWidget::loadModel() {

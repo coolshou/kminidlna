@@ -1,3 +1,9 @@
+/*
+http://github.com/coolshou/qminidlna
+
+Copyright (C) 2018 jimmy
+
+ */
 #ifndef SETTINGCONFFILE_H
 #define SETTINGCONFFILE_H
 

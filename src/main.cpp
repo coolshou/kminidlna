@@ -1,8 +1,8 @@
 /*
 qminidlna
-http://gitorious.org/qminidlna/pages/Home
+http://github.com/coolshou/qminidlna
 
-Copyright (C) 2011 Saljack <saljacky a gmail dot com>
+Copyright (C) 2018 jimmy
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,16 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <QApplication>
-
-//#include <KAboutData>
-//#include <KApplication>
-//#include <KCmdLineArgs>
 #include <QCommandLineParser>
 #include <QSettings>
-//#include <KConfigGroup>
 #include <QDebug>
-//#include <QIcon>
-//#include "kminidlna_version.h"
 #include "view/qminidlna.h"
 #include "server/restserver.h"
 /*
@@ -48,27 +41,12 @@ int main(int argc, char** argv)
 
     Q_INIT_RESOURCE(resource);
     //QString versionName = VERSION;
-/*
-    KAboutData aboutData("qminidlna",
-                         0,
-                         ki18n("qminidlna"),
-                         versionName.toLocal8Bit(),
-                         ki18n("Frotnend for MiniDLNA"),
-                         KAboutData::License_GPL_V2);
-
-    aboutData.addAuthor(ki18n("Tomáš Poledný"), ki18n("Author"), QByteArray("saljacky@gmail.com"));
-    aboutData.setProgramLogo(qVariantFromValue(QImage(":/images/qminidlna.png")));
-    aboutData.setBugAddress("Author email");
-
-    loadCommandLine(argc, argv, &aboutData);
-*/
     QApplication app(argc, argv);;
     QApplication::setOrganizationName("coolshou");
     QApplication::setOrganizationDomain("coolshou.idv.tw");
     QApplication::setApplicationName("qminidlna");
 
     app.setWindowIcon(QIcon(":/images/qminidlna.png"));
-    //KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     QCommandLineParser parser;
     parser.setApplicationDescription("qminidlna helper");
     parser.addHelpOption();
@@ -97,13 +75,6 @@ int main(int argc, char** argv)
             qDebug() << "Main: HTTP Server start on port " << server->port();
         }
         config.endGroup();
-        /*
-        KConfigGroup config = KGlobal::config()->group("server");
-        if (config.readEntry("run_server_on_start", false)) {
-            server->startServer();
-            qDebug() << "Main: HTTP Server start on port " << server->port();
-        }
-        */
     }
     if (args.indexOf("start-dlna")) {
         MiniDLNAProcess* process = MiniDLNAProcess::getInstance();

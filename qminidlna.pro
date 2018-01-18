@@ -47,7 +47,6 @@ SOURCES += \
     src/view/abstractsettings.cpp \
     src/view/foldereditdialog.cpp \
     src/view/generatecertificatedialog.cpp \
-    src/view/mainwidget.cpp \
     src/view/mediafolderswidget.cpp \
     src/main.cpp \
     src/view/qminidlna.cpp \
@@ -76,7 +75,6 @@ HEADERS += \
     src/view/abstractsettings.h \
     src/view/foldereditdialog.h \
     src/view/generatecertificatedialog.h \
-    src/view/mainwidget.h \
     src/view/mediafolderswidget.h \
     src/view/qminidlna.h \
     src/server/restconnection.h \

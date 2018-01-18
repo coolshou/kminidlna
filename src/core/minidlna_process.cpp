@@ -1,8 +1,8 @@
 /*
 qminidlna
-http://gitorious.org/qminidlna/pages/Home
+http://github.com/coolshou/qminidlna
 
-Copyright (C) 2011 Saljack <saljacky a gmail dot com>
+Copyright (C) 2018 jimmy
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -45,7 +45,9 @@ const QString MiniDLNAProcess::PIDFILE_PATH = "/tmp/";
 const QString MiniDLNAProcess::GLOBALCONFFILE_PATH = "/etc/minidlna.conf";
 const int MiniDLNAProcess::DEFAULTPORT = 8200;
 
-MiniDLNAProcess::MiniDLNAProcess(): RESTInterfaces() {
+MiniDLNAProcess::MiniDLNAProcess():
+    RESTInterfaces()
+{
     m_confFile = 0;
     loadConfiguration();
     t_pid = new PidThread(this);
@@ -59,8 +61,8 @@ MiniDLNAProcess::MiniDLNAProcess(): RESTInterfaces() {
     server->addInterfaces(this);
 }
 
-MiniDLNAProcess::~MiniDLNAProcess() {
-
+MiniDLNAProcess::~MiniDLNAProcess()
+{
     if (minidlna->state() == QProcess::Running) {
         minidlna->kill();
     }
@@ -164,7 +166,7 @@ void MiniDLNAProcess::loadSettings() {
     } else {
         QFileInfo def(MiniDLNAProcess::PIDFILE_PATH);
         if (def.isDir() && def.isWritable()) {
-//             qDebug()<< "setted default pid directory: "<< def.absolutePath();
+            qDebug()<< "setted default pid directory: "<< def.absolutePath();
         } else {
             qDebug() << "pid directory is not writable or it was not found";
         }

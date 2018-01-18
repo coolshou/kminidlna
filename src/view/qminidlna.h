@@ -1,8 +1,8 @@
 /*
 QminiDLNA
-http://gitorious.org/QminiDLNA/pages/Home
+http://github.com/coolshou/qminidlna
 
-Copyright (C) 2011 Saljack <saljacky a gmail dot com>
+Copyright (C) 2018 jimmy
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,10 +21,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef QminiDLNA_H
 #define QminiDLNA_H
 
-#include "mainwidget.h"
+//#include "mainwidget.h"
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
 #include "settingdialog.h"
+#include "../libs/qled/qled.h"
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -43,21 +44,25 @@ Q_OBJECT
 public:
     explicit QminiDLNA(QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~QminiDLNA();
+    void setStopStart(bool ss);
+    void setRunning();
+
 protected:
     void closeEvent(QCloseEvent *event);
 private:
     void initGUI();
     Ui::QminiDLNA *ui;
+    QLed *qled;
     QSystemTrayIcon *systemtray;
     void initSystemTray();
-    QMenuBar *menu;
+    //QMenuBar *menu;
     void createMenu();
     //KHelpMenu *aboutMenu;
-    QMenu *mTool;
-    QMenu *mAbout;
+    //QMenu *mTool;
+    //QMenu *mAbout;
     MiniDLNAProcess *dlnaProcess;
-    QAction* m_actionStartStopRESTServer;
-    MainWidget *mw;
+    //QAction* m_actionStartStopRESTServer;
+    //MainWidget *mw;
     QAction* trayStopStart;
     QAction* actQuit;
     void loadSettings();

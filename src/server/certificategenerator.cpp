@@ -1,8 +1,7 @@
 /*
-    KMiniDLNA
-    https://sourceforge.net/projects/kminidlna/
-    
-    Copyright (C) 2012  Tomáš Poledný saljacky(at)gmail(dot)com
+http://github.com/coolshou/qminidlna
+
+Copyright (C) 2018 jimmy
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

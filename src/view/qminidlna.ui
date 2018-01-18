@@ -6,20 +6,63 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>378</height>
+    <width>307</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QHBoxLayout" name="layoutRun">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../resource.qrc">:/images/qminidlna.png</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>minidlna run:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="btnStopStart">
+         <property name="text">
+          <string>Start</string>
+         </property>
+         <property name="icon">
+          <iconset theme="media-playback-start">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>689</width>
+     <width>307</width>
      <height>29</height>
     </rect>
    </property>
@@ -44,7 +87,8 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionconfigure">
    <property name="icon">
-    <iconset theme="configure"/>
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Configure QminiDLNA</string>
@@ -52,7 +96,8 @@
   </action>
   <action name="actionStart_HTTP_REST_server">
    <property name="icon">
-    <iconset theme="applications-internet"/>
+    <iconset theme="applications-internet">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Start HTTP REST server</string>
@@ -60,7 +105,8 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset theme="application-exit"/>
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Quit</string>
@@ -68,13 +114,16 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>About</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

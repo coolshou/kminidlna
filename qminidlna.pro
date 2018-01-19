@@ -19,7 +19,7 @@ LIBS += -L/usr/lib/ssl -lcrypto
 TARGET = qminidlna
 TEMPLATE = app
 VERSION = "1.0"
-
+DEFINES += VERSION="1.0"
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -95,7 +95,9 @@ FORMS += \
     src/view/settingconffile.ui \
     src/view/settingserver.ui \
     src/view/mediafolderswidget.ui \
-    src/view/qminidlna.ui
+    src/view/qminidlna.ui \
+    src/view/foldereditdialog.ui \
+    src/view/generatecertificatedialog.ui
 
 RESOURCES += \
     src/resource.qrc \

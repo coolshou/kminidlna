@@ -22,17 +22,18 @@ Copyright (C) 2018 jimmy
 #define MEDIAFOLDER_H
 #include <QStandardItemModel>
 #include <QList>
-//#include <KLocalizedString>
 
 
-class MediaFolder: public QObject {
+
+class MediaFolder: public QObject
+{
   Q_OBJECT
     public:
         enum MediaType {NONE, VIDEO, AUDIO, IMAGES};
         explicit MediaFolder(QObject* parent= 0);
         MediaFolder(QString folder, MediaType mediaType = NONE, QObject* parent= 0);
         MediaFolder(QString line, int lineNumber = -1, QObject* parent= 0);
-        MediaFolder(const MediaFolder& other);
+        MediaFolder(const MediaFolder& other, QObject* parent= 0);
 
         virtual ~MediaFolder();
         virtual bool operator==(const MediaFolder& other) const;
@@ -43,15 +44,15 @@ class MediaFolder: public QObject {
         QString folder() const;
         QStandardItem* standardItemMediaType();
         QStandardItem* standardItemFolder();
-	QString mediaTypeToString();
-	bool isValid();
-	QString line();
+        QString mediaTypeToString();
+        bool isValid();
+        QString line();
 
     private:
         MediaType m_mediaType;
         QString m_folder;
         int m_lineNumber;
-	bool m_valid;
+        bool m_valid;
 };
 
 #endif // MEDIAFOLDER_H

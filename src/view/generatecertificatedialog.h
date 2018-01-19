@@ -21,11 +21,13 @@ Copyright (C) 2018 jimmy
 #ifndef GENERATECERTIFICATEDIALOG_H
 #define GENERATECERTIFICATEDIALOG_H
 
-//#include <KDialog>
 #include <QDialog>
 #include <QLineEdit>
 #include <QString>
 // #include "../server/cert/certificategenerator.h"
+namespace Ui {
+    class GenerateCertificateDialog;
+} // namespace Ui
 
 
 class GenerateCertificateDialog : public QDialog
@@ -35,11 +37,12 @@ Q_OBJECT
     public:
         GenerateCertificateDialog(QWidget* parent, Qt::WindowFlags flags = 0);
         virtual ~GenerateCertificateDialog();
-	QString commonName();
-	QString country();
+        QString commonName();
+        QString country();
     private:
-	QLineEdit* m_txlCommonName;
-	QLineEdit* m_txlCountryName;
+        Ui::GenerateCertificateDialog *ui;
+        QLineEdit* m_txlCommonName;
+        QLineEdit* m_txlCountryName;
 };
 
 #endif // GENERATECERTIFICATEDIALOG_H

@@ -32,7 +32,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 /**
  * @patern singleton
  */
-class MiniDLNAProcess: public QObject, public RESTInterfaces {
+class MiniDLNAProcess: public QObject, public RESTInterfaces
+{
         Q_OBJECT
 
     public:
@@ -76,13 +77,21 @@ class MiniDLNAProcess: public QObject, public RESTInterfaces {
         bool m_isConfigFileOptionsChanged;
         ConfigurationFile* m_confFile;
 
+    private slots:
+        void onErrorOccured(QProcess::ProcessError error);
+        void onStateChanged(QProcess::ProcessState newState);
+        void readMinidlnaError();
+        void readMinidlnaOutput();
+
     public slots:
         void onPidFile(bool found);
 
     signals:
         void minidlnaStatus(QProcess::ProcessState state);
         void configurationFileChanged();
-
+        void errorOccurred(QProcess::ProcessError error);
+        void stateChanged(QProcess::ProcessState newState);
+        void errorMsg(QString err);
 };
 
 // namespace MiniDLNA {

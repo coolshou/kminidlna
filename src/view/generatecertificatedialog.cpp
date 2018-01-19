@@ -19,12 +19,18 @@ Copyright (C) 2018 jimmy
 
 
 #include "generatecertificatedialog.h"
+#include "ui_generatecertificatedialog.h"
+
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLocale>
 //#include <KLocale>
 
-GenerateCertificateDialog::GenerateCertificateDialog(QWidget* parent, Qt::WindowFlags flags): QDialog(parent, flags) {
+GenerateCertificateDialog::GenerateCertificateDialog(QWidget* parent, Qt::WindowFlags flags):
+    QDialog(parent, flags),
+    ui(new Ui::GenerateCertificateDialog)
+{
+    ui->setupUi(this);
     initGUI();
 }
 
@@ -33,26 +39,8 @@ GenerateCertificateDialog::~GenerateCertificateDialog() {
 }
 
 void GenerateCertificateDialog::initGUI() {
-    //setCaption(tr("Create certificate"));
-    setWindowTitle(tr("Create certificate"));
-    QGridLayout* layout = new QGridLayout();
-    //TODO use grid layout
-//     QVBoxLayout* verticalLayout = new QVBoxLayout(mainWidget());
-
-//     QHBoxLayout* horLCommonName = new QHBoxLayout(mainWidget());
-//     verticalLayout->addLayout(horLCommonName);
-    layout->addWidget(new QLabel(tr("Common Name (CN):")), 0, 0);
-
-    m_txlCommonName = new QLineEdit("qminidlna");
-    layout->addWidget(m_txlCommonName, 0, 1);
-    
-
-//     QHBoxLayout* horLCountry = new QHBoxLayout(mainWidget());
-//     verticalLayout->addLayout(horLCountry);
-    layout->addWidget(new QLabel(tr("Country (C):")), 1, 0);
-
-    m_txlCountryName = new QLineEdit(tr("CZ"));
-    layout->addWidget(m_txlCountryName, 1, 1);
+    m_txlCommonName = ui->m_txlCommonName;
+    m_txlCountryName = ui->m_txlCountryName;
 }
 
 QString GenerateCertificateDialog::commonName() {

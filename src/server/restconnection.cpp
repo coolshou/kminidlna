@@ -132,6 +132,7 @@ void RESTConnection::receiveHeader() {
             }
         }
         ServerRequest::HeaderLine headerLine = m_request->insertRawHeaderLine(tmp);
+        Q_UNUSED(headerLine);
         //TODO if headerLine is BAD close connection
 
         if(m_request->numberOfHeadersLine() > MAXHEADERLINES) {

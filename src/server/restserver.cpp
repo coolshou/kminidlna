@@ -1,25 +1,22 @@
 
 #include "restserver.h"
-#include <QString>
+#include "serverrequest.h"
+#include "restconnection.h"
+#include "certificategenerator.h"
 
+#include <QString>
 #include <QSslError>
 #include <QFile>
 #include <QStringList>
 #include <QHash>
 #include <QFileInfo>
-//#include <KConfigGroup>
-//#include <KGlobal>
-#include "serverrequest.h"
-#include "restconnection.h"
-#include "certificategenerator.h"
 
 #include <QDomDocument>
 #include <sys/stat.h>
 #include <qconfig.h>
 #include <QSettings>
-//#include <KConfig>
 #include <QStandardPaths>
-//#include <KStandardDirs>
+
 
 // bool RESTServer::m_runing = false;
 
@@ -28,7 +25,10 @@ QByteArray RESTServer::password = QByteArray();
 const int RESTServer::MAX_NUMBER_OF_PORT = 65000;
 const int RESTServer::DEFAULT_PORT = 8080;
 
-RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(DEFAULT_PORT), m_runing(false), m_customCert(false), m_validCertAndKey(false) {
+RESTServer::RESTServer(QObject* parent) :
+    QTcpServer(parent),
+    m_port(DEFAULT_PORT), m_runing(false), m_customCert(false), m_validCertAndKey(false)
+{
     loadConfig();
 //     loadCert(m_customCert);
     qDebug() << "NEW REST SERVER";
@@ -36,16 +36,19 @@ RESTServer::RESTServer(QObject* parent) : QTcpServer(parent), m_port(DEFAULT_POR
     addInterfaces(this);
 }
 
-RESTServer::~RESTServer() {
+RESTServer::~RESTServer()
+{
 
 }
 
-RESTServer* RESTServer::getInstance() {
+RESTServer* RESTServer::getInstance()
+{
     static RESTServer server;
     return &server;
 }
 
-void RESTServer::loadConfig() {
+void RESTServer::loadConfig()
+{
     m_notFoundFileHtmlPath = "404.html";
     QSettings config;
     config.beginGroup("server");
@@ -58,24 +61,14 @@ void RESTServer::loadConfig() {
     m_certPath = config.value("cert_path", QString()).toString();
     m_pkeyPath = config.value("pkey_path", QString()).toString();
     config.endGroup();
-    /*
-    KConfigGroup config = KGlobal::config()->group("server");
-    setPort(config.readEntry("port", DEFAULT_PORT));
-
-    RESTServer::login = config.readEntry("username", QByteArray());
-    RESTServer::password = config.readEntry("password", QByteArray());
-
-    m_customCert = config.readEntry("custom_cert", false);
-    m_certPath = config.readEntry("cert_path", QString());
-    m_pkeyPath = config.readEntry("pkey_path", QString());
-    */
 }
 
 /**
  * Start server if server not run
  * emit run signal
  */
-void RESTServer::startServer() {
+void RESTServer::startServer()
+{
 //     loadConfig();
     loadCert(m_customCert);
     if(m_validCertAndKey) {
@@ -99,7 +92,8 @@ void RESTServer::startServer() {
  * Stop server if server run
  * emit run signal
  */
-void RESTServer::stopServer() {
+void RESTServer::stopServer()
+{
     if(m_runing) {
         close();
         qDebug() << "RESTServer: stoping server";
@@ -112,7 +106,8 @@ void RESTServer::stopServer() {
 /**
  * Incoming connection on server
  */
-void RESTServer::incomingConnection(int socketDescriptor) {
+void RESTServer::incomingConnection(int socketDescriptor)
+{
     if(!m_validCertAndKey) {
         QTcpSocket* soc = nextPendingConnection();
         soc->close();
@@ -143,20 +138,21 @@ void RESTServer::incomingConnection(int socketDescriptor) {
 
 }
 
-void RESTServer::connectionClosed() {
+void RESTServer::connectionClosed()
+{
     QSslSocket* socket = dynamic_cast<QSslSocket *>(sender());
     qDebug() << "Closed: " << socket->socketDescriptor() << " Reason: " << socket->error() << socket->errorString() ;
     socket->deleteLater();
 }
 
-void RESTServer::handshakeComplete() {
+void RESTServer::handshakeComplete()
+{
     QSslSocket* socket = dynamic_cast<QSslSocket *>(sender());
     disconnect(socket, SIGNAL(disconnected()), this, SLOT(connectionClosed()));
-/* TODO: RESTConnection
     RESTConnection* connection = new RESTConnection(socket, this);
     connect(connection, SIGNAL(finished()), connection, SLOT(deleteLater()));
     connection->start();
-    */
+
 }
 
 
@@ -167,7 +163,8 @@ void RESTServer::handshakeComplete() {
 /**
  * write lock thread
  */
-void RESTServer::addInterfaces(RESTInterfaces* interface) {
+void RESTServer::addInterfaces(RESTInterfaces* interface)
+{
     QWriteLocker l(&m_lock);
     m_intefaces.append(interface);
 }
@@ -175,7 +172,8 @@ void RESTServer::addInterfaces(RESTInterfaces* interface) {
 /**
  * write lock thread
  */
-bool RESTServer::removeInterfaces(RESTInterfaces* interface) {
+bool RESTServer::removeInterfaces(RESTInterfaces* interface)
+{
     QWriteLocker l(&m_lock);
     if(m_intefaces.contains(interface)) {
         return m_intefaces.removeOne(interface);
@@ -186,14 +184,16 @@ bool RESTServer::removeInterfaces(RESTInterfaces* interface) {
 /**
  * write lock thread
  */
-void RESTServer::loadResource() {
+void RESTServer::loadResource()
+{
     QWriteLocker l(&m_lock);
     //Version.xml part
     res = new BasicRESTResource("/version.xml", this);
 
-    QByteArray versionxml = "<qminidlna><version>0.9pre</version></qminidlna>";
+    QByteArray versionxml = "<qminidlna><version>VERSION</version></qminidlna>";
 
-    if(res->setXML(versionxml)) {
+    if(res->setXML(versionxml))
+    {
         addResource(res);
     }
 }
@@ -202,7 +202,8 @@ void RESTServer::loadResource() {
  * read lock thread
  * @return resource on address if resource not exist return 0
  */
-RESTResource* RESTServer::resource(QString address) {
+RESTResource* RESTServer::resource(QString address)
+{
     QReadLocker l(&m_lock);
     QList<RESTInterfaces* >::const_iterator it;
     for(it = m_intefaces.begin(); it != m_intefaces.end(); ++it) {
@@ -214,7 +215,8 @@ RESTResource* RESTServer::resource(QString address) {
 }
 
 
-void RESTServer::errorsSSL(QList< QSslError > errs) {
+void RESTServer::errorsSSL(QList< QSslError > errs)
+{
     foreach(QSslError er, errs) {
         if(er != QSslError::SelfSignedCertificate) {
             qDebug() << "RESTServer SSL error:" << er.errorString();
@@ -226,7 +228,8 @@ void RESTServer::loadCert(bool custom) {
     if(custom) {
         loadCert(m_pkeyPath, m_certPath);
     } else {
-        //TODO: CertificateGenerator
+        QString path =  QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/qminidlna/";
+        loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME, true);
         //KStandardDirs dirs;
         //QString path =  dirs.saveLocation("data") + "qminidlna/";
         //loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME, true);
@@ -255,12 +258,12 @@ void RESTServer::loadCert(const QString& pkeyPath, const QString& certPath, bool
         if(fcert.open(QIODevice::ReadOnly | QIODevice::Text)) {
             m_cert = QSslCertificate(&fcert);
             fcert.close();
-            /*
-            if(!m_cert.isValid()) {
+
+            if(m_cert.isBlacklisted()) {
                 qDebug() << "RESTServer: certificate is not valid";
                 m_validCertAndKey = false;
                 return;
-            }*/
+            }
         } else {
             qDebug() << "RESTServer: cannot open certificate path: " << certPath;
             m_validCertAndKey = false;
@@ -268,15 +271,18 @@ void RESTServer::loadCert(const QString& pkeyPath, const QString& certPath, bool
         }
         m_validCertAndKey = true;
     } else if(generate) {
-        /*
+
         X509Value v;
         v.commonName = (unsigned char*) "qminidlna";
         v.countryName = (unsigned char*) "CZ";
-        KStandardDirs dirs;
-        QString path = dirs.saveLocation("data") + "qminidlna/";
+
+        //KStandardDirs dirs;
+        //QString path = dirs.saveLocation("data") + "qminidlna/";
+        QString path =  QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/qminidlna/";
         CertificateGenerator::createCertificate(v, path);
         loadCert(path + CertificateGenerator::PKEY_NAME, path + CertificateGenerator::CERTIFICATE_NAME);
-        */
+
+
     }
 }
 

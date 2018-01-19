@@ -46,7 +46,8 @@ const QString CertificateGenerator::CERTIFICATE_NAME = "cert.crt";
  * @param value value of certificate
  * @param path path where certificate and private key will be saved default is "", must end with / for example: /home/xxxx/
  */
-CertificateGenerator::CreatedCertificteError CertificateGenerator::createCertificate(X509Value& value, const QString path, unsigned int bits) {
+CertificateGenerator::CreatedCertificteError CertificateGenerator::createCertificate(X509Value& value, const QString path, unsigned int bits)
+{
     CreatedCertificteError error = NoError;
     BIO *bio_err;
     X509 *x509 = 0;
@@ -94,8 +95,10 @@ CertificateGenerator::CreatedCertificteError CertificateGenerator::createCertifi
             qDebug() << "Certificate and private key was not created. Check persmission";
         }
 
-        fclose(certFILE);
-        fclose(pkeyFILE);
+        if (certFILE != 0)
+            fclose(certFILE);
+        if (pkeyFILE != 0)
+            fclose(pkeyFILE);
         certF.close();
         pkeyF.close();
     } else {
@@ -124,6 +127,8 @@ void CertificateGenerator::callback(int p, int n, void* arg) {
     if(p == 2) c = '*';
     if(p == 3) c = '\n';
     fputc(c, stderr);
+    Q_UNUSED(n);
+    Q_UNUSED(arg);
 }
 
 /**

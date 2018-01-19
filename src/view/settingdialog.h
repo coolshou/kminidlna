@@ -22,7 +22,6 @@ public:
     ~SettingDialog();
 
 public slots:
-    //void curentPageChanged(KPageWidgetItem* current, KPageWidgetItem* before);
     void onChange();
 
 private slots:

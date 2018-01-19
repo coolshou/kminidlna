@@ -24,10 +24,7 @@ Copyright (C) 2018 jimmy
 #include <QFile>
 #include <QTextStream>
 #include <QStandardPaths>
-//#include <KStandardDirs>
 #include <QApplication>
-//#include <KApplication>
-//#include <KAboutData>
 #include <QDir>
 #include "minidlna_process.h"
 
@@ -275,7 +272,7 @@ QString ConfigurationFile::pathToDefaultLocalConfigFile() {
     //KStandardDirs stdir;
     //QString path = stdir.saveLocation("data") +
     QString path = stdir +
-                   "qminidlna/" +
+                   "/qminidlna/" +
                    DEFAULT_LOCAL_CONF_FILE_NAME;
     return path;
 }

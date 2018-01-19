@@ -23,13 +23,16 @@ Copyright (C) 2018 jimmy
 
 #include <Qt>
 #include <QDialog>
-//#include <kdialog.h>
 #include <QLineEdit>
 #include <QComboBox>
 #include "../core/model/mediafolder.h"
 
+namespace Ui {
+class FolderEditDialog;
+}
 
-class FolderEditDialog : public QDialog {
+class FolderEditDialog : public QDialog
+{
     Q_OBJECT
 public:
     explicit FolderEditDialog(QWidget* parent = 0, Qt::WindowFlags flags = 0);
@@ -38,6 +41,7 @@ public:
     MediaFolder* mediaFolder();
 private:
     void initGUI();
+    Ui::FolderEditDialog *ui;
     QLineEdit* m_ledFolderPath;
     QComboBox* m_cbxMediaType;
     void setMediaType(MediaFolder::MediaType mediaType);

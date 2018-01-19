@@ -48,14 +48,14 @@ class RESTServer : public QTcpServer, public RESTInterfaces {
 
         inline bool isRuning() {
             return m_runing;
-        };
+        }
 
         inline int port() {
             return m_port;
-        };
+        }
         inline void setPort(int port) {
             m_port = port;
-        };
+        }
         void setCert(const QSslCertificate& cert);
         void setSslKey(QSslKey* key);
         void loadConfig();

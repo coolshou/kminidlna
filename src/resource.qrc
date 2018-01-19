@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/images">
-        <file alias="ikona.png">resource/kminidlna.png</file>
         <file alias="run.png">resource/icon_play.png</file>
         <file alias="qminidlna.png">resource/qminidlna.png</file>
     </qresource>

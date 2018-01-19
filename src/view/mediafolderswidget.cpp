@@ -25,7 +25,6 @@ Copyright (C) 2018 jimmy
 #include <QSizePolicy>
 #include <QAbstractItemView>
 #include <QHeaderView>
-//#include <KLocalizedString>
 #include "../core/minidlna_process.h"
 #include "foldereditdialog.h"
 #include <QPushButton>
@@ -52,26 +51,16 @@ void MediaFoldersWidget::initGUI() {
 
     m_tableView = ui->m_tableView;
     m_tableView->resizeRowsToContents();
-    //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //m_tableView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-
-    //Controll part
-    m_controllWidget = ui->m_controllWidget;
-
-    QPushButton* btnEdit = ui->btnEdit;
-    connect(btnEdit, SIGNAL(clicked(bool)), this, SLOT(onEditButtonClicked()));
-
-    //m_add = ui->m_add;
+    connect(ui->btnEdit, SIGNAL(clicked(bool)), this, SLOT(onEditButtonClicked()));
     connect(ui->m_add, SIGNAL(clicked(bool)), this, SLOT(onAddButtonClicked()));
-
-    //m_remove = ui->m_remove;
     connect(ui->m_remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveButtonClicked()));
 }
 
 void MediaFoldersWidget::loadModel() {
     m_model->clear();
     QStringList headerLabels;
-    headerLabels << tr("Folder") << tr("Media type");
+    //headerLabels << tr("Folder") << tr("Media type");
+    headerLabels << tr("Media type") << tr("Folder") ;
     m_model->setHorizontalHeaderLabels(headerLabels);
     m_tableView->setModel(m_model);
 
@@ -111,17 +100,17 @@ void MediaFoldersWidget::onRemoveButtonClicked() {
 void MediaFoldersWidget::onEditButtonClicked() {
     int row = m_tableView->currentIndex().row();
     if (row >= 0 && row < m_model->rowCount()) {
-        MediaFolder::MediaType type = *(MediaFolder::MediaType *) m_model->item(row, 1)->data().data();
-        MediaFolder folder(m_model->item(row, 0)->data().toString(), type);
+        MediaFolder::MediaType type = *(MediaFolder::MediaType *) m_model->item(row, 0)->data().data();
+        MediaFolder folder(m_model->item(row,1)->data().toString(), type);
         FolderEditDialog* dlg = new FolderEditDialog(folder, this);
         if (dlg->exec() == QDialog::Accepted) {
             MediaFolder* tmp = dlg->mediaFolder();
             if (!(*tmp == folder)) {
-                m_model->item(row, 0)->setText(tmp->folder());
-                m_model->item(row, 0)->setData(tmp->folder());
+                m_model->item(row, 0)->setText(tmp->mediaTypeToString());
+                m_model->item(row, 0)->setData(tmp->mediaType());
 
-                m_model->item(row, 1)->setText(tmp->mediaTypeToString());
-                m_model->item(row, 1)->setData(tmp->mediaType());
+                m_model->item(row, 1)->setText(tmp->folder());
+                m_model->item(row, 1)->setData(tmp->folder());
 
                 m_changedModel = true;
                 emit modelChanged();
@@ -146,7 +135,7 @@ void MediaFoldersWidget::saveModel() {
 
 void MediaFoldersWidget::setFileIsNotWritable(bool writable) {
 
-    m_controllWidget->setEnabled(writable);
+    ui->m_controllWidget->setEnabled(writable);
     if (!writable) {
         m_lblInfo->setText("<b>" + tr("Config file: ") + "</b>" + m_pathToConfig +
                            " <br/><b>" + tr("Configuration file is not writable!") + "</b");

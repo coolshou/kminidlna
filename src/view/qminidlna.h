@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef QminiDLNA_H
 #define QminiDLNA_H
 
-//#include "mainwidget.h"
 #include "../core/minidlna_process.h"
 #include "../server/restserver.h"
 #include "settingdialog.h"
@@ -55,14 +54,9 @@ private:
     QLed *qled;
     QSystemTrayIcon *systemtray;
     void initSystemTray();
-    //QMenuBar *menu;
+    void initStatusBar();
     void createMenu();
-    //KHelpMenu *aboutMenu;
-    //QMenu *mTool;
-    //QMenu *mAbout;
     MiniDLNAProcess *dlnaProcess;
-    //QAction* m_actionStartStopRESTServer;
-    //MainWidget *mw;
     QAction* trayStopStart;
     QAction* actQuit;
     void loadSettings();
@@ -71,6 +65,8 @@ private:
 private slots:
     void showSettings();
     void onMiniDLNAState(QProcess::ProcessState state);
+    void onMinidlnaError(QString err);
+
 public slots:
     void systemTrayActived(QSystemTrayIcon::ActivationReason reason);
     void onBtnStopStart();  

@@ -21,21 +21,24 @@ Copyright (C) 2018 jimmy
 #include "mediafolder.h"
 #include <QDebug>
 
-MediaFolder::MediaFolder(QString folder, MediaFolder::MediaType mediaType, QObject* parent)
-        :  QObject(parent), m_mediaType(mediaType), m_lineNumber(-1), m_valid(true)
+MediaFolder::MediaFolder(QString folder, MediaFolder::MediaType mediaType, QObject* parent):
+    QObject(parent),
+    m_mediaType(mediaType), m_lineNumber(-1), m_valid(true)
 {
     m_folder = folder;
 }
 
-MediaFolder::MediaFolder(QObject* parent)
-        : QObject(parent), m_valid(false)
+MediaFolder::MediaFolder(QObject* parent):
+    QObject(parent),
+    m_valid(false)
 {
     m_folder = "";
     m_mediaType = NONE;
 }
 
-MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent)
-        : QObject(parent), m_lineNumber(lineNumber), m_valid(false)
+MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent):
+    QObject(parent),
+    m_lineNumber(lineNumber), m_valid(false)
 {
     switch (line[0].toLatin1()) {
     case 'V':
@@ -68,7 +71,9 @@ MediaFolder::MediaFolder(QString line, int lineNumber, QObject* parent)
     }
 }
 
-MediaFolder::MediaFolder(const MediaFolder& other) {
+MediaFolder::MediaFolder(const MediaFolder& other, QObject* parent):
+    QObject(parent)
+{
     m_folder = other.m_folder;
     m_lineNumber = other.m_lineNumber;
     m_mediaType = other.m_mediaType;
@@ -97,27 +102,29 @@ MediaFolder::MediaType MediaFolder::mediaType() const {
 /**
  * You must delete list after using it!!!
  */
-QList< QStandardItem* >* MediaFolder::row() {
+QList< QStandardItem* >* MediaFolder::row()
+{
     QList<QStandardItem *>* ret = new QList<QStandardItem *>();
-    ret->append(standardItemFolder());
     ret->append(standardItemMediaType());
+    ret->append(standardItemFolder());
     return ret;
 }
 
-void MediaFolder::setFolder(QString path) {
+void MediaFolder::setFolder(QString path)
+{
     m_folder = path;
 }
 
-void MediaFolder::setMediaType(MediaFolder::MediaType mediaType) {
+void MediaFolder::setMediaType(MediaFolder::MediaType mediaType)
+{
     m_mediaType = mediaType;
-
-
 }
 
 /**
  * must be used in model for delete
  */
-QStandardItem* MediaFolder::standardItemFolder() {
+QStandardItem* MediaFolder::standardItemFolder()
+{
     QStandardItem* ret = new QStandardItem();
     ret->setData(m_folder);
     ret->setText(m_folder);
@@ -128,14 +135,16 @@ QStandardItem* MediaFolder::standardItemFolder() {
 /**
  * must be used in model for delete
  */
-QStandardItem* MediaFolder::standardItemMediaType() {
+QStandardItem* MediaFolder::standardItemMediaType()
+{
     QStandardItem* ret = new QStandardItem();
     ret->setData(m_mediaType);
     ret->setText(mediaTypeToString());
     return ret;
 }
 
-QString MediaFolder::mediaTypeToString() {
+QString MediaFolder::mediaTypeToString()
+{
     QString ret;
     switch (m_mediaType) {
     case VIDEO:

@@ -3,11 +3,6 @@
 
 #include <QWidget>
 #include "abstractsettings.h"
-#include <QSpinBox>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QCheckBox>
-#include <QRadioButton>
 
 namespace Ui {
 class SettingServer;
@@ -34,17 +29,7 @@ public slots:
 private:
     void initGUI();
     Ui::SettingServer *ui;
-    QSpinBox* m_port;
-    QLineEdit* m_username;
     QByteArray m_passwordHashed;
-    QPushButton* m_btnControll;
-    QCheckBox* m_onStartRun;
-    QPushButton* m_btnPassword;
-    QRadioButton* m_rbtGenerated;
-    QRadioButton* m_rbtCustom;
-    QWidget* m_customCertificate;
-    QLineEdit* m_leCustomPKey;
-    QLineEdit* m_leCustomCertificate;
 
 };
 

@@ -24,95 +24,73 @@ SettingServer::~SettingServer()
 }
 void SettingServer::initGUI()
 {
-    //PORT
-    m_port = ui->m_port;
-    m_port->setMinimum(1);
-    m_port->setMaximum(RESTServer::MAX_NUMBER_OF_PORT);
-    m_port->setValue(RESTServer::DEFAULT_PORT);
-    connect(m_port, SIGNAL(valueChanged(int)), this, SLOT(someChanged()));
-
-    m_onStartRun = ui->m_onStartRun;
-    connect(m_onStartRun, SIGNAL(stateChanged(int)), this, SLOT(someChanged()));
-
+    connect(ui->m_port, SIGNAL(valueChanged(int)), this, SLOT(someChanged()));
+    connect(ui->m_onStartRun, SIGNAL(stateChanged(int)), this, SLOT(someChanged()));
     //LOGIN GROUP
     //Username
-    m_username = ui->m_username;
-    connect(m_username, SIGNAL(textChanged(QString)), this, SLOT(someChanged()));
+    connect(ui->m_username, SIGNAL(textChanged(QString)), this, SLOT(someChanged()));
     //Password
-    m_btnPassword = ui->m_btnPassword;
-    connect(m_btnPassword, SIGNAL(clicked(bool)), this, SLOT(onPasswordClicked(bool)));
+    connect(ui->m_btnPassword, SIGNAL(clicked(bool)), this, SLOT(onPasswordClicked(bool)));
 
     //Certificate
-    m_rbtGenerated = ui->m_rbtGenerated;
-    m_rbtGenerated->setChecked(true);
-    connect(m_rbtGenerated, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
-
-    m_rbtCustom = ui->m_rbtCustom;
-    connect(m_rbtCustom, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
-
-    m_customCertificate =  ui->m_customCertificate;
-    m_customCertificate->setEnabled(false);
-
-    m_leCustomPKey = ui->m_leCustomPKey;
-    connect(m_leCustomPKey, SIGNAL(textChanged(QString)), SLOT(someChanged()));
-
-    QToolButton* tbtPKey =  ui->tbtPKey;
-    connect(tbtPKey, SIGNAL(clicked(bool)),  SLOT(onTbtPKeyClicked(bool)));
-
-    m_leCustomCertificate = ui->m_leCustomCertificate;
-    connect(m_leCustomCertificate, SIGNAL(textChanged(QString)), SLOT(someChanged()));
-
-    QToolButton* tbtCert =  ui->tbtCert;
-    connect(tbtCert, SIGNAL(clicked(bool)), SLOT(onTbtCertClicked(bool)));
-
+    connect(ui->m_rbtGenerated, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
+    connect(ui->m_rbtCustom, SIGNAL(toggled(bool)), SLOT(certificateChanged(bool)));
+    connect(ui->m_leCustomPKey, SIGNAL(textChanged(QString)), SLOT(someChanged()));
+    connect(ui->tbtPKey, SIGNAL(clicked(bool)),  SLOT(onTbtPKeyClicked(bool)));
+    connect(ui->m_leCustomCertificate, SIGNAL(textChanged(QString)), SLOT(someChanged()));
+    connect(ui->tbtCert, SIGNAL(clicked(bool)), SLOT(onTbtCertClicked(bool)));
     connect(ui->btnGenerateCertificate, SIGNAL(clicked(bool)), SLOT(onGenerateCertificateClicked(bool)));
 
 }
 
-void SettingServer::applySettings() {
+void SettingServer::applySettings()
+{
     AbstractSettings::applySettings();
     QSettings config;
     config.beginGroup("server");
-    config.setValue("port", m_port->value());
-    config.setValue("run_server_on_start", m_onStartRun->isChecked());
-    config.setValue("username", m_username->text());
+    config.setValue("port", ui->m_port->value());
+    config.setValue("run_server_on_start", ui->m_onStartRun->isChecked());
+    config.setValue("username", ui->m_username->text());
     config.setValue("password", m_passwordHashed);
-    config.setValue("custom_cert", m_rbtCustom->isChecked());
-    config.setValue("pkey_path", m_leCustomPKey->text());
-    config.setValue("cert_path", m_leCustomCertificate->text());
+    config.setValue("custom_cert", ui->m_rbtCustom->isChecked());
+    config.setValue("pkey_path", ui->m_leCustomPKey->text());
+    config.setValue("cert_path", ui->m_leCustomCertificate->text());
     config.sync();
     config.endGroup();
 }
 
-void SettingServer::setDefaults() {
-    m_port->setValue(RESTServer::DEFAULT_PORT);
-    m_onStartRun->setChecked(false);
-    m_username->setText(QByteArray());
+void SettingServer::setDefaults()
+{
+    ui->m_port->setValue(RESTServer::DEFAULT_PORT);
+    ui->m_onStartRun->setChecked(false);
+    ui->m_username->setText(QByteArray());
     m_passwordHashed.clear();
 }
 
-void SettingServer::loadSettings() {
+void SettingServer::loadSettings()
+{
     QSettings config;
     config.beginGroup("server");
-    m_port->setValue(config.value("port", 8080).toInt());
-    m_onStartRun->setChecked(config.value("run_server_on_start", false).toBool());
-    m_username->setText(config.value("username", QByteArray()).toByteArray());
+    ui->m_port->setValue(config.value("port", 8080).toInt());
+    ui->m_onStartRun->setChecked(config.value("run_server_on_start", false).toBool());
+    ui->m_username->setText(config.value("username", QByteArray()).toByteArray());
     m_passwordHashed = config.value("password", QByteArray()).toByteArray();
     bool custom = config.value("custom_cert", false).toBool();
 
     if(custom){
-      m_customCertificate->setEnabled(true);
-      m_rbtCustom->setChecked(true);
+      ui->m_customCertificate->setEnabled(true);
+      ui->m_rbtCustom->setChecked(true);
     }
-    m_leCustomPKey->setText(config.value("pkey_path", QString()).toString());
-    m_leCustomCertificate->setText(config.value("cert_path", QString()).toString());
+    ui->m_leCustomPKey->setText(config.value("pkey_path", QString()).toString());
+    ui->m_leCustomCertificate->setText(config.value("cert_path", QString()).toString());
     config.endGroup();
 
     m_changed = false;
 }
 
 
-void SettingServer::onPasswordClicked(bool ) {
+void SettingServer::onPasswordClicked(bool )
+{
 //     if (clicked) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -144,31 +122,35 @@ void SettingServer::onPasswordClicked(bool ) {
     */
 }
 
-void SettingServer::certificateChanged(bool) {
-    if(m_rbtCustom->isChecked()) {
-        m_customCertificate->setEnabled(true);
+void SettingServer::certificateChanged(bool)
+{
+    if(ui->m_rbtCustom->isChecked()) {
+        ui->m_customCertificate->setEnabled(true);
     } else {
-        m_customCertificate->setEnabled(false);
+        ui->m_customCertificate->setEnabled(false);
     }
     someChanged();
 }
 
-void SettingServer::onTbtPKeyClicked(bool) {
-    QString path = QFileDialog::getOpenFileName(this,tr("Private key file"),QUrl(m_leCustomPKey->text()).toString(),"All (*.*)");
+void SettingServer::onTbtPKeyClicked(bool)
+{
+    QString path = QFileDialog::getOpenFileName(this,tr("Private key file"),ui->m_leCustomPKey->text(),"All (*.*)");
     if(!path.isEmpty()) {
-        m_leCustomPKey->setText(path);
+        ui->m_leCustomPKey->setText(path);
     }
 }
 
-void SettingServer::onTbtCertClicked(bool) {
-    QString path = QFileDialog::getOpenFileName(this,tr("Certificate X509 file"),QUrl(m_leCustomCertificate->text()).toString(),"All (*.*)");
+void SettingServer::onTbtCertClicked(bool)
+{
+    QString path = QFileDialog::getOpenFileName(this,tr("Certificate X509 file"),ui->m_leCustomCertificate->text(),"All (*.*)");
     if(!path.isEmpty()) {
-        m_leCustomCertificate->setText(path);
+        ui->m_leCustomCertificate->setText(path);
     }
 }
 
 
-void SettingServer::onGenerateCertificateClicked(bool) {
+void SettingServer::onGenerateCertificateClicked(bool)
+{
     GenerateCertificateDialog* dlg = new GenerateCertificateDialog(this);
     if(dlg->exec()) {
         X509Value value;

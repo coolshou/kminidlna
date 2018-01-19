@@ -14,11 +14,21 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMaximumSize</enum>
+   </property>
    <item>
     <widget class="QWidget" name="mediaFolderGroup" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
       <item>
-       <layout class="QVBoxLayout" name="mediaFolderGroupLayout"/>
+       <layout class="QVBoxLayout" name="mediaFolderGroupLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
+        </property>
+       </layout>
       </item>
      </layout>
     </widget>

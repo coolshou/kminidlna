@@ -20,7 +20,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Configure qminidlna</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
@@ -53,31 +53,35 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2"/>
+      <layout class="QVBoxLayout" name="tabGeneralLayout"/>
      </widget>
      <widget class="QWidget" name="tabMiniDLNA">
       <attribute name="title">
        <string>MiniDLNA</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4"/>
+      <layout class="QVBoxLayout" name="tabMiniDLNALayout"/>
      </widget>
      <widget class="QWidget" name="tabMediaFolder">
       <attribute name="title">
        <string>Media folders</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout"/>
+      <layout class="QVBoxLayout" name="tabMediaFolderLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabConfig">
       <attribute name="title">
        <string>Config</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5"/>
+      <layout class="QVBoxLayout" name="tabConfigLayout"/>
      </widget>
      <widget class="QWidget" name="tabServer">
       <attribute name="title">
        <string>Server interface</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6"/>
+      <layout class="QVBoxLayout" name="tabServerLayout"/>
      </widget>
     </widget>
    </item>

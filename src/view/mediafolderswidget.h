@@ -31,7 +31,6 @@ Copyright (C) 2018 jimmy
 #include <QStandardItemModel>
 #include <QTableView>
 #include <QDialog>
-//#include <KDialog>
 #include <QToolButton>
 
 namespace Ui {

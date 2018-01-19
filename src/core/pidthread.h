@@ -26,9 +26,7 @@ Copyright (C) 2018 jimmy
 #include <QString>
 #include <QFile>
 #include <QMessageBox>
-//#include <KMessageBox>
 #include <QDebug>
-//#include <KLocalizedString>
 
 class PidThread: public QThread
 {

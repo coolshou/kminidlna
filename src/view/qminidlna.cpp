@@ -38,8 +38,9 @@ QminiDLNA::QminiDLNA(QWidget* parent, Qt::WindowFlags f):
     initGUI();
     connect(dlnaProcess, SIGNAL(minidlnaStatus(QProcess::ProcessState)),
             this, SLOT(onMiniDLNAState(QProcess::ProcessState)));
+    connect(dlnaProcess, SIGNAL(errorMsg(QString)), this, SLOT(onMinidlnaError(QString)));
     connect(RESTServer::getInstance(), SIGNAL(notValidKeyCertificate()),
-            SLOT(onNotValidCertificateKey()));
+            this, SLOT(onNotValidCertificateKey()));
     loadSettings();
     initSystemTray();
 }
@@ -51,8 +52,6 @@ QminiDLNA::~QminiDLNA()
 
 void QminiDLNA::initGUI()
 {
-    //mw = new MainWidget(this);
-    //setCentralWidget(mw);
     qled = new QLed(this);
     qled->setOffColor(QLed::ledColor::Grey);
     qled->setOnColor(QLed::ledColor::Green);
@@ -63,7 +62,7 @@ void QminiDLNA::initGUI()
     createMenu();
     initSystemTray();
     connect(ui->btnStopStart, SIGNAL(toggled(bool)), this, SLOT(onBtnStopStart()));
-    //connect(mw, SIGNAL(pressedBtnStopStart()), this, SLOT(onBtnStopStart()));
+
 }
 void QminiDLNA::initSystemTray()
 {
@@ -88,7 +87,11 @@ void QminiDLNA::initSystemTray()
     systemtray->show();
     connect(systemtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(systemTrayActived(QSystemTrayIcon::ActivationReason)));
-    //connect(systemtray, SIGNAL(quitSelected()), this, SLOT(quitQminiDLNA()));
+}
+void QminiDLNA::initStatusBar()
+{
+    QLabel *msg = new QLabel( tr("msg") );
+
 }
 
 void QminiDLNA::systemTrayActived(QSystemTrayIcon::ActivationReason reason) {
@@ -111,7 +114,9 @@ void QminiDLNA::closeEvent(QCloseEvent* event) {
         systemtray->showMessage(tr("QminiDLNA"), tr("QminiDLNA was minimalized."), QSystemTrayIcon::Information, 8000);
         event->ignore();
     } else {
-        QMainWindow::closeEvent(event);
+        //QMainWindow::closeEvent(event);
+        qDebug() << "close event:" << event;
+        event->accept();
     }
 }
 
@@ -126,8 +131,6 @@ void QminiDLNA::createMenu() {
 
 void QminiDLNA::showSettings() {
     SettingDialog *sdlg = new SettingDialog(this);
-
-    //SettingsDialog *sdlg = new SettingsDialog(this);
     connect(sdlg, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
     sdlg->exec();
     disconnect(sdlg);
@@ -153,10 +156,6 @@ void QminiDLNA::loadSettings() {
     QSettings config;
     config.beginGroup("General");
     m_closeToTray = config.value("closetotray", false).toBool();
-    /*
-    KConfigGroup config = KGlobal::config()->group("General");
-    m_closeToTray = config.readEntry("closetotray", false);
-    */
     config.endGroup();
     systemtray->setVisible(m_closeToTray);
 
@@ -183,6 +182,11 @@ void QminiDLNA::onMiniDLNAState(QProcess::ProcessState state) {
         trayStopStart->setText(tr("Start"));
     }
 }
+void QminiDLNA::onMinidlnaError(QString err)
+{
+    ui->statusbar->showMessage(err, 15);
+}
+
 void QminiDLNA::quitQminiDLNA() {
     dlnaProcess->minidlnaKill();
     qApp->quit();
@@ -201,10 +205,8 @@ void QminiDLNA::onActionStartStopServer() {
 void QminiDLNA::onRESTServerRun(bool run) {
     if(run) {
         ui->actionStart_HTTP_REST_server->setText(tr("Stop HTTP REST server"));
-        //m_actionStartStopRESTServer->setText(tr("Stop HTTP REST server"));
     } else {
         ui->actionStart_HTTP_REST_server->setText(tr("Start HTTP REST server"));
-        //m_actionStartStopRESTServer->setText(tr("Start HTTP REST server"));
     }
 }
 

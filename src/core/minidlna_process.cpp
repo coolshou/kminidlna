@@ -21,15 +21,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "minidlna_process.h"
 #include <QDebug>
 #include <QApplication>
-//#include <KApplication>
 #include <unistd.h>
 #include <QMessageBox>
-//#include <KMessageBox>
 #include <QLocale>
-//#include <KLocalizedString>
 #include <QTextStream>
 #include <QSettings>
-//#include <KConfigGroup>
 
 #include <sys/types.h>
 #include <signal.h>
@@ -40,7 +36,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "../server/interface/restmediafolder.h"
 #include "../server/interface/restminidlnaput.h"
 
-const QString MiniDLNAProcess::MINIDLNA_PATH = "/usr/sbin/minidlna";
+#if defined(Q_OS_WIN)
+const QString MiniDLNAProcess::MINIDLNA_PATH = "minidlnad.exe";
+#else
+const QString MiniDLNAProcess::MINIDLNA_PATH = "/usr/sbin/minidlnad";
+#endif
 const QString MiniDLNAProcess::PIDFILE_PATH = "/tmp/";
 const QString MiniDLNAProcess::GLOBALCONFFILE_PATH = "/etc/minidlna.conf";
 const int MiniDLNAProcess::DEFAULTPORT = 8200;
@@ -51,12 +51,14 @@ MiniDLNAProcess::MiniDLNAProcess():
     m_confFile = 0;
     loadConfiguration();
     t_pid = new PidThread(this);
-    connect(t_pid, SIGNAL(foundPidFile(bool)),
-            this, SLOT(onPidFile(bool)));
+    connect(t_pid, SIGNAL(foundPidFile(bool)), this, SLOT(onPidFile(bool)));
 
     loadResource();
     minidlna = new QProcess();
-
+    connect(minidlna, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(onErrorOccured(QProcess::ProcessError)));
+    connect(minidlna, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(onStateChanged(QProcess::ProcessState)));
+    connect(minidlna, SIGNAL(readyReadStandardError()),this,SLOT(readMinidlnaError()));
+    connect(minidlna, SIGNAL(readyReadStandardOutput()),this,SLOT(readMinidlnaOutput()));
     RESTServer* server = RESTServer::getInstance();
     server->addInterfaces(this);
 }
@@ -73,13 +75,16 @@ MiniDLNAProcess::~MiniDLNAProcess()
     }
     if (t_pid != 0) {
         if (t_pid->isRunning()) {
+            //TODO: too early exit will cause crash!! why?
             t_pid->terminate();
         }
-        delete t_pid;
+            delete t_pid;
     }
+
 }
 
-MiniDLNAProcess* MiniDLNAProcess::getInstance() {
+MiniDLNAProcess* MiniDLNAProcess::getInstance()
+{
     static MiniDLNAProcess instance;
     return &instance;
 }
@@ -90,6 +95,7 @@ MiniDLNAProcess* MiniDLNAProcess::getInstance() {
  */
 void MiniDLNAProcess::minidlnaStart() {
     if (!QFile::exists(t_pid->getPidPath())) {
+        qDebug() << "Run: " <<minidlnas << " " << arg << endl;
         minidlna->start(minidlnas, arg);
         emit minidlnaStatus(QProcess::Starting);
         t_pid->setPathPidFile(pathPidFile + "minidlna.pid");
@@ -143,7 +149,6 @@ void MiniDLNAProcess::loadConfiguration() {
 void MiniDLNAProcess::loadSettings() {
     QSettings config;
     config.beginGroup("minidlna");
-    //KConfigGroup config = KGlobal::config()->group("minidlna");
 
     //set minidlna path
     QString minidlnapath = config.value("minidlnapath", MiniDLNAProcess::MINIDLNA_PATH).toString();
@@ -158,7 +163,7 @@ void MiniDLNAProcess::loadSettings() {
         }
     }
 
-    //Set pid path
+    //Set pid file (absolute path)
     QString pidpath = config.value("pidpath", MiniDLNAProcess::PIDFILE_PATH).toString();
     QFileInfo pid(pidpath);
     if (pid.isDir() && pid.isWritable()) {
@@ -167,6 +172,7 @@ void MiniDLNAProcess::loadSettings() {
         QFileInfo def(MiniDLNAProcess::PIDFILE_PATH);
         if (def.isDir() && def.isWritable()) {
             qDebug()<< "setted default pid directory: "<< def.absolutePath();
+            pathPidFile = def.absolutePath();
         } else {
             qDebug() << "pid directory is not writable or it was not found";
         }
@@ -268,4 +274,29 @@ void MiniDLNAProcess::configFileChanged() {
     loadSettings();
     m_isConfigFileOptionsChanged = true;
     emit configurationFileChanged();
+}
+
+void MiniDLNAProcess::onErrorOccured(QProcess::ProcessError error)
+{
+    qDebug() << "MiniDLNAProcess onErrorOccured ERROR:" << error << endl;
+    emit errorOccurred(error);
+}
+void MiniDLNAProcess::onStateChanged(QProcess::ProcessState newState)
+{
+    qDebug() << "MiniDLNAProcess onStateChanged :" << newState << endl;
+    emit stateChanged(newState);
+
+}
+void MiniDLNAProcess::readMinidlnaError()
+{
+    QString str = minidlna->readAllStandardError();
+    emit errorMsg(str);
+    qDebug() << "readMinidlnaError: \n" << str << endl;
+}
+void MiniDLNAProcess::readMinidlnaOutput()
+{
+    QString str = minidlna->readAllStandardOutput();
+    emit errorMsg(str);
+    qDebug() << "readMinidlnaOutput: \n" << str << endl;
+
 }

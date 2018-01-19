@@ -1,6 +1,8 @@
 #include "abstractsettings.h"
 
-AbstractSettings::AbstractSettings(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f), m_changed(false)
+AbstractSettings::AbstractSettings(QWidget* parent, Qt::WindowFlags f):
+    QWidget(parent, f),
+    m_changed(false)
 {
 
 }

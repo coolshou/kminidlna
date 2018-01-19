@@ -23,7 +23,8 @@ void SettingMediaFolder::setDefaults() {
 
 }
 
-void SettingMediaFolder::applySettings() {
+void SettingMediaFolder::applySettings()
+{
     AbstractSettings::applySettings();
     m_mediaFoldersWidget->saveModel();
 }
@@ -32,8 +33,7 @@ void SettingMediaFolder::initGUI() {
     m_mediaFoldersWidget = new MediaFoldersWidget(ui->mediaFolderGroup);
 
     ui->mediaFolderGroupLayout->addWidget(m_mediaFoldersWidget);
-    connect(m_mediaFoldersWidget, SIGNAL(modelChanged()),
-            this, SLOT(someChanged()));
+    connect(m_mediaFoldersWidget, SIGNAL(modelChanged()), this, SLOT(someChanged()));
     connect(MiniDLNAProcess::getInstance(), SIGNAL(configurationFileChanged()),
             m_mediaFoldersWidget, SLOT(reload()));
 }

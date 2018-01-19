@@ -16,32 +16,30 @@ SettingDialog::~SettingDialog()
 }
 
 void SettingDialog::initGUI() {
-    setWindowModality(Qt::WindowModal);
-
-    setWindowTitle(tr("Configure qminidlna"));
-    setMinimumSize(450, 250);
-
     m_general = new SettingGeneral(ui->tabGeneral);
+    ui->tabGeneralLayout->addWidget(m_general);
     connect(m_general, SIGNAL(changed()), this, SLOT(onChange()));
 
     m_minidlna = new SettingMiniDLNA(ui->tabMiniDLNA);
+    ui->tabMiniDLNALayout->addWidget(m_minidlna);
     connect(m_minidlna, SIGNAL(changed()),this, SLOT(onChange()));
 
     m_mediaFolders = new SettingMediaFolder(ui->tabMediaFolder);
+    ui->tabMediaFolderLayout->addWidget(m_mediaFolders);
     connect(m_mediaFolders, SIGNAL(changed()), this, SLOT(onChange()));
 
     m_confFileSettings = new SettingConfFile(ui->tabConfig);
+    ui->tabConfigLayout->addWidget(m_confFileSettings);
     connect(m_confFileSettings, SIGNAL(changed()), this, SLOT(onChange()));
 
     m_server = new SettingServer(ui->tabServer);
+    ui->tabServerLayout->addWidget(m_server);
     connect(m_server, SIGNAL(changed()), this, SLOT(onChange()));
     m_apply = ui->m_apply;
 }
 
 void SettingDialog::onApply() {
     QWidget *w = ui->tabOptions->currentWidget();
-
-    //KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w);
     if (tmp->isChanged()) {
         tmp->applySettings();
@@ -53,8 +51,6 @@ void SettingDialog::onApply() {
 
 void SettingDialog::onDefault() {
     QWidget *w = ui->tabOptions->currentWidget();
-
-    //KPageWidgetItem* w = currentPage();
     AbstractSettings* tmp = dynamic_cast<AbstractSettings*>(w);
     tmp->setDefaults();
 }
